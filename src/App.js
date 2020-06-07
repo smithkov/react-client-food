@@ -1,26 +1,48 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import Landing from "./components/Landing";
+
+import Footer from "./components/Footer";
+import Login from "./components/login";
+import Register from "./components/register";
+import FoodListing from "./components/FoodListing";
+import Dashboard from "../src/adminComponents/dashboard";
+import ShopForm from "../src/adminComponents/shopForm";
+import ProductList from "../src/adminComponents/productList";
+import ProductForm from "../src/adminComponents/productForm";
+import { Provider } from "react-redux";
+import store from "./store";
+import ProtectedRoute from "./ProtectedRoute";
+
+class App extends React.Component {
+  state = {
+    isAuthenticated: false,
+  };
+ 
+
+  render() {
+    return (
+      <Provider store={store}>
+        <Router>
+          <Switch>
+            <Route exact path="/" component={Landing} />
+            <Route exact path="/listing" component={FoodListing} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/register" component={Register} />
+            <Route exact path="/seller_reg" component={ShopForm} />
+            <Route exact path="/product_reg" component={ProductForm} />
+            <Route exact path="/product_list" component={ProductList} />
+            <Route path="/dashboard" component={ProtectedRoute(Dashboard)} />
+
+            {/* <Route path="/add" component={AddUser} />
+        <Route path="/edit/:id" component={EditUser} /> */}
+          </Switch>
+          <Footer />
+        </Router>
+      </Provider>
+    );
+  }
 }
 
 export default App;

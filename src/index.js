@@ -1,14 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+
+import './style.scss';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+
+
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import "bootstrap/dist/css/bootstrap.css";
+
+import 'semantic-ui-css/semantic.min.css'
+
+
+
 
 ReactDOM.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById('big-eat')
 );
 
 // If you want your app to work offline and load faster, you can change
