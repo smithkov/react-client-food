@@ -1,6 +1,7 @@
 import React from "react";
 
 import { AnchorButton, Intent, ProgressBar } from "@blueprintjs/core";
+import AfterNav from "./common/afterNav";
 
 import _ from "lodash";
 
@@ -11,8 +12,12 @@ import SideMenu from "./common/sideMenu";
 import ClientService from "../services/clientService";
 import { Col, Container, Row } from "reactstrap";
 import clientService from "../services/clientService";
-import { getUserProfile, MISSING_USER_MSG, ERROR_MSG } from "../utility/global";
-import { Button, Checkbox, Form } from "semantic-ui-react";
+import {
+  getUserProfile,
+  MISSING_USER_MSG,
+  IMG_MAX_SIZE,
+} from "../utility/global";
+import { Button, Message, Form } from "semantic-ui-react";
 
 export default class ProductForm extends React.Component {
   constructor(props) {
@@ -24,6 +29,8 @@ export default class ProductForm extends React.Component {
       desc: "",
       weight: "",
       price: "",
+      origin: [],
+      selectedOrigin: "",
       discountPrice: "",
       quantity: "",
       unitType: [],
@@ -34,7 +41,7 @@ export default class ProductForm extends React.Component {
       hasSave: true,
       message: "",
       hasError: false,
-      showLoader: false,
+      hasImageLimit:false
     };
   }
   componentDidMount() {
@@ -51,6 +58,23 @@ export default class ProductForm extends React.Component {
           this.setState({
             unitType: [{ key: "", text: "--Select unit type--" }].concat(
               unitTypes
+            ),
+          });
+        })
+        .catch((err) => {});
+
+      ClientService.origins()
+        .then((response) => {
+          let origins = response.data.data.map((origin) => {
+            return {
+              key: origin.id,
+              value: origin.id,
+              text: origin.name,
+            };
+          });
+          this.setState({
+            origin: [{ key: "", text: "--Select product origin--" }].concat(
+              origins
             ),
           });
         })
@@ -80,31 +104,52 @@ export default class ProductForm extends React.Component {
       });
     }
   }
+  onChangeDropdown = (e, data) => {
+    this.setState({
+      [data.name]: data.value,
+    });
+  };
   onFileLoad(e) {
-    const file = e.currentTarget.files[0];
-    const oldFile = e.currentTarget.files[0];
+    try {
+      const file = e.currentTarget.files[0];
+      const oldFile = e.currentTarget.files[0];
+      const imageSize = (file.size / 1024) * 0.001;
+      if (imageSize < IMG_MAX_SIZE) {
+        this.setState({
+          hasImageLimit:false
+        })
+        let fileReader = new FileReader();
+        fileReader.onload = () => {
+          console.log("IMAGE LOADED: ", fileReader.result);
 
-    let fileReader = new FileReader();
-    fileReader.onload = () => {
-      console.log("IMAGE LOADED: ", fileReader.result);
-      const file = {
-        data: fileReader.result,
-        isUploading: false,
-        file: oldFile,
-      };
-      //Add file
-      this.addLoadedFile(file);
-    };
+          const file = {
+            data: fileReader.result,
+            isUploading: false,
+            file: oldFile,
+          };
+          //Add file
 
-    fileReader.onabort = () => {
-      alert("Reading Aborted");
-    };
+          this.addLoadedFile(file);
+        };
 
-    fileReader.onerror = () => {
-      alert("Reading ERROR!");
-    };
+        fileReader.onabort = () => {
+          alert("Reading Aborted");
+        };
 
-    fileReader.readAsDataURL(file);
+        fileReader.onerror = () => {
+          alert("Reading ERROR!");
+        };
+
+        fileReader.readAsDataURL(file);
+      }
+      else{
+        this.setState({
+          hasImageLimit:true
+        })
+      }
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   addLoadedFile(file) {
@@ -142,52 +187,67 @@ export default class ProductForm extends React.Component {
   }
 
   onUpload(e) {
-    this.setState({
-      showLoader: true,
-    });
     e.preventDefault();
+    const {
+      category,
+      unitType,
+      origin,
+      discountPrice,
+      selectedOrigin,
+      selectedUnitType,
+      selectedCategory,
+      weight,
+      price,
+      quantity,
+      name,
+      desc,
+    } = this.state;
     if (this.state.loadedFiles.length > 0) {
-      var formData = new FormData();
+      let formData = new FormData();
       this.state.loadedFiles.forEach((file) => {
         formData.append("image", file.file);
       });
-      formData.append("discountPrice", this.state.discountPrice);
-      formData.append("price", this.state.price);
-      formData.append("unitId", this.state.selectedUnitType);
-      formData.append("weight", this.state.weight);
-      formData.append("name", this.state.name);
-      formData.append("desc", this.state.desc);
+      formData.append("discountPrice", discountPrice);
+      formData.append("price", price);
+      formData.append("categoryId", selectedCategory);
+      formData.append("unitId", selectedUnitType);
+      formData.append("weight", weight);
+      formData.append("quantity", quantity);
+      formData.append("name", name);
+      formData.append("originId", selectedOrigin);
+      formData.append("desc", desc);
       formData.append("userId", getUserProfile().id);
-      clientService
-        .createProduct(formData)
-        .then((response) => {
-          this.setState({
-            showAlert: true,
-            message: response.data.message,
-            showLoader: false,
-          });
-        })
-        .catch((err) => {
-          this.setState({
-            showLoader: false,
-          });
-        });
-      const { loadedFiles } = this.state;
 
+      //This shows progress bar on images
+      const { loadedFiles } = this.state;
       loadedFiles.map((file, idx) => {
-        console.log("Updating...");
-        console.log(file);
         //Update file (Change it's state to uploading)
         let newFile = this.updateLoadedFile(file, {
           ...file,
           isUploading: true,
         });
       });
+
+      clientService
+        .createProduct(formData)
+        .then((response) => {
+          console.log(response);
+          this.setState({
+            showAlert: true,
+            message: response.data.message,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          this.setState({
+            showAlert: true,
+            message: err.response.data.message,
+          });
+        });
     } else {
       this.setState({
         showAlert: true,
         message: "At least one product photo is required.",
-        showLoader: false,
       });
     }
   }
@@ -197,41 +257,26 @@ export default class ProductForm extends React.Component {
     });
   };
   render() {
-    const { loadedFiles } = this.state;
+    const { category, unitType, origin, loadedFiles, message,hasImageLimit } = this.state;
+    const imgAlert =  hasImageLimit? <Message
+    warning
+    header='Maximum image limit reached!'
+    content='You can only be allowed a maximum image limit of 5MB'
+  />:'';
+    
     const alert = this.state.showAlert ? (
       <div className="ui info message">
-        
-        <p>
-          {this.state.message}
-        </p>
+        <p>{message}</p>
       </div>
     ) : (
       ""
     );
-    //   Variable that checks for form submission
-    // const submit = this.showLoader ? (
-    //   <button
-    //     ref={this.buttonRef}
-    //     class="btn btn-info btn-block"
-    //     type="submit"
-    //     disabled
-    //   >
-    //     <span
-    //       class="spinner-grow spinner-grow-sm"
-    //       role="status"
-    //       aria-hidden="true"
-    //     ></span>
-    //     saving...
-    //   </button>
-    // ) : (
-    //   <button class="btn btn-info btn-block" ref={this.buttonRef} type="submit">
-    //     Save
-    //   </button>
-    // );
-    //end of submit render
+    
     return (
       <Container fluid={true}>
         <Nav />
+        <AfterNav form={"Create Product"} />
+        <hr></hr>
         <Row className="dash-layout">
           <Col lg="2">
             <SideMenu />
@@ -242,6 +287,7 @@ export default class ProductForm extends React.Component {
               className="inner-container"
               style={{ padding: 10, display: "flex", flexDirection: "column" }}
             >
+              {imgAlert}
               <div className="sub-header">Drag an Image</div>
               <div className="draggable-container">
                 <input
@@ -294,9 +340,19 @@ export default class ProductForm extends React.Component {
                 {alert}
                 <Form.Select
                   fluid
+                  onChange={this.onChangeDropdown}
+                  name="selectedCategory"
                   label="Category"
-                  options={this.state.category}
+                  options={category}
                   placeholder="Category"
+                />
+                <Form.Select
+                  fluid
+                  onChange={this.onChangeDropdown}
+                  name="selectedOrigin"
+                  label="Product origin"
+                  options={origin}
+                  placeholder="Product origin"
                 />
                 <Form.Field>
                   <label>Product name</label>
@@ -336,7 +392,9 @@ export default class ProductForm extends React.Component {
                   <Form.Select
                     fluid
                     label="Unit"
-                    options={this.state.unitType}
+                    name="selectedUnitType"
+                    options={unitType}
+                    onChange={this.onChangeDropdown}
                     placeholder="Unit"
                   />
                   <Form.Input fluid label="Weight" onChange={this.onChange} />

@@ -29,6 +29,7 @@ class FoodListing extends Component {
     return (
       <div>
         <NavBar/>
+        <br/><br/>
         <Listing>
           <SideMenu />{" "}
         </Listing>

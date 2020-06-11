@@ -70,7 +70,7 @@ class Listing extends Component {
                         </Item.Meta>
                         <Item.Description>{seller.desc}</Item.Description>
                         <Item.Extra>
-                          <Label>IMAX</Label>
+                <Label>£{seller.price}</Label>
                           <Rating
                             maxRating={5}
                             defaultRating={3}

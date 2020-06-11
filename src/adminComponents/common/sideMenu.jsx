@@ -67,16 +67,17 @@ export default class SideMenu extends Component {
         </Menu.Item>
 
         <Menu.Item>
-          <Menu.Header>Support</Menu.Header>
+          <Menu.Header>Shop</Menu.Header>
 
           <Menu.Menu>
+          <Link to={`/seller_reg/`}>
             <Menu.Item
-              name="email"
-              active={this.state.activeItem === "email"}
+              name="create-shop"
+              active={this.state.activeItem === "emcreate-shop"}
               onClick={this.handleItemClick}
             >
-              E-mail Support
-            </Menu.Item>
+             My Shop
+            </Menu.Item></Link>
 
             <Menu.Item
               name="faq"

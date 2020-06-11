@@ -1,20 +1,17 @@
 import React, { Component } from "react";
-import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  Col,
-  Container,
-  Form,
-  Input,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupText,
-  Row,
-} from "reactstrap";
+import { Col, Container, Row } from "reactstrap";
 import ClientService from "../services/clientService";
 import { Redirect } from "react-router-dom";
+import {
+  Button,
+  Form,
+  Grid,
+  Header,
+  Image,
+  Checkbox,
+  Message,
+  Segment,
+} from "semantic-ui-react";
 
 class Register extends Component {
   state = {
@@ -23,6 +20,7 @@ class Register extends Component {
     firstName: "",
     lastName: "",
     hasError: false,
+    showAlert: false,
     message: "",
   };
 
@@ -49,121 +47,98 @@ class Register extends Component {
         const { error, message } = err.response.data;
 
         this.setState({
-          hasError: error,
+          showAlert: true,
           message: message,
         });
       });
   };
   render() {
-    const alert = (
-      <div className="alert alert-warning" role="alert">
-        {this.state.message}
+    const alert = this.state.showAlert ? (
+      <div className="ui info message">
+        <p>{this.state.message}</p>
       </div>
+    ) : (
+      ""
     );
-
     return (
       <Container fluid={true}>
-        <Row style={{paddingTop:"100px", position:"relative"}}>
+        <Row style={{ paddingTop: "100px", position: "relative" }}>
           <Col lg="4"></Col>
           <Col lg="4">
-            <form onSubmit={this.register} class="text-center border border-light p-5" action="#!">
-              {this.state.hasError?alert:''}
-              <p class="h4 mb-4">Sign up</p>
-
-              <div class="form-row mb-4">
-                <div class="col">
-                  <input
-                    type="text" name="firstName"
-                    id="defaultRegisterFormFirstName"
-                    class="form-control"
-                    placeholder="First name" onChange={this.onChange}
-                  />
-                </div>
-                <div class="col">
-                  <input
-                    type="text" name="lastName"
-                    id="defaultRegisterFormLastName"
-                    class="form-control"
-                    placeholder="Last name" onChange={this.onChange}
-                  />
-                </div>
-              </div>
-
-              <input
-                type="email" name="email"
-                id="defaultRegisterFormEmail"
-                class="form-control mb-4"
-                placeholder="E-mail" onChange={this.onChange}
-              />
-
-              <input
-                type="password" name="password"
-                id="defaultRegisterFormPassword"
-                class="form-control"
-                placeholder="Password" onChange={this.onChange}
-                aria-describedby="defaultRegisterFormPasswordHelpBlock"
-              />
-              <small
-                id="defaultRegisterFormPasswordHelpBlock"
-                class="form-text text-muted mb-4"
+            <form onSubmit={this.register}>
+              <Grid
+                textAlign="center"
+                style={{ height: "100vh" }}
+                verticalAlign="middle"
               >
-                At least 8 characters and 1 digit
-              </small>
+                <Grid.Column style={{ maxWidth: 450 }}>
+                  <Header as="h2" color="teal" textAlign="center">
+                    <Image src="./images/logo.png" /> Sign-up to order/sell
+                  </Header>
 
-              {/* <input
-                type="text"
-                id="defaultRegisterPhonePassword"
-                class="form-control"
-                placeholder="Phone number"
-                aria-describedby="defaultRegisterFormPhoneHelpBlock"
-              /> */}
-              <small
-                id="defaultRegisterFormPhoneHelpBlock"
-                class="form-text text-muted mb-4"
-              >
-                Optional - for two step authentication
-              </small>
+                  <Form size="large">
+                    {alert}
+                    <Button color="primary" fluid  size="large">
+                      <i class="facebook icon"></i>
+                     Continue with Facebook
+                    </Button>
+                    <hr></hr>
+                    <Segment stacked>
+                      <Form.Group widths="equal">
+                        <Form.Field>
+                          <input
+                            required
+                            type="text"
+                            name="firstName"
+                            id="defaultRegisterFormFirstName"
+                            placeholder="First name"
+                            onChange={this.onChange}
+                          />
+                        </Form.Field>
 
-              <div class="custom-control custom-checkbox">
-                <input
-                  type="checkbox"
-                  class="custom-control-input"
-                  id="defaultRegisterFormNewsletter"
-                />
-                <label
-                  class="custom-control-label"
-                  for="defaultRegisterFormNewsletter"
-                >
-                  Subscribe to our newsletter
-                </label>
-              </div>
+                        <Form.Field>
+                          <input
+                            type="text"
+                            required
+                            name="lastName"
+                            id="defaultRegisterFormLastName"
+                            placeholder="Last name"
+                            onChange={this.onChange}
+                          />
+                        </Form.Field>
+                      </Form.Group>
+                      <Form.Input
+                        fluid
+                        type="email"
+                        icon="user"
+                        onChange={this.onChange}
+                        name="email"
+                        iconPosition="left"
+                        placeholder="E-mail address"
+                      />
+                      <Form.Input
+                        fluid
+                        icon="lock"
+                        onChange={this.onChange}
+                        name="password"
+                        iconPosition="left"
+                        placeholder="Password"
+                        type="password"
+                      />
+                      <Form.Input>
+                        <Checkbox
+                          required
+                          label="I agree to the Terms and Conditions"
+                        />
+                      </Form.Input>
 
-              <button class="btn btn-info my-4 btn-block" type="submit">
-                Sign in
-              </button>
-
-              {/* <p>or sign up with:</p>
-
-              <a href="#" class="mx-2" role="button">
-                <i class="fab fa-facebook-f light-blue-text"></i>
-              </a>
-              <a href="#" class="mx-2" role="button">
-                <i class="fab fa-twitter light-blue-text"></i>
-              </a>
-              <a href="#" class="mx-2" role="button">
-                <i class="fab fa-linkedin-in light-blue-text"></i>
-              </a>
-              <a href="#" class="mx-2" role="button">
-                <i class="fab fa-github light-blue-text"></i>
-              </a> */}
-
-              <p>
-                By clicking
-                <em>Sign up</em> you agree to our
-                <a href="" target="_blank">
-                  terms of service
-                </a>
-              </p>
+                      <Button type="submit" color="teal" fluid size="large">
+                        Sign up
+                      </Button>
+                    </Segment>
+                  </Form>
+                </Grid.Column>
+              </Grid>
             </form>
           </Col>
           <Col lg="4"></Col>

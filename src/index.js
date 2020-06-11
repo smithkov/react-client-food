@@ -1,3 +1,6 @@
+
+import "core-js/stable";
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -16,9 +19,8 @@ import 'semantic-ui-css/semantic.min.css'
 
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+ 
+    <App />,
   document.getElementById('big-eat')
 );
 

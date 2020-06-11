@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import SideMenu from "./common/sideMenu";
 import { Col, Container, Row } from "reactstrap";
 import Nav from "./common/nav";
-import { Button, Checkbox, Icon, Table } from "semantic-ui-react";
+import {Button, Checkbox, Icon, Table } from "semantic-ui-react";
+import AfterNav from './common/afterNav'
 import { getUserProfile, MISSING_USER_MSG, ERROR_MSG } from "../utility/global";
 import clientService from "../services/clientService";
 import { Link } from "react-router-dom";
@@ -13,18 +14,21 @@ export default class ShopForm extends Component {
 
     this.state = {
       products: [],
+      hasData: false,
     };
   }
 
   componentDidMount() {
+    console.log(getUserProfile().id);
     clientService
-      .productsByShop(getUserProfile().id)
+      .productsByUser({ userId: getUserProfile().id })
       .then((response) => {
         //const data = response.data;
-        console.log(response);
+        const data = response.data.data;
 
         this.setState({
-          products: response.data.data,
+          products: data,
+          hasData: data.length > 0 ? true : false,
         });
         // this.setState({
         //   sellers: response.data.data,
@@ -42,59 +46,75 @@ export default class ShopForm extends Component {
     return (
       <Container fluid={true}>
         <Nav />
+        <AfterNav form ={"Product List"}/>
+        <hr></hr>
         <Row className="dash-layout">
           <Col lg="2">
             <SideMenu />
-          </Col> <Col lg="1">
           </Col>
+         
+          <Col lg="1"></Col>
+          
           <Col className="dashboard-panel" lg="6">
-            <Table  celled compact>
-              <Table.Header fullWidth>
-                <Table.Row>
-                  <Table.HeaderCell>Title</Table.HeaderCell>
-                  <Table.HeaderCell>Category</Table.HeaderCell>
-                  <Table.HeaderCell>Price</Table.HeaderCell>
-                  <Table.HeaderCell>Discount Price</Table.HeaderCell>
-                  <Table.HeaderCell>Quantity</Table.HeaderCell>
-                  
-                </Table.Row>
-              </Table.Header>
+            {this.state.hasData ? (
+              <Table celled compact>
+                <Table.Header fullWidth>
+                  <Table.Row>
+                    <Table.HeaderCell>Title</Table.HeaderCell>
+                    <Table.HeaderCell>Category</Table.HeaderCell>
+                    <Table.HeaderCell>Price</Table.HeaderCell>
+                    <Table.HeaderCell>Discount Price</Table.HeaderCell>
+                    <Table.HeaderCell>Quantity</Table.HeaderCell>
+                  </Table.Row>
+                </Table.Header>
 
-              <Table.Body>
-                {this.state.products.map((product) => {
-                  // const rating = { id: 2, value: seller.rating}
-                  return (
-                    <Table.Row>
-                      <Table.Cell>{product.name}</Table.Cell>
-                      <Table.Cell>{product.Category?product.Category.name:''}</Table.Cell>
-                      <Table.Cell>£{parseInt(product.price).toFixed(2) }</Table.Cell>
-                      <Table.Cell>£{parseInt(product.discountPrice).toFixed(2) }</Table.Cell>
-                      <Table.Cell>{product.quantity}</Table.Cell>
-                    </Table.Row>
-                  );
-                })}
-              </Table.Body>
+                <Table.Body>
+                  {this.state.products.map((product) => {
+                    // const rating = { id: 2, value: seller.rating}
+                    return (
+                      <Table.Row>
+                        <Table.Cell>{product.name}</Table.Cell>
+                        <Table.Cell>
+                          {product.Category ? product.Category.name : ""}
+                        </Table.Cell>
+                        <Table.Cell>
+                          £{parseInt(product.price).toFixed(2)}
+                        </Table.Cell>
+                        <Table.Cell>
+                          £{parseInt(product.discountPrice).toFixed(2)}
+                        </Table.Cell>
+                        <Table.Cell>{product.quantity}</Table.Cell>
+                      </Table.Row>
+                    );
+                  })}
+                </Table.Body>
 
-              <Table.Footer fullWidth>
-                <Table.Row>
-                  <Table.HeaderCell />
-                  <Table.HeaderCell colSpan="4">
-                  <Link to={`/product_reg/`}>
-                  <Button
-                      floated="right"
-                      icon
-                      labelPosition="left"
-                      primary
-                      size="small"
-                    >
-                      <Icon name="add circle" /> Add product
-                    </Button>
-                  </Link>
-                    
-                  </Table.HeaderCell>
-                </Table.Row>
-              </Table.Footer>
-            </Table>
+                <Table.Footer fullWidth>
+                  <Table.Row>
+                    <Table.HeaderCell />
+                    <Table.HeaderCell colSpan="4">
+                      <Link to={`/product_reg/`}>
+                        <Button
+                          floated="right"
+                          icon
+                          labelPosition="left"
+                          primary
+                          size="small"
+                        >
+                          <Icon name="add circle" /> Add product
+                        </Button>
+                      </Link>
+                    </Table.HeaderCell>
+                  </Table.Row>
+                </Table.Footer>
+              </Table>
+            ) : (
+              <Link to={`/product_reg/`}>
+                <Button type="submit" color="teal" fluid size="large">
+                  Create new products
+                </Button>
+              </Link>
+            )}
           </Col>
         </Row>
       </Container>

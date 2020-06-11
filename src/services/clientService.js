@@ -20,7 +20,7 @@ class ClientService {
   register(data) {
     return http.post("/user/register", data);
   }
-  
+
   createShop(data) {
     return http.post("/shop", data);
   }
@@ -42,8 +42,11 @@ class ClientService {
   update(id, data) {
     return http.put(`/tutorials/${id}`, data);
   }
-  productsByShop(userId){
-    return http.get(`/product/shop/${userId}`)
+  findShopByUser(id) {
+    return http.get(`/shops/byUser/${id}`);
+  }
+  productsByUser(data) {
+    return http.post(`/product/byUser`, data);
   }
 
   delete(id) {
