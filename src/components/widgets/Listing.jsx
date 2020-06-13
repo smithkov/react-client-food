@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import SideMenu from "./SideMenu";
 import { Container, Row, Col } from "reactstrap";
 import { IMAGE_URL } from "../../utility/global";
+import { Link } from "react-router-dom";
 
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -38,13 +39,23 @@ class Listing extends Component {
       <Container fluid={true}>
         <Row>
           <Col lg="3">
-          <br></br><br></br><br></br>
-            {this.props.children}</Col>
+            <br></br>
+            <br></br>
+            <br></br>
+            {this.props.children}
+          </Col>
           <Col style={{ paddingTop: 10 }} lg="8">
-            <br></br><br></br><br></br>
+            <br></br>
+            <br></br>
+            <br></br>
             <React.Fragment>
-              <Input style={{width:'100%'}}  type="text" placeholder="Search..." action>
-                <input  />
+              <Input
+                style={{ width: "100%" }}
+                type="text"
+                placeholder="Search..."
+                action
+              >
+                <input />
                 <Select compact options={options} defaultValue="meals" />
                 <Button type="submit">Search</Button>
               </Input>
@@ -70,20 +81,21 @@ class Listing extends Component {
                         </Item.Meta>
                         <Item.Description>{seller.desc}</Item.Description>
                         <Item.Extra>
-                <Label>£{seller.price}</Label>
+                          <Label>£{seller.price}</Label>
                           <Rating
                             maxRating={5}
                             defaultRating={3}
                             icon="star"
                             size="huge"
                           />
-
-                          <Button floated="right" animated="vertical">
-                            <Button.Content hidden>Order</Button.Content>
-                            <Button.Content visible>
-                              <Icon name="shop" />
-                            </Button.Content>
-                          </Button>
+                          <Link>
+                            <Button
+                              floated="right"
+                              content="Order now"
+                              icon="right arrow"
+                              labelPosition="right"
+                            />
+                          </Link>
                         </Item.Extra>
                       </Item.Content>
                     </Item>

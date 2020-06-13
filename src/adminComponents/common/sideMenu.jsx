@@ -53,11 +53,12 @@ export default class SideMenu extends Component {
           <Menu.Header>Settings</Menu.Header>
 
           <Menu.Menu>
+          <Link to={`/myAccount/`}>
             <Menu.Item
               name="Account-info"
               active={this.state.activeItem === "Account-info"}
               onClick={this.handleItemClick}
-            />
+            /></Link>
             <Menu.Item
               name="Seller-settings"
               active={this.state.activeItem === "Seller-settings"}

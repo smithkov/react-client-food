@@ -1,4 +1,10 @@
 import React, { Component } from "react";
+//import Grid from "@material-ui/core/Grid";
+// import {
+//   MuiPickersUtilsProvider,
+//   KeyboardTimePicker,
+//   KeyboardDatePicker,
+// } from "@material-ui/pickers";
 import Nav from "./common/nav";
 import SideMenu from "./common/sideMenu";
 import ClientService from "../services/clientService";
@@ -16,30 +22,23 @@ import AfterNav from "./common/afterNav";
 //import "date-fns";
 //import MomentUtils from "@date-io/moment";
 
-export default class ShopForm extends Component {
+export default class Account extends Component {
   constructor(props) {
     super(props);
   }
   state = {
-    shopType: [],
-    selectedShopType: "",
-    shopTypeText: "Shop Types",
-    showAlert: false,
-    shopName: "",
-    hasSave: true,
-    message: "",
-    selectedCity: "",
     city: [],
-    hasShop: false,
-    selectedLogo: null,
-    selectedBanner: null,
-    logoPreviewUrl: null,
-    bannerPreviewUrl: null,
-    firstAddress:"",
-    secondAddress:"",
+    selectedCity: "",
+    showAlert: false,
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    firstAddress: "",
+    secondAddress: "",
     postCode: "",
+    message: "",
     cityText:""
-
 
     //selectedDateStart: new Date("2014-08-18T21:11:54").setHours(10, 0, 0),
     //selectedDateEnd: new Date("2014-08-18T21:11:54").setHours(20, 0, 0),
@@ -81,52 +80,6 @@ export default class ShopForm extends Component {
     reader.readAsDataURL(event.target.files[0]);
   };
   componentDidMount() {
-    ClientService.shopTypes()
-      .then((response) => {
-        let shopTypes = response.data.data.map((shopType) => {
-          return {
-            key: shopType.id,
-            value: shopType.id,
-            text: shopType.name,
-          };
-        });
-        this.setState({
-          shopType: [{ value: "", text: "--Select shop type--" }].concat(
-            shopTypes
-          ),
-        });
-      })
-      .catch((err) => {
-        //console.log(err);
-      });
-
-    ClientService.findShopByUser(getUserProfile().id)
-      .then((response) => {
-        const data = response.data.data;
-        console.log(data)
-        const { shopName, logo, shopBanners,cityId, ShopType, firstAddress, secondAddress, postCode, City } = data;
-
-        this.setState({
-          shopName,
-          shopTypeText: ShopType.name,
-          bannerPreviewUrl:
-            shopBanners.length > 0
-              ? `${IMAGE_URL}${shopBanners[0].bannerPath}`
-              : DEFAULT_BANNER,
-          logoPreviewUrl: logo ? `${IMAGE_URL}${logo}` : DEFAULT_LOGO,
-          selectedShopType: ShopType.id,
-          hasShop: data,
-          firstAddress,
-          secondAddress:secondAddress==null?"":secondAddress,
-          postCode,
-          cityText:City?City.name:"City",
-          selectedCity:cityId
-        });
-      })
-      .catch((err) => {
-        //console.log(err);
-      });
-
     ClientService.cities()
       .then((response) => {
         let cities = response.data.data.map((city) => {
@@ -138,6 +91,35 @@ export default class ShopForm extends Component {
         });
         this.setState({
           city: [{ value: "", text: "--Select city--" }].concat(cities),
+        });
+      })
+      .catch((err) => {
+        //console.log(err);
+      });
+
+    ClientService.findUserById(getUserProfile().id)
+      .then((response) => {
+        const data = response.data.data;
+        const {
+          firstName,
+          lastName,
+          email,
+          firstAddress,
+          secondAddress,
+          postCode,
+          cityId,
+          City
+        } = data;
+
+        this.setState({
+          firstName,
+          lastName,
+          email,
+          firstAddress,
+          secondAddress,
+          postCode,
+          selectedCity: cityId,
+          cityText:City?City.name:"City"
         });
       })
       .catch((err) => {
@@ -159,28 +141,26 @@ export default class ShopForm extends Component {
   onSubmit = (e) => {
     e.preventDefault();
     const {
-      selectedLogo,
-      selectedBanner,
-      shopName,
-      selectedShopType,
-      secondAddress,
+      firstName,
+      lastName,
+      email,
       firstAddress,
+      secondAddress,
       postCode,
-      selectedCity
+      selectedCity,
     } = this.state;
-    let formData = new FormData();
-    formData.append("firstAddress", firstAddress);
-    formData.append("secondAddress", secondAddress);
-    formData.append("cityId", selectedCity);
-    formData.append("postCode", postCode);
-    formData.append("logo", selectedLogo);
-    formData.append("banner", selectedBanner);
-    formData.append("shopName", shopName);
-    formData.append("shopTypeId", selectedShopType);
-    formData.append("userId", getUserProfile().id);
+
     if (getUserProfile()) {
       clientService
-        .createShop(formData)
+        .userUpdate(getUserProfile().id, {
+          firstName,
+          lastName,
+          email,
+          firstAddress,
+          secondAddress,
+          postCode,
+          cityId: selectedCity,
+        })
         .then((response) => {
           console.log(response);
           this.setState({
@@ -196,34 +176,10 @@ export default class ShopForm extends Component {
     } else {
       this.setState({ showAlert: true, message: MISSING_USER_MSG });
     }
-    //    clientService.createShop({
-
-    //    })
   };
-  // handleDateChangeStart = (date) => {
-  //   this.setState({
-  //     selectedDateStart: date._d,
-  //   });
-  // };
-  // handleDateChangeEnd = (date) => {
-  //   this.setState({
-  //     selectedDateEnd: date._d,
-  //   });
-  // };
+
   render() {
-    let $logoPreview = (
-      <div className="previewText image-container">
-        Please select an Image for Preview
-      </div>
-    );
-    if (this.state.logoPreviewUrl) {
-      $logoPreview = (
-        <div className="image-container">
-          <img src={this.state.imagePreviewUrl} alt="icon" width="200" />{" "}
-        </div>
-      );
-    }
-    const alert = this.state.showAlert ? (
+    const userAlert = this.state.showAlert ? (
       <div className="ui info message">
         <p>{this.state.message}</p>
       </div>
@@ -232,25 +188,21 @@ export default class ShopForm extends Component {
     );
 
     const {
-      shopName,
-      selectedShopType,
-      shopType,
-      logoPreviewUrl,
-      hasShop,
-      bannerPreviewUrl,
-      shopTypeText,
+      firstName,
+      lastName,
+      email,
       firstAddress,
       secondAddress,
-      postCode,
       selectedCity,
-      cityText,
-      city
+      postCode,
+      city,
+      cityText
     } = this.state;
-    console.log(selectedShopType);
+
     return (
       <Container fluid={true}>
         <Nav />
-        <AfterNav form={hasShop ? "Update Shop" : "Create Shop"} />
+        <AfterNav form={"My Account"} />
         <hr></hr>
         <Row style={{ paddingTop: "10px" }}>
           <Col lg="2">
@@ -258,11 +210,11 @@ export default class ShopForm extends Component {
           </Col>
           <Col lg="1"></Col>
           <Col className="dashboard-panel" lg="6">
-            <Message attached header="Shop details" />
+            <Message attached header="Personal details" />
             <Form
               className="attached fluid segment"
               style={{
-                width: "100%",
+                width: "auto",
                 margin: "auto",
                 height: "auto",
                 padding: 13,
@@ -270,49 +222,48 @@ export default class ShopForm extends Component {
               onSubmit={this.onSubmit}
             >
               <p class="h4 mb-4">Shop Details</p>
-              {alert}
-
-              <Dropdown
-                fluid
-                selection
-                name="selectedShopType"
-                label="Shop type"
-                placeholder={shopTypeText}
-                options={shopType}
-                onChange={this.onChangeDropdown}
-              />
-              <Form.Field>
-                <label>Shop name</label>
-                <input
-                  type="text"
-                  required
-                  value={shopName}
-                  name="shopName"
-                  onChange={this.onChange}
-                  placeholder="Shop name"
-                />
-              </Form.Field>
+              {userAlert}
 
               <Form.Group widths="equal">
                 <Form.Field>
-                  <label>Logo</label>
-                  <input type="file" onChange={this.fileChangedHandler} />
+                  <label>First name</label>
+                  <input
+                    type="text"
+                    required
+                    value={firstName}
+                    name="firstName"
+                    onChange={this.onChange}
+                    placeholder="First name"
+                  />
                 </Form.Field>
 
-                <Image
-                  style={{ paddingTop: 5 }}
-                  src={logoPreviewUrl || DEFAULT_LOGO}
-                  size="small"
-                />
+                <Form.Field>
+                  <label>Last name</label>
+                  <input
+                    type="text"
+                    required
+                    value={lastName}
+                    name="lastName"
+                    onChange={this.onChange}
+                    placeholder="Last name"
+                  />
+                </Form.Field>
               </Form.Group>
               <Form.Field>
-                <label>Banner (728×90)</label>
-                <input type="file" onChange={this.fileChangedHandler2} />
+                <label>Email</label>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  name="email"
+                  onChange={this.onChange}
+                  placeholder="Email"
+                />
               </Form.Field>
-              <br />
-              <Image src={bannerPreviewUrl || DEFAULT_BANNER} />
-              <br /><hr></hr>
-              <Message floating content='Business Address' />
+
+              <hr />
+
+              <Message floating content="Home Address" />
               <Form.Field>
                 <label>Address 1</label>
                 <input
@@ -360,7 +311,7 @@ export default class ShopForm extends Component {
                 />
               </Form.Group>
 
-              <Button type="submit">Create Shop</Button>
+              <Button type="submit">Update</Button>
             </Form>
           </Col>
         </Row>

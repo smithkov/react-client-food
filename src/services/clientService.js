@@ -9,8 +9,20 @@ class ClientService {
     return http.get("/product/origin/" + id);
   }
 
+  productsByShopId(id) {
+    return http.get("/products/byShopId/" + id);
+  }
+
   origins() {
     return http.get(`/origins`);
+  }
+
+  cities() {
+    return http.get(`/cities`);
+  }
+
+  socialTypes() {
+    return http.get(`/socialTypes`);
   }
 
   login(data) {
@@ -33,33 +45,35 @@ class ClientService {
     return http.post("/product", data);
   }
 
+  createHomeAddress(data) {
+    return http.post("/homeAddress", data);
+  }
+
   shopTypes() {
     return http.get(`/shopTypes`);
   }
   unitTypes() {
     return http.get(`/units`);
   }
-  update(id, data) {
-    return http.put(`/tutorials/${id}`, data);
+  userUpdate(id, data) {
+    return http.patch(`/user/${id}`, data);
   }
   findShopByUser(id) {
     return http.get(`/shops/byUser/${id}`);
+  }
+
+  findShopById(id) {
+    return http.get(`/shop/${id}`);
   }
   productsByUser(data) {
     return http.post(`/product/byUser`, data);
   }
 
-  delete(id) {
-    return http.delete(`/tutorials/${id}`);
+  findUserById(id) {
+    return http.get(`/user/${id}`);
   }
 
-  deleteAll() {
-    return http.delete(`/tutorials`);
-  }
 
-  findByTitle(title) {
-    return http.get(`/tutorials?title=${title}`);
-  }
 }
 
 export default new ClientService();
