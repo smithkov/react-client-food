@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { Card, Icon, Image } from "semantic-ui-react";
-import { Grid, Button, Label } from "semantic-ui-react";
-import { IMAGE_URL,DEFAULT_LOGO } from "../../utility/global";
+import { Grid, Button, Header, Rating } from "semantic-ui-react";
+import { IMAGE_URL, DEFAULT_LOGO, displayRating,totalRating } from "../../utility/global";
+import { Link } from "react-router-dom";
 
 export default class ItemCard extends Component {
   constructor(props) {
@@ -14,23 +15,39 @@ export default class ItemCard extends Component {
       objectFit: "cover",
       objectPosition: "center center",
     };
-   
-    const { name, image, price,productImages, Category } = this.props.product;
+
+    const { id, name, image, price, productImages, Category, productRatings } = this.props.product;
+    
     return (
       <React.Fragment>
         <Grid.Column>
           <Card color="red">
-            <Image style={styles} src={productImages.length>0? `${IMAGE_URL}${productImages[0].imagePath}`:DEFAULT_LOGO} ui={false} />
+            <Image
+              style={styles}
+              src={
+                productImages.length > 0
+                  ? `${IMAGE_URL}${productImages[0].imagePath}`
+                  : DEFAULT_LOGO
+              }
+              ui={false}
+            />
             <Card.Content>
               <Card.Header>{name}</Card.Header>
               <Card.Meta>
                 {" "}
-                <Label key={name} size="medium">
-                  £{price}
-                </Label>
+                <Header color="red" as="h4"> £{parseInt(price).toFixed(2)}</Header>
+                <Rating
+                maxRating={5}
+                defaultRating={0}
+                rating={displayRating(productRatings)}
+                disabled
+                icon="star"
+                size="small"
+              /> |  {totalRating(productRatings)}
               </Card.Meta>
               <Card.Description>
                 {Category ? Category.name : ""}
+               <Link to={`/item_meal_detail/product/${id}`}> <span style={{ float: "right" }}>Details</span></Link>
               </Card.Description>
             </Card.Content>
             <Card.Content extra>

@@ -231,7 +231,7 @@ export default class ProductForm extends React.Component {
       clientService
         .createProduct(formData)
         .then((response) => {
-          console.log(response);
+          
           this.setState({
             showAlert: true,
             message: response.data.message,

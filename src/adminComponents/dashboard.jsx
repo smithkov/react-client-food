@@ -10,6 +10,7 @@ export default class Dashboard extends Component {
       <Container fluid={true}>
         <Nav />
         <AfterNav form ={"Dashboard"}/><hr></hr>
+        
         <Row style={{ paddingTop: "10px", height: 600 }}>
           <Col lg="2" sm="12" xs="12">
             <SideMenu />

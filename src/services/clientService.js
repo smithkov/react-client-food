@@ -9,6 +9,10 @@ class ClientService {
     return http.get("/product/origin/" + id);
   }
 
+  productById(id) {
+    return http.get("/product/" + id);
+  }
+
   productsByShopId(id) {
     return http.get("/products/byShopId/" + id);
   }
@@ -33,6 +37,10 @@ class ClientService {
     return http.post("/user/register", data);
   }
 
+  socialAccess(data) {
+    return http.post("/user/socialRegister", data);
+  }
+
   createShop(data) {
     return http.post("/shop", data);
   }
@@ -49,6 +57,14 @@ class ClientService {
     return http.post("/homeAddress", data);
   }
 
+  createReview(data) {
+    return http.post("/rating", data);
+  }
+
+  createProductReview(data) {
+    return http.post("/productRating", data);
+  }
+
   shopTypes() {
     return http.get(`/shopTypes`);
   }
@@ -58,8 +74,29 @@ class ClientService {
   userUpdate(id, data) {
     return http.patch(`/user/${id}`, data);
   }
+
+  settings(id, data) {
+    return http.patch(`/settings/${id}`, data);
+  }
+
   findShopByUser(id) {
     return http.get(`/shops/byUser/${id}`);
+  }
+
+  findReviewByShop(data) {
+    return http.post(`/rating/shop`,data);
+  }
+
+  findReviewByProduct(data) {
+    return http.post(`/productRating/product`,data);
+  }
+
+  findShopByName(data) {
+    return http.post(`/shopByName`,data);
+  }
+
+  findShopByUrl(data) {
+    return http.post(`/shopByUrl`,data);
   }
 
   findShopById(id) {

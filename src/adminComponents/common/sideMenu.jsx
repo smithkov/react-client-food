@@ -1,14 +1,17 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { Menu } from "semantic-ui-react";
+import { Menu, Modal, Button } from "semantic-ui-react";
 
 export default class SideMenu extends Component {
   state = {
-    activeItem: "",
+    activeItem: "" 
   };
+ 
   render() {
+    
     return (
       <Menu vertical>
+      
         <Menu.Item>
           <Menu.Header>Products</Menu.Header>
 
@@ -21,11 +24,11 @@ export default class SideMenu extends Component {
               />
             </Link>
             <Link to={`/product_list/`}>
-            <Menu.Item
-              name="Product-listing"
-              active={this.state.activeItem === "Product-listing"}
-              onClick={this.handleItemClick}
-            />
+              <Menu.Item
+                name="Product-listing"
+                active={this.state.activeItem === "Product-listing"}
+                onClick={this.handleItemClick}
+              />
             </Link>
           </Menu.Menu>
         </Menu.Item>
@@ -34,13 +37,12 @@ export default class SideMenu extends Component {
           <Menu.Header>Orders</Menu.Header>
 
           <Menu.Menu>
-           
-              <Menu.Item
-                name="Fulfilled-orders"
-                active={this.state.activeItem === "Fulfilled-orders"}
-                onClick={this.handleItemClick}
-              />
-           
+            <Menu.Item
+              name="Fulfilled-orders"
+              active={this.state.activeItem === "Fulfilled-orders"}
+              onClick={this.handleItemClick}
+            />
+
             <Menu.Item
               name="Unfulfilled-orders"
               active={this.state.activeItem === "Unfulfilled-orders"}
@@ -53,12 +55,13 @@ export default class SideMenu extends Component {
           <Menu.Header>Settings</Menu.Header>
 
           <Menu.Menu>
-          <Link to={`/myAccount/`}>
-            <Menu.Item
-              name="Account-info"
-              active={this.state.activeItem === "Account-info"}
-              onClick={this.handleItemClick}
-            /></Link>
+            <Link to={`/myAccount/`}>
+              <Menu.Item
+                name="Account-info"
+                active={this.state.activeItem === "Account-info"}
+                onClick={this.handleItemClick}
+              />
+            </Link>
             <Menu.Item
               name="Seller-settings"
               active={this.state.activeItem === "Seller-settings"}
@@ -71,15 +74,15 @@ export default class SideMenu extends Component {
           <Menu.Header>Shop</Menu.Header>
 
           <Menu.Menu>
-          <Link to={`/seller_reg/`}>
-            <Menu.Item
-              name="create-shop"
-              active={this.state.activeItem === "emcreate-shop"}
-              onClick={this.handleItemClick}
-            >
-             My Shop
-            </Menu.Item></Link>
-
+            <Link to={`/seller_reg/`}>
+              <Menu.Item
+                name="create-shop"
+                active={this.state.activeItem === "create-shop"}
+                onClick={this.handleItemClick}
+              >
+                My Shop
+              </Menu.Item>
+            </Link>
             <Menu.Item
               name="faq"
               active={this.state.activeItem === "faq"}

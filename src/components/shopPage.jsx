@@ -1,20 +1,24 @@
 import React, { Component } from "react";
 import ClientService from "../services/clientService";
-import NavBar from "../components/NavBar";
-import { Grid, Image, Tab } from "semantic-ui-react";
-import ItemCard from "./widgets/itemCard";
+import NavBar from "./NavBar";
+import { Grid, Image, Tab, Message } from "semantic-ui-react";
+import ItemCard from "./widgets/ItemCard";
+import Review from "./widgets/Review";
+import ReviewList from "./widgets/reviewList";
 import {
   getUserProfile,
-  MISSING_USER_MSG,
+  DEFAULT_USER,
   DEFAULT_BANNER,
   IMAGE_URL,
   DEFAULT_LOGO,
+  Rating,
 } from "../utility/global";
 import clientService from "../services/clientService";
 
 export default class ShopPage extends Component {
   constructor(props) {
     super(props);
+    console.log(props.match.params.shopUrl);
   }
 
   state = {
@@ -23,34 +27,47 @@ export default class ShopPage extends Component {
     logoPreviewUrl: "",
     shopTypeText: "",
     products: [],
+    shopId: "",
+    comments: [],
   };
-  componentDidMount() {
-    ClientService.findShopById("65b3b2a1-4eb6-4df0-9894-0613b5b3e9af")
-      .then((response) => {
-        const data = response.data.data;
-        const { shopName, logo, shopBanners, products, ShopType } = data;
+  componentDidMount = async () => {
+    const shopUrl = this.props.match.params.shopUrl;
+    const getShop = await ClientService.findShopByUrl({ shopUrl });
 
-        this.setState({
-          shopName: shopName,
-          shopTypeText: ShopType.name,
-          logoPreviewUrl: logo ? `${IMAGE_URL}${logo}` : DEFAULT_LOGO,
-          bannerPreviewUrl:
-            shopBanners.length > 0
-              ? `${IMAGE_URL}${shopBanners[0].bannerPath}`
-              : DEFAULT_BANNER,
-        });
-      })
-      .catch((err) => {});
-    clientService
-      .productsByShopId("65b3b2a1-4eb6-4df0-9894-0613b5b3e9af")
-      .then((response) => {
-        console.log(response.data.data);
-        this.setState({
-          products: response.data.data,
-        });
+    const data = getShop.data;
+    const { id, shopName, logo, shopBanners, products, ShopType } = data;
+
+    this.setState({
+      shopId: id,
+      shopName: shopName,
+      shopTypeText: ShopType.name,
+      logoPreviewUrl: logo ? `${IMAGE_URL}${logo}` : DEFAULT_LOGO,
+      bannerPreviewUrl:
+        shopBanners.length > 0
+          ? `${IMAGE_URL}${shopBanners[0].bannerPath}`
+          : DEFAULT_BANNER,
+    });
+
+    clientService.productsByShopId(id).then((response) => {
+      this.setState({
+        products: response.data.data,
       });
-  }
-
+    });
+  };
+  handleTabChange = (e, { activeIndex }) => {
+    if (activeIndex === 2) {
+      const shopId = this.state.shopId;
+      clientService
+        .findReviewByShop({ shopId })
+        .then((response) => {
+          const data = response.data.data;
+          this.setState({
+            comments: data,
+          });
+        })
+        .catch((err) => console.log(err));
+    }
+  };
   render() {
     const panes = [
       {
@@ -68,7 +85,18 @@ export default class ShopPage extends Component {
         ),
       },
       { menuItem: "Contact Us", render: () => <Tab.Pane></Tab.Pane> },
-      { menuItem: "Rating", render: () => <Tab.Pane>Tab 3 Content</Tab.Pane> },
+      {
+        menuItem: "Rating",
+        render: () => (
+          <Tab.Pane>
+            <Review isForShop={true} shopId={this.state.shopId} />
+            <hr></hr>
+            {this.state.comments.map((comment) => {
+              return <ReviewList key={comment.id} data={comment} />;
+            })}
+          </Tab.Pane>
+        ),
+      },
     ];
     const styles = {
       height: 150,
@@ -96,12 +124,17 @@ export default class ShopPage extends Component {
                 className="img-resize"
                 src={bannerPreviewUrl}
               />
+              <Message
+                icon="announcement"
+                header="Have you heard about our mailing list?"
+                content="Get the best news in your e-mail every day."
+              />
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
             <Grid.Column width={3}></Grid.Column>
             <Grid.Column width={12}>
-              <Tab panes={panes} />
+              <Tab panes={panes} onTabChange={this.handleTabChange} />
             </Grid.Column>
           </Grid.Row>
         </Grid>

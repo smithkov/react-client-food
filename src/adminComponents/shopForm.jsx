@@ -11,7 +11,14 @@ import {
   IMAGE_URL,
   DEFAULT_LOGO,
 } from "../utility/global";
-import { Button, Dropdown, Form, Image, Message } from "semantic-ui-react";
+import {
+  Button,
+  Dropdown,
+  Form,
+  Image,
+  Message,
+  Input,
+} from "semantic-ui-react";
 import AfterNav from "./common/afterNav";
 //import "date-fns";
 //import MomentUtils from "@date-io/moment";
@@ -26,6 +33,9 @@ export default class ShopForm extends Component {
     shopTypeText: "Shop Types",
     showAlert: false,
     shopName: "",
+    initialShopName: "",
+    initialShopUrl: "",
+    shopUrl: "",
     hasSave: true,
     message: "",
     selectedCity: "",
@@ -35,11 +45,13 @@ export default class ShopForm extends Component {
     selectedBanner: null,
     logoPreviewUrl: null,
     bannerPreviewUrl: null,
-    firstAddress:"",
-    secondAddress:"",
+    firstAddress: "",
+    secondAddress: "",
     postCode: "",
-    cityText:""
-
+    cityText: "",
+    disabled: false,
+    isDuplicateUrl:false,
+    isDuplicateName:false
 
     //selectedDateStart: new Date("2014-08-18T21:11:54").setHours(10, 0, 0),
     //selectedDateEnd: new Date("2014-08-18T21:11:54").setHours(20, 0, 0),
@@ -103,8 +115,19 @@ export default class ShopForm extends Component {
     ClientService.findShopByUser(getUserProfile().id)
       .then((response) => {
         const data = response.data.data;
-        console.log(data)
-        const { shopName, logo, shopBanners,cityId, ShopType, firstAddress, secondAddress, postCode, City } = data;
+        console.log(data);
+        const {
+          shopName,
+          shopUrl,
+          logo,
+          shopBanners,
+          cityId,
+          ShopType,
+          firstAddress,
+          secondAddress,
+          postCode,
+          City,
+        } = data;
 
         this.setState({
           shopName,
@@ -117,10 +140,13 @@ export default class ShopForm extends Component {
           selectedShopType: ShopType.id,
           hasShop: data,
           firstAddress,
-          secondAddress:secondAddress==null?"":secondAddress,
+          shopUrl,
+          initialShopName: shopName,
+          initialShopUrl: shopUrl,
+          secondAddress: secondAddress == null ? "" : secondAddress,
           postCode,
-          cityText:City?City.name:"City",
-          selectedCity:cityId
+          cityText: City ? City.name : "City",
+          selectedCity: cityId,
         });
       })
       .catch((err) => {
@@ -162,11 +188,12 @@ export default class ShopForm extends Component {
       selectedLogo,
       selectedBanner,
       shopName,
+      shopUrl,
       selectedShopType,
       secondAddress,
       firstAddress,
       postCode,
-      selectedCity
+      selectedCity,
     } = this.state;
     let formData = new FormData();
     formData.append("firstAddress", firstAddress);
@@ -176,6 +203,7 @@ export default class ShopForm extends Component {
     formData.append("logo", selectedLogo);
     formData.append("banner", selectedBanner);
     formData.append("shopName", shopName);
+    formData.append("shopUrl", shopUrl);
     formData.append("shopTypeId", selectedShopType);
     formData.append("userId", getUserProfile().id);
     if (getUserProfile()) {
@@ -210,7 +238,65 @@ export default class ShopForm extends Component {
   //     selectedDateEnd: date._d,
   //   });
   // };
+  onBlur = (e) => {
+    const { shopName, initialShopName, initialShopUrl, shopUrl } = this.state;
+    if (e.target.name == "shopName" && shopName !== initialShopName) {
+      clientService
+        .findShopByName({ shopName })
+        .then((response) => {
+         
+          if(response.data){
+            this.setState({
+              disabled:true,
+              isDuplicateName:true
+            })
+          }else{
+            this.setState({
+              disabled:false,
+              isDuplicateName:false
+            })
+          }
+        });
+    }
+
+    if (e.target.name == "shopUrl" && shopUrl !== initialShopUrl) {
+      clientService.findShopByUrl({ shopUrl }).then((response) => {
+        if(response.data){
+          this.setState({
+            disabled:true,
+            isDuplicateUrl:true
+          })
+        }else{
+          this.setState({
+            disabled:false,
+            isDuplicateUrl:false
+          })
+        }
+      });
+    }
+  };
   render() {
+    const {
+      shopName,
+      shopUrl,
+      selectedShopType,
+      shopType,
+      logoPreviewUrl,
+      hasShop,
+      bannerPreviewUrl,
+      shopTypeText,
+      firstAddress,
+      secondAddress,
+      postCode,
+      selectedCity,
+      cityText,
+      city,
+      disabled,
+      isDuplicateName,
+      isDuplicateUrl
+    } = this.state;
+    const nameAlert= isDuplicateName?(<Message color='yellow'>The shop name already exist! Please choose a different one.</Message>):"";
+    const urlAlert= isDuplicateUrl?(<Message color='yellow'>The shop url already exist! Please choose a different one.</Message>):"";
     let $logoPreview = (
       <div className="previewText image-container">
         Please select an Image for Preview
@@ -231,22 +317,8 @@ export default class ShopForm extends Component {
       ""
     );
 
-    const {
-      shopName,
-      selectedShopType,
-      shopType,
-      logoPreviewUrl,
-      hasShop,
-      bannerPreviewUrl,
-      shopTypeText,
-      firstAddress,
-      secondAddress,
-      postCode,
-      selectedCity,
-      cityText,
-      city
-    } = this.state;
-    console.log(selectedShopType);
+  
+
     return (
       <Container fluid={true}>
         <Nav />
@@ -281,18 +353,29 @@ export default class ShopForm extends Component {
                 options={shopType}
                 onChange={this.onChangeDropdown}
               />
+              {nameAlert}
               <Form.Field>
                 <label>Shop name</label>
                 <input
                   type="text"
                   required
                   value={shopName}
+                  onBlur={this.onBlur}
                   name="shopName"
                   onChange={this.onChange}
                   placeholder="Shop name"
                 />
               </Form.Field>
-
+              {urlAlert}
+              <Form.Field>
+                <Input
+                  name="shopUrl"
+                  onBlur={this.onBlur}
+                  onChange={this.onChange}
+                  label="https://cookneat/"
+                  placeholder="your-url.co.uk"
+                />
+              </Form.Field>
               <Form.Group widths="equal">
                 <Form.Field>
                   <label>Logo</label>
@@ -311,8 +394,9 @@ export default class ShopForm extends Component {
               </Form.Field>
               <br />
               <Image src={bannerPreviewUrl || DEFAULT_BANNER} />
-              <br /><hr></hr>
-              <Message floating content='Business Address' />
+              <br />
+              <hr></hr>
+              <Message floating content="Business Address" />
               <Form.Field>
                 <label>Address 1</label>
                 <input
@@ -360,7 +444,9 @@ export default class ShopForm extends Component {
                 />
               </Form.Group>
 
-              <Button type="submit">Create Shop</Button>
+              <Button disabled={disabled} type="submit">
+                Create Shop
+              </Button>
             </Form>
           </Col>
         </Row>

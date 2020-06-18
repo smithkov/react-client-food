@@ -15,7 +15,7 @@ import {
   MISSING_USER_MSG,
   DEFAULT_BANNER,
   IMAGE_URL,
-  DEFAULT_LOGO,
+  DEFAULT_USER,
 } from "../utility/global";
 import { Button, Dropdown, Form, Image, Message } from "semantic-ui-react";
 import AfterNav from "./common/afterNav";
@@ -38,7 +38,9 @@ export default class Account extends Component {
     secondAddress: "",
     postCode: "",
     message: "",
-    cityText:""
+    cityText: "",
+    selectedPhoto: "",
+    photoPreviewUrl: "",
 
     //selectedDateStart: new Date("2014-08-18T21:11:54").setHours(10, 0, 0),
     //selectedDateEnd: new Date("2014-08-18T21:11:54").setHours(20, 0, 0),
@@ -47,7 +49,7 @@ export default class Account extends Component {
   fileChangedHandler = (event) => {
     try {
       this.setState({
-        selectedLogo: event.target.files[0],
+        selectedPhoto: event.target.files[0],
       });
 
       let reader = new FileReader();
@@ -64,21 +66,6 @@ export default class Account extends Component {
     }
   };
 
-  fileChangedHandler2 = (event) => {
-    this.setState({
-      selectedBanner: event.target.files[0],
-    });
-
-    let reader = new FileReader();
-
-    reader.onloadend = () => {
-      this.setState({
-        bannerPreviewUrl: reader.result,
-      });
-    };
-
-    reader.readAsDataURL(event.target.files[0]);
-  };
   componentDidMount() {
     ClientService.cities()
       .then((response) => {
@@ -108,10 +95,12 @@ export default class Account extends Component {
           secondAddress,
           postCode,
           cityId,
-          City
+          City,
+          photo
         } = data;
-
+        const myPhoto = photo?`${IMAGE_URL}${photo}`:"";
         this.setState({
+          photoPreviewUrl:myPhoto,
           firstName,
           lastName,
           email,
@@ -119,7 +108,7 @@ export default class Account extends Component {
           secondAddress,
           postCode,
           selectedCity: cityId,
-          cityText:City?City.name:"City"
+          cityText: City ? City.name : "City",
         });
       })
       .catch((err) => {
@@ -148,19 +137,20 @@ export default class Account extends Component {
       secondAddress,
       postCode,
       selectedCity,
+      selectedPhoto
     } = this.state;
-
+    const  formData = new FormData();
+    formData.append("firstName", firstName);
+    formData.append("lastName", lastName);
+    formData.append("email", email);
+    formData.append("firstAddress", firstAddress);
+    formData.append("secondAddress", secondAddress);
+    formData.append("postCode", postCode);
+    formData.append("selectedCity", selectedCity);
+    formData.append("photo", selectedPhoto);
     if (getUserProfile()) {
       clientService
-        .userUpdate(getUserProfile().id, {
-          firstName,
-          lastName,
-          email,
-          firstAddress,
-          secondAddress,
-          postCode,
-          cityId: selectedCity,
-        })
+        .userUpdate(getUserProfile().id,formData)
         .then((response) => {
           console.log(response);
           this.setState({
@@ -177,7 +167,26 @@ export default class Account extends Component {
       this.setState({ showAlert: true, message: MISSING_USER_MSG });
     }
   };
-
+  fileChangedHandler = (event) => {
+    try{
+      this.setState({
+        selectedPhoto: event.target.files[0],
+      });
+  
+      let reader = new FileReader();
+  
+      reader.onloadend = () => {
+        this.setState({
+          photoPreviewUrl: reader.result,
+        });
+      };
+  
+      reader.readAsDataURL(event.target.files[0]);
+    }catch(err){
+      
+    }
+    
+  };
   render() {
     const userAlert = this.state.showAlert ? (
       <div className="ui info message">
@@ -196,7 +205,8 @@ export default class Account extends Component {
       selectedCity,
       postCode,
       city,
-      cityText
+      cityText,
+      photoPreviewUrl,
     } = this.state;
 
     return (
@@ -221,9 +231,25 @@ export default class Account extends Component {
               }}
               onSubmit={this.onSubmit}
             >
-              <p class="h4 mb-4">Shop Details</p>
               {userAlert}
+              <Form.Group widths="equal">
+                <Form.Field>
+                  <label>Photo</label>
+                  <input type="file" onChange={this.fileChangedHandler} />
+                </Form.Field>
 
+                <Form.Field>
+                  <img
+                    style={{
+                      objectFit: "cover",
+                      objectPosition: "center center",
+                      height: 100,
+                      width: "100",
+                    }}
+                    src={photoPreviewUrl ? photoPreviewUrl : DEFAULT_USER}
+                  />
+                </Form.Field>
+              </Form.Group>
               <Form.Group widths="equal">
                 <Form.Field>
                   <label>First name</label>

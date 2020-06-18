@@ -1,8 +1,14 @@
 import React, { Component } from "react";
 import SideMenu from "./SideMenu";
 import { Container, Row, Col } from "reactstrap";
-import { IMAGE_URL } from "../../utility/global";
+import {
+  IMAGE_URL,
+  totalRating,
+  displayRating,
+  formatPrice,
+} from "../../utility/global";
 import { Link } from "react-router-dom";
+import "./listing.css";
 
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -10,9 +16,10 @@ import { fetchProducts } from "../../actions/productActions";
 import {
   Button,
   Icon,
+  Grid,
   Image,
   Item,
-  Label,
+  Header,
   Rating,
   Select,
   Input,
@@ -35,19 +42,17 @@ class Listing extends Component {
   }
 
   render() {
+    const styles = {
+      width: "100%",
+      height: 150,
+      objectFit: "cover",
+      objectPosition: "center center",
+    };
     return (
-      <Container fluid={true}>
-        <Row>
-          <Col lg="3">
-            <br></br>
-            <br></br>
-            <br></br>
-            {this.props.children}
-          </Col>
-          <Col style={{ paddingTop: 10 }} lg="8">
-            <br></br>
-            <br></br>
-            <br></br>
+      <Grid style={{ paddingTop: 80, paddingLeft: 30 }} stackable>
+        <Grid.Row>
+          <Grid.Column width={3}>{this.props.children}</Grid.Column>
+          <Grid.Column width={10}>
             <React.Fragment>
               <Input
                 style={{ width: "100%" }}
@@ -65,48 +70,51 @@ class Listing extends Component {
               {this.props.products.map((seller) => {
                 // const rating = { id: 2, value: seller.rating}
                 return (
-                  <Item.Group divided>
-                    <Item>
-                      <Item.Image
-                        style={{ height: "auto" }}
-                        src={`${IMAGE_URL}${seller.productImages[1].imagePath}`}
-                      />
-
-                      <Item.Content>
-                        <Item.Header as="a">{seller.name}</Item.Header>
-                        <Item.Meta>
-                          <span className="cinema">
-                            {seller.VirtualShop.shopName}
-                          </span>
-                        </Item.Meta>
-                        <Item.Description>{seller.desc}</Item.Description>
-                        <Item.Extra>
-                          <Label>£{seller.price}</Label>
+                  <React.Fragment>
+                    <Grid style={{backgroundColor:'#F2F2F2'}} stackable>
+                      <Grid.Row>
+                        <Grid.Column width={5}>
+                          <Image
+                            style={{
+                              objectFit: "cover",
+                              objectPosition: "center center",
+                              height: 200,
+                              width: "100%",
+                            }}
+                            src={`${IMAGE_URL}${seller.productImages[0].imagePath}`}
+                            rounded
+                          />
+                        </Grid.Column>
+                        <Grid.Column width={11}>
+                          <Header as="h2">{seller.name}</Header>
+                          <span>{seller.desc}</span>
+                          <Header color="red" as="h4">
+                            {formatPrice(seller.price)}
+                          </Header>
                           <Rating
                             maxRating={5}
-                            defaultRating={3}
+                            defaultRating={0}
+                            rating={displayRating(seller.productRatings)}
+                            disabled
                             icon="star"
-                            size="huge"
-                          />
-                          <Link>
-                            <Button
-                              floated="right"
-                              content="Order now"
-                              icon="right arrow"
-                              labelPosition="right"
-                            />
+                            size="small"
+                          />{" "}
+                          | {totalRating(seller.productRatings)}
+                          <br />
+                          <Link to={`/${seller.VirtualShop.shopUrl}`}>
+                            {seller.VirtualShop.shopName}
                           </Link>
-                        </Item.Extra>
-                      </Item.Content>
-                    </Item>
-                  </Item.Group>
+                        </Grid.Column>
+                      </Grid.Row>
+                    </Grid><br/><br/>
+                  </React.Fragment>
                 );
               })}
             </React.Fragment>
-          </Col>
-          <Col lg="1"></Col>
-        </Row>
-      </Container>
+          </Grid.Column>
+          <Grid.Column width={3}></Grid.Column>
+        </Grid.Row>
+      </Grid>
     );
   }
 }

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Col, Container, Row } from "reactstrap";
 import ClientService from "../services/clientService";
 import { Redirect } from "react-router-dom";
+import FacebookLogin from "react-facebook-login";
 import {
   Button,
   Form,
@@ -11,7 +12,9 @@ import {
   Checkbox,
   Message,
   Segment,
+  Icon,
 } from "semantic-ui-react";
+import clientService from "../services/clientService";
 
 class Register extends Component {
   state = {
@@ -24,6 +27,34 @@ class Register extends Component {
     message: "",
   };
 
+  responseFacebook = (res) => {
+    //const firstName
+    console.log(res)
+    if (res) {
+      const { email, name, graphDomain, id } = res;
+      const nameArray = name.split(" ");
+      const firstName = nameArray[0];
+      const lastName = nameArray.pop();
+      const password = id;
+      const source = graphDomain;
+      
+
+      clientService
+        .socialAccess({email,firstName,lastName,source, password})
+        .then((response) => {
+          this.props.history.push("/listing/");
+        })
+        .catch((err) => {
+          const { error, message } = err.response.data;
+
+          this.setState({
+            showAlert: true,
+            message: message,
+          });
+        });
+    }
+  };
+  
   onChange = (e) => {
     this.setState({
       [e.target.name]: e.target.value,
@@ -78,11 +109,15 @@ class Register extends Component {
 
                   <Form size="large">
                     {alert}
-                    <Button color="primary" fluid  size="large">
-                      <i class="facebook icon"></i>
-                     Continue with Facebook
-                    </Button>
-                    <hr></hr>
+                    <FacebookLogin
+                      appId="900223110479631"
+                      autoLoad={true}
+                      fields="name,email,picture"
+                      callback={this.responseFacebook}
+                      icon={<Icon name="facebook" />}
+                    />
+
+                    <div class="ui horizontal divider">Or</div>
                     <Segment stacked>
                       <Form.Group widths="equal">
                         <Form.Field>
