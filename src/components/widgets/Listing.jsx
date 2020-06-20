@@ -61,7 +61,7 @@ class Listing extends Component {
                 action
               >
                 <input />
-                <Select compact options={options} defaultValue="meals" />
+                
                 <Button type="submit">Search</Button>
               </Input>
               <br />
@@ -71,7 +71,7 @@ class Listing extends Component {
                 // const rating = { id: 2, value: seller.rating}
                 return (
                   <React.Fragment>
-                    <Grid style={{backgroundColor:'#F2F2F2'}} stackable>
+                    <Grid style={{ backgroundColor: "#F2F2F2" }} stackable>
                       <Grid.Row>
                         <Grid.Column width={5}>
                           <Image
@@ -86,27 +86,70 @@ class Listing extends Component {
                           />
                         </Grid.Column>
                         <Grid.Column width={11}>
-                          <Header as="h2">{seller.name}</Header>
-                          <span>{seller.desc}</span>
-                          <Header color="red" as="h4">
-                            {formatPrice(seller.price)}
-                          </Header>
-                          <Rating
-                            maxRating={5}
-                            defaultRating={0}
-                            rating={displayRating(seller.productRatings)}
-                            disabled
-                            icon="star"
-                            size="small"
-                          />{" "}
-                          | {totalRating(seller.productRatings)}
-                          <br />
-                          <Link to={`/${seller.VirtualShop.shopUrl}`}>
-                            {seller.VirtualShop.shopName}
-                          </Link>
+                          <Grid>
+                            <Grid.Row>
+                              <Grid.Column width={8}>
+                                <Header as="h2">{seller.name}</Header>
+                                <span>{seller.desc}</span>
+                                <Header color="red" as="h4">
+                                  {formatPrice(seller.price)}
+                                </Header>
+                                <Rating
+                                  maxRating={5}
+                                  defaultRating={0}
+                                  rating={displayRating(seller.productRatings)}
+                                  disabled
+                                  icon="star"
+                                  size="small"
+                                />{" "}
+                                | {totalRating(seller.productRatings)}
+                                <br />
+                                <Link to={`/${seller.VirtualShop.shopUrl}`}>
+                                  {seller.VirtualShop.shopName}
+                                </Link>
+                              </Grid.Column>
+                              <Grid.Column width={8}>
+                                {seller.VirtualShop.maxTime ? (
+                                  <p>
+                                    <Icon name="time" />
+                                    {` ${seller.VirtualShop.minTime} - ${seller.VirtualShop.maxTime} mins`}
+                                  </p>
+                                ) : (
+                                  ""
+                                )}
+                                {seller.VirtualShop.percentageDiscount ? (
+                                  <p style={{ color: "red" }}>
+                                    <Icon color="red" name="fire" />
+                                    {`${seller.VirtualShop.percentageDiscount} % off when you spend £${seller.VirtualShop.discountAmount}`}
+                                  </p>
+                                ) : (
+                                  ""
+                                )}
+                                {seller.VirtualShop.minOrder ? (
+                                  <p>
+                                    <Icon name="money" />
+                                    {` Minimum spend £${seller.VirtualShop.minOrder}`}
+                                  </p>
+                                ) : (
+                                  ""
+                                )}
+
+                                {seller.VirtualShop.deliveryPrice ? (
+                                  <p>
+                                    <Icon name="truck" />
+                                    {` Delivery £${seller.VirtualShop.deliveryPrice}`}
+                                  </p>
+                                ) : (
+                                  ""
+                                )}
+                              </Grid.Column>
+                            </Grid.Row>
+                          </Grid>
                         </Grid.Column>
                       </Grid.Row>
-                    </Grid><br/><br/>
+                    </Grid>
+                    <br />
+                    <br />
                   </React.Fragment>
                 );
               })}

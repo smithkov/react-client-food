@@ -25,6 +25,10 @@ class ClientService {
     return http.get(`/cities`);
   }
 
+  durations() {
+    return http.get(`/shop/duration`);
+  }
+
   socialTypes() {
     return http.get(`/socialTypes`);
   }
@@ -73,6 +77,10 @@ class ClientService {
   }
   userUpdate(id, data) {
     return http.patch(`/user/${id}`, data);
+  }
+
+  settings(id, data) {
+    return http.patch(`/settings/${id}`, data);
   }
 
   settings(id, data) {

@@ -4,7 +4,7 @@ import "core-js/stable";
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import './style.scss';
+import './index.css'
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
