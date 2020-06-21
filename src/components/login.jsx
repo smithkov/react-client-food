@@ -1,6 +1,9 @@
 import React, { Component } from "react";
-import ClientService from "../services/clientService";
+import clientService from "../services/clientService";
 import { CRED } from "../utility/global";
+import GoogleLogin from "react-google-login";
+import FacebookLogin from "react-facebook-login";
+import Cookies from 'js-cookie'
 import {
   Button,
   Form,
@@ -9,7 +12,9 @@ import {
   Image,
   Message,
   Segment,
+  Icon
 } from "semantic-ui-react";
+import { Link } from "react-router-dom";
 
 class Login extends Component {
   state = {
@@ -31,12 +36,13 @@ class Login extends Component {
       password: this.state.password,
     };
 
-    ClientService.login(data)
+    clientService.login(data)
 
       .then((response) => {
         const { token, data } = response.data;
         data.token = token;
-        localStorage.setItem(CRED, JSON.stringify(data));
+        Cookies.set(CRED, data, { expires: 7, path: '' })
+        
 
         this.props.history.push("/dashboard/");
       })
@@ -47,6 +53,41 @@ class Login extends Component {
           hasError: error,
         });
       });
+  };
+
+  responseGoogle = (response) => {
+    console.log(response);
+  };
+  responseFacebook = (res) => {
+    //const firstName
+    
+    if (res) {
+      const { email, name, graphDomain, id } = res;
+      const nameArray = name.split(" ");
+      const firstName = nameArray[0];
+      const lastName = nameArray.pop();
+      const password = id;
+      const source = graphDomain;
+
+      clientService
+        .socialAccess({ email, firstName, lastName, source, password })
+        .then((response) => {
+         
+          const { token, data } = response.data;
+          data.token = token;
+          Cookies.set(CRED, data, { expires: 7, path: '' })
+          //localStorage.setItem(CRED, JSON.stringify(data));
+          this.props.history.push("/listing/");
+        })
+        .catch((err) => {
+          const { error, message } = err.response.data;
+
+          this.setState({
+            showAlert: true,
+            message: message,
+          });
+        });
+    }
   };
   render() {
     const alert = (
@@ -73,6 +114,31 @@ class Login extends Component {
 
             <Form size="large">
               {this.state.hasError ? alert : ""}
+              <FacebookLogin
+                appId="900223110479631"
+                autoLoad={false}
+                cssClass="facebookBtn"
+                fields="name,email,picture"
+                callback={this.responseFacebook}
+                icon={<Icon name="facebook" />}
+                textButton="&nbsp;&nbsp;Sign In with Facebook"
+              />
+              <GoogleLogin
+                clientId="489905510114-d9395vk5dso3h7bb07rlfv492u444ebs.apps.googleusercontent.com"
+                render={(renderProps) => (
+                  <button onClick={renderProps.onClick} type="button" className="google">
+                    &nbsp;&nbsp;
+                    <Icon name="google" />
+                    Sign In with Google
+                  </button>
+                )}
+                onSuccess={this.responseGoogle}
+                onFailure={this.responseGoogle}
+                className="google"
+                style={{ textAlign: "center" }}
+                buttonText="Sign In with Google"
+              />
+              <div class="ui horizontal divider">Or</div>
               <Segment stacked>
                 <Form.Input
                   fluid
@@ -99,13 +165,12 @@ class Login extends Component {
               </Segment>
             </Form>
             <Message>
-              New to us? <a href="#">Sign Up</a>
+              New to us? <Link to={"/register"}>Sign Up</Link>
             </Message>
           </Grid.Column>
         </Grid>
       </form>
     );
-   
   }
 }
 export default Login;

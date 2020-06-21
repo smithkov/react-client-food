@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { Col, Container, Row } from "reactstrap";
 import ClientService from "../services/clientService";
-import { Redirect } from "react-router-dom";
+import { Redirect, Link } from "react-router-dom";
+import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
 import {
   Button,
@@ -25,11 +26,14 @@ class Register extends Component {
     hasError: false,
     showAlert: false,
     message: "",
+    orders: [],
   };
-
+  responseGoogle = (response) => {
+    console.log(response);
+  };
   responseFacebook = (res) => {
     //const firstName
-    console.log(res)
+    console.log(res);
     if (res) {
       const { email, name, graphDomain, id } = res;
       const nameArray = name.split(" ");
@@ -37,10 +41,9 @@ class Register extends Component {
       const lastName = nameArray.pop();
       const password = id;
       const source = graphDomain;
-      
 
       clientService
-        .socialAccess({email,firstName,lastName,source, password})
+        .socialAccess({ email, firstName, lastName, source, password })
         .then((response) => {
           this.props.history.push("/listing/");
         })
@@ -54,13 +57,16 @@ class Register extends Component {
         });
     }
   };
-  
+
   onChange = (e) => {
     this.setState({
       [e.target.name]: e.target.value,
     });
   };
 
+  addOrder(){
+
+  }
   register = (e) => {
     e.preventDefault();
     const data = {
@@ -91,6 +97,7 @@ class Register extends Component {
     ) : (
       ""
     );
+
     return (
       <Container fluid={true}>
         <Row style={{ paddingTop: "100px", position: "relative" }}>
@@ -104,19 +111,39 @@ class Register extends Component {
               >
                 <Grid.Column style={{ maxWidth: 450 }}>
                   <Header as="h2" color="teal" textAlign="center">
-                    <Image src="./images/logo.png" /> Sign-up to order/sell
+                    <Image src="./images/logo.png" /> Sign-up to order
                   </Header>
 
                   <Form size="large">
                     {alert}
                     <FacebookLogin
                       appId="900223110479631"
-                      autoLoad={true}
+                      autoLoad={false}
+                      cssClass="facebookBtn"
                       fields="name,email,picture"
                       callback={this.responseFacebook}
                       icon={<Icon name="facebook" />}
+                      textButton="&nbsp;&nbsp;Sign In with Facebook"
                     />
-
+                    <GoogleLogin
+                      clientId="489905510114-d9395vk5dso3h7bb07rlfv492u444ebs.apps.googleusercontent.com"
+                      render={(renderProps) => (
+                        <button
+                          onClick={renderProps.onClick}
+                          type="button"
+                          className="google"
+                        >
+                          &nbsp;&nbsp;
+                          <Icon name="google" />
+                          Sign In with Google
+                        </button>
+                      )}
+                      onSuccess={this.responseGoogle}
+                      onFailure={this.responseGoogle}
+                      className="google"
+                      style={{ textAlign: "center" }}
+                      buttonText="Sign In with Google"
+                    />
                     <div class="ui horizontal divider">Or</div>
                     <Segment stacked>
                       <Form.Group widths="equal">
@@ -172,6 +199,9 @@ class Register extends Component {
                       </Button>
                     </Segment>
                   </Form>
+                  <Message>
+                    Already have an account? <Link to={"/login"}>Log In</Link>
+                  </Message>
                 </Grid.Column>
               </Grid>
             </form>

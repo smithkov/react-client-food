@@ -51,7 +51,7 @@ export default class ItemCard extends Component {
               </Card.Description>
             </Card.Content>
             <Card.Content extra>
-              <Button fluid primary>
+              <Button type="button" onClick={()=>this.props.handleAdd(this.props.product)} fluid primary>
                 Order
               </Button>
             </Card.Content>

@@ -1,9 +1,18 @@
 import React, { Component } from "react";
+import {
+  getUserProfile,
+  DEFAULT_USER,
+  DEFAULT_BANNER,
+  IMAGE_URL,
+  DEFAULT_LOGO,
+} from "../utility/global";
 
+import { Link } from "react-router-dom";
 import {
   Container,
   Dropdown,
   Icon,
+  DropDown,
   Image,
   List,
   Menu,
@@ -12,9 +21,47 @@ import {
 } from "semantic-ui-react";
 
 export default class NavBar extends Component {
-  state = {};
+  state = {
+    firstName: "",
+    avatar: "",
+  };
 
+  componentDidMount() {
+    this.setState({
+      firstName: getUserProfile() ? getUserProfile().firstName : "",
+      avatar: getUserProfile()
+        ? getUserProfile().photo
+          ? `${IMAGE_URL}${getUserProfile().photo}`
+          : DEFAULT_USER
+        : DEFAULT_USER,
+    });
+  }
   render() {
+    const { firstName, avatar } = this.state;
+    const styles={color:"black"}
+    const options = [
+      {
+        key: "user",
+        text: (
+          <Link style={styles} to={`/dashboard`}>
+            Your Account
+          </Link>
+        ),
+        icon: "user",
+      },
+      { key: "settings", text: (
+        <Link style={styles} to={`/dashboard`}>
+          Your orders
+        </Link>
+      ), icon: "clipboard outline" },
+      { key: "sign-out", text: "Sign Out", icon: "sign out" },
+    ];
+    const trigger = (
+      <span>
+        <Image avatar src={avatar} />
+        {firstName}
+      </span>
+    );
     return (
       <div>
         {" "}
@@ -29,7 +76,16 @@ export default class NavBar extends Component {
               Cook 'or' Eat
             </Menu.Item>
             <Menu.Item as="a">Home</Menu.Item>
-
+            <Menu.Menu position="right">
+              <Menu.Item>
+                <Dropdown
+                  trigger={trigger}
+                  options={options}
+                  pointing="top left"
+                  icon={null}
+                />
+              </Menu.Item>
+            </Menu.Menu>
             {/* <Dropdown item simple text="Dropdown">
               <Dropdown.Menu>
                 <Dropdown.Item>List Item</Dropdown.Item>

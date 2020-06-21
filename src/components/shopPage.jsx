@@ -17,10 +17,11 @@ import {
   Card,
   Icon,
   List,
-  Header,
+  Button,
   Ref,
 } from "semantic-ui-react";
 import ItemCard from "./widgets/ItemCard";
+import Order from "./widgets/order";
 import Review from "./widgets/Review";
 import ReviewList from "./widgets/reviewList";
 import {
@@ -32,6 +33,8 @@ import {
   Rating,
 } from "../utility/global";
 import clientService from "../services/clientService";
+import { Link } from "react-router-dom";
+import Social from "../adminComponents/social";
 
 class ShopPage extends Component {
   constructor(props) {
@@ -56,6 +59,9 @@ class ShopPage extends Component {
     postCode: "",
     city: "",
     comments: [],
+    socials: "",
+    orders: [],
+    total: 0,
   };
   contextRef = createRef();
   componentDidMount = async () => {
@@ -80,12 +86,14 @@ class ShopPage extends Component {
         City,
         postCode,
         firstAddress,
+        socials,
       } = data;
 
       this.setState({
         shopId: id,
         shopName: shopName,
         notice,
+        socials,
         minTime,
         maxTime,
         city: City ? City.name : "",
@@ -114,15 +122,49 @@ class ShopPage extends Component {
             lat: lat,
             lng: lng,
           });
-          console.log(lat, lng);
         },
-        (error) => {
-          console.error(error);
-        }
+        (error) => {}
       );
     } catch (err) {
       console.log(err);
     }
+  };
+  handleAddOrder = (data) => {
+    const newOrder = {
+      name: data.name,
+      quantity: 1,
+      id: data.id,
+      price: data.price,
+    };
+    const total = parseInt(newOrder.price) + this.state.total;
+    const findProduct = this.state.orders.find(
+      (order) => order.id == newOrder.id
+    );
+    if (findProduct) {
+      findProduct.quantity++;
+
+      this.setState({
+        orders: [...this.state.orders],
+        total: total,
+      });
+    } else
+      this.setState({
+        orders: [...this.state.orders, newOrder],
+        total: total,
+      });
+  };
+
+  handleRemoveOrder = (id) => {
+    const product = this.state.orders.filter((order) => order.id == id);
+    const filterProduct = this.state.orders.filter((order) => order.id != id);
+    console.log(product)
+    const newTotal = this.state.total - (parseInt(product[0].price) * parseInt(product[0].quantity))
+   
+
+    this.setState({
+      orders: [...filterProduct],
+      total: newTotal,
+    });
   };
   handleTabChange = (e, { activeIndex }) => {
     if (activeIndex === 2) {
@@ -144,6 +186,42 @@ class ShopPage extends Component {
       margin: "auto",
       height: "100%",
     };
+    const { socials } = this.state;
+    let socialRender;
+
+    if (socials.length > 0) {
+      let social = socials[0];
+
+      const facebook = social.facebook ? (
+        <a target="blank" href={social.facebook}>
+          <Button circular color="facebook" icon="facebook" />
+        </a>
+      ) : (
+        ""
+      );
+      const twitter = social.twitter ? (
+        <a target="blank" href={social.twitter}>
+          <Button circular color="twitter" icon="twitter" />
+        </a>
+      ) : (
+        ""
+      );
+      const instagram = social.instagram ? (
+        <a target="blank" href={social.instagram}>
+          <Button circular color="instagram" icon="instagram" />
+        </a>
+      ) : (
+        ""
+      );
+
+      socialRender = (
+        <div>
+          {facebook}
+          {instagram}
+          {twitter}
+        </div>
+      );
+    }
     const panes = [
       {
         menuItem: "Menu",
@@ -152,7 +230,13 @@ class ShopPage extends Component {
             <Tab.Pane>
               <Grid doubling relaxed="very" columns={3}>
                 {this.state.products.map((product) => {
-                  return <ItemCard key={product.id} product={product} />;
+                  return (
+                    <ItemCard
+                      handleAdd={this.handleAddOrder}
+                      key={product.id}
+                      product={product}
+                    />
+                  );
                 })}
               </Grid>
             </Tab.Pane>
@@ -171,6 +255,7 @@ class ShopPage extends Component {
                     meta={this.state.city}
                     description={this.state.postCode}
                   />
+                  {socialRender}
                 </Grid.Column>
                 <Grid.Column>
                   <Map
@@ -276,8 +361,23 @@ class ShopPage extends Component {
                     ) : (
                       ""
                     )}
+                    <div>Total: {this.state.total}</div>
                   </List>
-                  There are no items in your basket
+
+                  {this.state.orders.length > 0 ? (
+                    <List>
+                      {this.state.orders.map((order) => {
+                        return (
+                          <Order
+                            handleRemove={this.handleRemoveOrder}
+                            item={order}
+                          />
+                        );
+                      })}
+                    </List>
+                  ) : (
+                    `There are no items in your basket`
+                  )}
                 </Message>
               </Grid.Column>
               <Grid.Column width={12}>

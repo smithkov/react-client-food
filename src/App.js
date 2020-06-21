@@ -13,6 +13,7 @@ import ShopForm from "../src/adminComponents/shopForm";
 import ProductList from "../src/adminComponents/productList";
 import ProductForm from "../src/adminComponents/productForm";
 import ShopSetting from "../src/adminComponents/shopSetting";
+import ShopSocial from "../src/adminComponents/social";
 import Account from "../src/adminComponents/account";
 import ProductDetail from "./components/productDetail";
 import { Provider } from "react-redux";
@@ -42,6 +43,7 @@ class App extends React.Component {
             <Route exact path="/dashboard" component={ProtectedRoute(Dashboard)} />
             <Route exact  path="/:shopUrl" component={ShopPage} />
             <Route exact  path="/shop/settings" component={ShopSetting} />
+            <Route exact  path="/shop/social" component={ShopSocial} />
             <Route exact  path="/item_meal_detail/product/:id" component={ProductDetail} />
 
             {/* <Route path="/add" component={AddUser} />

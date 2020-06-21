@@ -4,14 +4,12 @@ import { Menu, Modal, Button } from "semantic-ui-react";
 
 export default class SideMenu extends Component {
   state = {
-    activeItem: "" 
+    activeItem: "",
   };
- 
+
   render() {
-    
     return (
       <Menu vertical>
-      
         <Menu.Item>
           <Menu.Header>Products</Menu.Header>
 
@@ -81,6 +79,24 @@ export default class SideMenu extends Component {
                 onClick={this.handleItemClick}
               >
                 My Shop
+              </Menu.Item>
+            </Link>
+            <Link to={`/shop/settings`}>
+              <Menu.Item
+                name="shop-settings"
+                active={this.state.activeItem === "shop-settings"}
+                onClick={this.handleItemClick}
+              >
+                Settings
+              </Menu.Item>
+            </Link>
+            <Link to={`/shop/social`}>
+              <Menu.Item
+                name="shop-social"
+                active={this.state.activeItem === "shop-social"}
+                onClick={this.handleItemClick}
+              >
+                Social
               </Menu.Item>
             </Link>
             <Menu.Item

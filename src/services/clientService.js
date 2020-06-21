@@ -33,6 +33,14 @@ class ClientService {
     return http.get(`/socialTypes`);
   }
 
+  social(data) {
+    return http.post(`/social`,data);
+  }
+
+  findSocialById(userId) {
+    return http.get(`/social/${userId}`);
+  }
+
   login(data) {
     return http.post("/user/login", data);
   }
