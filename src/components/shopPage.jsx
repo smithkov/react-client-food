@@ -18,6 +18,7 @@ import {
   Icon,
   List,
   Button,
+  Table,
   Ref,
 } from "semantic-ui-react";
 import ItemCard from "./widgets/ItemCard";
@@ -31,6 +32,7 @@ import {
   IMAGE_URL,
   DEFAULT_LOGO,
   Rating,
+  formatPrice,
 } from "../utility/global";
 import clientService from "../services/clientService";
 import { Link } from "react-router-dom";
@@ -46,6 +48,7 @@ class ShopPage extends Component {
     notice: "",
     minTime: "",
     maxTime: "",
+    minOrder: "",
     percentageDiscount: "",
     discountAmount: "",
     bannerPreviewUrl: "",
@@ -61,7 +64,10 @@ class ShopPage extends Component {
     comments: [],
     socials: "",
     orders: [],
+    offerDiscount: 0,
+    subTotal: 0,
     total: 0,
+    deliveryPrice: 0,
   };
   contextRef = createRef();
   componentDidMount = async () => {
@@ -81,12 +87,14 @@ class ShopPage extends Component {
         notice,
         minTime,
         maxTime,
+        minOrder,
         percentageDiscount,
         discountAmount,
         City,
         postCode,
         firstAddress,
         socials,
+        deliveryPrice,
       } = data;
 
       this.setState({
@@ -96,11 +104,13 @@ class ShopPage extends Component {
         socials,
         minTime,
         maxTime,
+        minOrder,
+        deliveryPrice: deliveryPrice ? deliveryPrice : 0,
         city: City ? City.name : "",
         postCode,
         firstAddress,
         percentageDiscount,
-        discountAmount,
+        discountAmount: discountAmount ? discountAmount : 0,
         shopTypeText: ShopType.name,
         logoPreviewUrl: logo ? `${IMAGE_URL}${logo}` : DEFAULT_LOGO,
         bannerPreviewUrl:
@@ -136,34 +146,53 @@ class ShopPage extends Component {
       id: data.id,
       price: data.price,
     };
-    const total = parseInt(newOrder.price) + this.state.total;
-    const findProduct = this.state.orders.find(
+
+    const subTotal = parseFloat(newOrder.price) + this.state.subTotal;
+
+    const findOrder = this.state.orders.find(
       (order) => order.id == newOrder.id
     );
-    if (findProduct) {
-      findProduct.quantity++;
+    let newOfferDiscount = 0;
+    let newTotal = 0;
+
+    if (findOrder) {
+      findOrder.quantity++;
+
+      newOfferDiscount = this.findDiscount(subTotal);
+      newTotal = this.getTotal(subTotal, newOfferDiscount);
 
       this.setState({
         orders: [...this.state.orders],
-        total: total,
+        subTotal: subTotal,
+        offerDiscount: newOfferDiscount,
+        total: newTotal,
       });
-    } else
+    } else {
+      newOfferDiscount = this.findDiscount(subTotal);
+      newTotal = this.getTotal(subTotal, newOfferDiscount);
+
       this.setState({
         orders: [...this.state.orders, newOrder],
-        total: total,
+        subTotal: subTotal,
+        offerDiscount: newOfferDiscount,
+        total: newTotal,
       });
+    }
   };
 
   handleRemoveOrder = (id) => {
-    const product = this.state.orders.filter((order) => order.id == id);
-    const filterProduct = this.state.orders.filter((order) => order.id != id);
-    console.log(product)
-    const newTotal = this.state.total - (parseInt(product[0].price) * parseInt(product[0].quantity))
-   
+    const currentOrder = this.state.orders.filter((order) => order.id == id);
+    const filteredOrder = this.state.orders.filter((order) => order.id != id);
+
+    const subTotal =
+      this.state.subTotal -
+      parseFloat(currentOrder[0].price) * parseFloat(currentOrder[0].quantity);
 
     this.setState({
-      orders: [...filterProduct],
-      total: newTotal,
+      orders: [...filteredOrder],
+      subTotal: subTotal,
+      offerDiscount: this.findDiscount(subTotal),
+      total: this.getTotal(subTotal),
     });
   };
   handleTabChange = (e, { activeIndex }) => {
@@ -180,6 +209,23 @@ class ShopPage extends Component {
         .catch((err) => console.log(err));
     }
   };
+
+  findDiscount(subTotal) {
+    const { percentageDiscount, discountAmount } = this.state;
+
+    if (percentageDiscount && subTotal >= discountAmount) {
+      return (percentageDiscount / 100) * subTotal;
+
+      // this.setState({ subTotal: total - discountPercent });
+    } else if (discountAmount && !percentageDiscount) return discountAmount;
+    else return 0;
+  }
+  getTotal(subTotal, offerDiscount) {
+    const { deliveryPrice } = this.state;
+
+    return subTotal - offerDiscount + parseFloat(deliveryPrice);
+  }
+
   render() {
     const mapStyles = {
       width: "100%",
@@ -299,9 +345,20 @@ class ShopPage extends Component {
       notice,
       minTime,
       maxTime,
+      minOrder,
+      total,
+      orders,
       percentageDiscount,
       discountAmount,
+      subTotal,
+      deliveryPrice,
+      offerDiscount,
     } = this.state;
+
+    const orderLength = orders.length;
+    const hasOrder = orderLength > 0;
+
+    const isShowDeliveryLimBox = subTotal < minOrder && orderLength > 0;
 
     return (
       <React.Fragment>
@@ -309,7 +366,7 @@ class ShopPage extends Component {
         <Ref innerRef={this.contextRef}>
           <Grid stackable style={{ margin: 70 }}>
             <Grid.Row>
-              <Grid.Column width={3}>
+              <Grid.Column width={4}>
                 <Image
                   className="img-resize"
                   src={logoPreviewUrl || DEFAULT_LOGO}
@@ -333,7 +390,7 @@ class ShopPage extends Component {
               </Grid.Column>
             </Grid.Row>
             <Grid.Row>
-              <Grid.Column width={3}>
+              <Grid.Column width={4}>
                 <Message floating>
                   <List>
                     {percentageDiscount ? (
@@ -361,22 +418,73 @@ class ShopPage extends Component {
                     ) : (
                       ""
                     )}
-                    <div>Total: {this.state.total}</div>
                   </List>
-
-                  {this.state.orders.length > 0 ? (
-                    <List>
-                      {this.state.orders.map((order) => {
-                        return (
-                          <Order
-                            handleRemove={this.handleRemoveOrder}
-                            item={order}
-                          />
-                        );
-                      })}
-                    </List>
+                  {!isShowDeliveryLimBox ? (
+                    ""
+                  ) : (
+                    <div className="alertBox">{`Spend ${
+                     formatPrice(minOrder - subTotal) 
+                    } more for delivery`}</div>
+                  )}
+                  {hasOrder ? (
+                    <Table color="red">
+                      <Table.Body>
+                        {orders.map((order) => {
+                          return (
+                            <Order
+                              handleRemove={this.handleRemoveOrder}
+                              item={order}
+                            />
+                          );
+                        })}
+                      </Table.Body>
+                    </Table>
                   ) : (
                     `There are no items in your basket`
+                  )}
+
+                  {hasOrder ? (
+                    <Table color="orange">
+                      <Table.Body>
+                        <Table.Row>
+                          <Table.Cell>SubTotal:</Table.Cell>
+                          <Table.Cell textAlign="right">
+                            {formatPrice(subTotal)}
+                          </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                          <Table.Cell>Delivery:</Table.Cell>{" "}
+                          <Table.Cell textAlign="right">
+                            {formatPrice(deliveryPrice)}
+                          </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                          <Table.Cell>Discount:</Table.Cell>{" "}
+                          <Table.Cell textAlign="right">
+                            {formatPrice(offerDiscount)}
+                          </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                          <Table.Cell>Total:</Table.Cell>{" "}
+                          <Table.Cell textAlign="right">
+                            {formatPrice(total)}
+                          </Table.Cell>
+                        </Table.Row>
+                      </Table.Body>
+                    </Table>
+                  ) : (
+                    ``
+                  )}
+                  {hasOrder ? (
+                    <Button
+                      fluid
+                      primary
+                      disabled={(parseFloat(subTotal) <= parseFloat(minOrder))}
+                    >
+                      Checkout
+                    </Button>
+                  ) : (
+                    ""
                   )}
                 </Message>
               </Grid.Column>

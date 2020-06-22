@@ -35,5 +35,5 @@ export const displayRating = (productRatings) => {
 };
 
 export const formatPrice = (price) => {
-  return `£${parseInt(price).toFixed(2)}`;
+  return `£${parseFloat(price).toFixed(2)}`;
 };
