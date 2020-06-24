@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Button, Rating, Form, Message, Header } from "semantic-ui-react";
 import ClientService from "../../services/clientService";
 import {
-  getUserProfile,
   MISSING_USER_MSG,
   DEFAULT_BANNER,
   IMAGE_URL,
@@ -27,7 +26,8 @@ export default class Review extends Component {
   };
 
   onSubmit = async () => {
-    const user = getUserProfile();
+    const result = await ClientService.hasAuth();
+    const user = result.data.data;
     if (user) {
       const { rating, title, content } = this.state;
       const shopId = this.props.shopId;

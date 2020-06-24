@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import {
-  getUserProfile,
   DEFAULT_USER,
   DEFAULT_BANNER,
   IMAGE_URL,
@@ -19,26 +18,35 @@ import {
   Segment,
   Visibility,
 } from "semantic-ui-react";
-
+import clientService from '../services/clientService'
 export default class NavBar extends Component {
   state = {
     firstName: "",
-    avatar: "",
+    avatar: DEFAULT_USER,
   };
 
-  componentDidMount() {
+  componentDidMount = async () => {
+    try{
+      const result = await clientService.hasAuth();
+    const {firstName, photo} = result.data.data;
+    
     this.setState({
-      firstName: getUserProfile() ? getUserProfile().firstName : "",
-      avatar: getUserProfile()
-        ? getUserProfile().photo
-          ? `${IMAGE_URL}${getUserProfile().photo}`
+      firstName: firstName ? firstName : "",
+      avatar: photo
+          ? `${IMAGE_URL}${photo}`
           : DEFAULT_USER
-        : DEFAULT_USER,
     });
-  }
+    }catch(err){
+      
+      
+
+    }
+    
+  };
   render() {
     const { firstName, avatar } = this.state;
-    const styles={color:"black"}
+    
+    const styles = { color: "black" };
     const options = [
       {
         key: "user",
@@ -49,11 +57,15 @@ export default class NavBar extends Component {
         ),
         icon: "user",
       },
-      { key: "settings", text: (
-        <Link style={styles} to={`/dashboard`}>
-          Your orders
-        </Link>
-      ), icon: "clipboard outline" },
+      {
+        key: "settings",
+        text: (
+          <Link style={styles} to={`/dashboard`}>
+            Your orders
+          </Link>
+        ),
+        icon: "clipboard outline",
+      },
       { key: "sign-out", text: "Sign Out", icon: "sign out" },
     ];
     const trigger = (
@@ -76,7 +88,7 @@ export default class NavBar extends Component {
               Cook 'or' Eat
             </Menu.Item>
             <Menu.Item as="a">Home</Menu.Item>
-            <Menu.Menu position="right">
+            {firstName?<Menu.Menu position="right">
               <Menu.Item>
                 <Dropdown
                   trigger={trigger}
@@ -85,7 +97,7 @@ export default class NavBar extends Component {
                   icon={null}
                 />
               </Menu.Item>
-            </Menu.Menu>
+            </Menu.Menu>:""}
             {/* <Dropdown item simple text="Dropdown">
               <Dropdown.Menu>
                 <Dropdown.Item>List Item</Dropdown.Item>

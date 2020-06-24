@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Grid } from "semantic-ui-react";
-import { getUserProfile } from "../../utility/global";
 import { Link, Redirect } from "react-router-dom";
+import clientService from '../../services/clientService'
 
 export default class AfterNav extends Component {
   constructor(props) {
@@ -9,10 +9,20 @@ export default class AfterNav extends Component {
   }
   state = {
     navigate: false,
+    firstName: ""
   };
+  componentDidMount=async()=>{
+    let result = await clientService.hasAuth();
+     
+     const user = result.data.data
+     
+     this.setState({
+       firstName : user?user.firstName:""
+     })
+  }
   onClick = (e) => {
     e.preventDefault();
-    localStorage.removeItem("cred");
+    
     this.setState({
         navigate:true
     })
@@ -29,7 +39,7 @@ export default class AfterNav extends Component {
             </Grid.Column>
             <Grid.Column floated="right" width={5}>
               <span className="float-right">
-                Logged In as {getUserProfile().fullName}{" "}
+                Logged In as {this.state.firstName}
                 <Link onClick={this.onClick}> (Sign Out)</Link>
               </span>
             </Grid.Column>

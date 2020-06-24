@@ -2,9 +2,9 @@ import React, { Component } from "react";
 import SideMenu from "./common/sideMenu";
 import { Col, Container, Row } from "reactstrap";
 import Nav from "./common/nav";
-import {Button, Checkbox, Icon, Table } from "semantic-ui-react";
-import AfterNav from './common/afterNav'
-import { getUserProfile, MISSING_USER_MSG, ERROR_MSG } from "../utility/global";
+import { Button, Checkbox, Icon, Table } from "semantic-ui-react";
+import AfterNav from "./common/afterNav";
+import { MISSING_USER_MSG, ERROR_MSG } from "../utility/global";
 import clientService from "../services/clientService";
 import { Link } from "react-router-dom";
 
@@ -18,26 +18,29 @@ export default class ShopForm extends Component {
     };
   }
 
-  componentDidMount() {
-    console.log(getUserProfile().id);
-    clientService
-      .productsByUser({ userId: getUserProfile().id })
-      .then((response) => {
-        //const data = response.data;
-        const data = response.data.data;
+  componentDidMount = async () => {
+    const result = await clientService.hasAuth();
+    const user = result.data.data;
+    if (user) {
+      clientService
+        .productsByUser({ userId: user.id })
+        .then((response) => {
+          //const data = response.data;
+          const data = response.data.data;
 
-        this.setState({
-          products: data,
-          hasData: data.length > 0 ? true : false,
+          this.setState({
+            products: data,
+            hasData: data.length > 0 ? true : false,
+          });
+          // this.setState({
+          //   sellers: response.data.data,
+          // });
+        })
+        .catch((err) => {
+          //console.log(err);
         });
-        // this.setState({
-        //   sellers: response.data.data,
-        // });
-      })
-      .catch((err) => {
-        //console.log(err);
-      });
-  }
+    }
+  };
 
   onSubmit = (e) => {
     e.preventDefault();
@@ -46,15 +49,15 @@ export default class ShopForm extends Component {
     return (
       <Container fluid={true}>
         <Nav />
-        <AfterNav form ={"Product List"}/>
+        <AfterNav form={"Product List"} />
         <hr></hr>
         <Row className="dash-layout">
           <Col lg="2">
             <SideMenu />
           </Col>
-         
+
           <Col lg="1"></Col>
-          
+
           <Col className="dashboard-panel" lg="6">
             {this.state.hasData ? (
               <Table celled compact>

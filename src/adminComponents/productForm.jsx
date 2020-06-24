@@ -13,7 +13,6 @@ import ClientService from "../services/clientService";
 import { Col, Container, Row } from "reactstrap";
 import clientService from "../services/clientService";
 import {
-  getUserProfile,
   MISSING_USER_MSG,
   IMG_MAX_SIZE,
 } from "../utility/global";
@@ -41,11 +40,14 @@ export default class ProductForm extends React.Component {
       hasSave: true,
       message: "",
       hasError: false,
-      hasImageLimit:false
+      hasImageLimit: false,
     };
   }
-  componentDidMount() {
-    if (getUserProfile()) {
+  componentDidMount=async() =>{
+    const result = await clientService.hasAuth();
+    const user = result.data.data;
+
+    if (user) {
       ClientService.unitTypes()
         .then((response) => {
           let unitTypes = response.data.data.map((unitType) => {
@@ -80,7 +82,7 @@ export default class ProductForm extends React.Component {
         })
         .catch((err) => {});
 
-      ClientService.category(getUserProfile().id)
+      ClientService.category(user.id)
         .then((response) => {
           let categories = response.data.data.map((category) => {
             return {
@@ -116,8 +118,8 @@ export default class ProductForm extends React.Component {
       const imageSize = (file.size / 1024) * 0.001;
       if (imageSize < IMG_MAX_SIZE) {
         this.setState({
-          hasImageLimit:false
-        })
+          hasImageLimit: false,
+        });
         let fileReader = new FileReader();
         fileReader.onload = () => {
           console.log("IMAGE LOADED: ", fileReader.result);
@@ -141,11 +143,10 @@ export default class ProductForm extends React.Component {
         };
 
         fileReader.readAsDataURL(file);
-      }
-      else{
+      } else {
         this.setState({
-          hasImageLimit:true
-        })
+          hasImageLimit: true,
+        });
       }
     } catch (err) {
       console.log(err);
@@ -186,84 +187,98 @@ export default class ProductForm extends React.Component {
     return newFile;
   }
 
-  onUpload(e) {
+  onUpload = async (e) => {
     e.preventDefault();
-    const {
-      category,
-      unitType,
-      origin,
-      discountPrice,
-      selectedOrigin,
-      selectedUnitType,
-      selectedCategory,
-      weight,
-      price,
-      quantity,
-      name,
-      desc,
-    } = this.state;
-    if (this.state.loadedFiles.length > 0) {
-      let formData = new FormData();
-      this.state.loadedFiles.forEach((file) => {
-        formData.append("image", file.file);
-      });
-      formData.append("discountPrice", discountPrice);
-      formData.append("price", price);
-      formData.append("categoryId", selectedCategory);
-      formData.append("unitId", selectedUnitType);
-      formData.append("weight", weight);
-      formData.append("quantity", quantity);
-      formData.append("name", name);
-      formData.append("originId", selectedOrigin);
-      formData.append("desc", desc);
-      formData.append("userId", getUserProfile().id);
-
-      //This shows progress bar on images
-      const { loadedFiles } = this.state;
-      loadedFiles.map((file, idx) => {
-        //Update file (Change it's state to uploading)
-        let newFile = this.updateLoadedFile(file, {
-          ...file,
-          isUploading: true,
+    const result = await clientService.hasAuth();
+    const user = result.data.data;
+    if (user) {
+      const {
+        category,
+        unitType,
+        origin,
+        discountPrice,
+        selectedOrigin,
+        selectedUnitType,
+        selectedCategory,
+        weight,
+        price,
+        quantity,
+        name,
+        desc,
+      } = this.state;
+      if (this.state.loadedFiles.length > 0) {
+        let formData = new FormData();
+        this.state.loadedFiles.forEach((file) => {
+          formData.append("image", file.file);
         });
-      });
+        formData.append("discountPrice", discountPrice);
+        formData.append("price", price);
+        formData.append("categoryId", selectedCategory);
+        formData.append("unitId", selectedUnitType);
+        formData.append("weight", weight);
+        formData.append("quantity", quantity);
+        formData.append("name", name);
+        formData.append("originId", selectedOrigin);
+        formData.append("desc", desc);
+        formData.append("userId", user.id);
 
-      clientService
-        .createProduct(formData)
-        .then((response) => {
-          
-          this.setState({
-            showAlert: true,
-            message: response.data.message,
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-          this.setState({
-            showAlert: true,
-            message: err.response.data.message,
+        //This shows progress bar on images
+        const { loadedFiles } = this.state;
+        loadedFiles.map((file, idx) => {
+          //Update file (Change it's state to uploading)
+          let newFile = this.updateLoadedFile(file, {
+            ...file,
+            isUploading: true,
           });
         });
-    } else {
-      this.setState({
-        showAlert: true,
-        message: "At least one product photo is required.",
-      });
+
+        clientService
+          .createProduct(formData)
+          .then((response) => {
+            this.setState({
+              showAlert: true,
+              message: response.data.message,
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+            this.setState({
+              showAlert: true,
+              message: err.response.data.message,
+            });
+          });
+      } else {
+        this.setState({
+          showAlert: true,
+          message: "At least one product photo is required.",
+        });
+      }
     }
-  }
+  };
   onChange = (e) => {
     this.setState({
       [e.target.name]: e.target.value,
     });
   };
   render() {
-    const { category, unitType, origin, loadedFiles, message,hasImageLimit } = this.state;
-    const imgAlert =  hasImageLimit? <Message
-    warning
-    header='Maximum image limit reached!'
-    content='You can only be allowed a maximum image limit of 5MB'
-  />:'';
-    
+    const {
+      category,
+      unitType,
+      origin,
+      loadedFiles,
+      message,
+      hasImageLimit,
+    } = this.state;
+    const imgAlert = hasImageLimit ? (
+      <Message
+        warning
+        header="Maximum image limit reached!"
+        content="You can only be allowed a maximum image limit of 5MB"
+      />
+    ) : (
+      ""
+    );
+
     const alert = this.state.showAlert ? (
       <div className="ui info message">
         <p>{message}</p>
@@ -271,7 +286,7 @@ export default class ProductForm extends React.Component {
     ) : (
       ""
     );
-    
+
     return (
       <Container fluid={true}>
         <Nav />

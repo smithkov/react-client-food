@@ -4,7 +4,10 @@ import SideMenu from "./common/sideMenu";
 import { Card, Icon, Image } from "semantic-ui-react";
 import { Col, Container, Row } from "reactstrap";
 import AfterNav from './common/afterNav'
+import clientService from "../services/clientService";
 export default class Dashboard extends Component {
+
+
   render() {
     return (
       <Container fluid={true}>

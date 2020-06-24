@@ -26,7 +26,6 @@ import Order from "./widgets/order";
 import Review from "./widgets/Review";
 import ReviewList from "./widgets/reviewList";
 import {
-  getUserProfile,
   DEFAULT_USER,
   DEFAULT_BANNER,
   IMAGE_URL,
@@ -44,6 +43,7 @@ class ShopPage extends Component {
   }
 
   state = {
+    isAllowUpdate: false,
     shopName: "",
     notice: "",
     minTime: "",
@@ -70,13 +70,27 @@ class ShopPage extends Component {
     deliveryPrice: 0,
   };
   contextRef = createRef();
+  componentWillUpdate(nextProps, nextState) {
+    if (nextState.isAllowUpdate) {
+      const cart = clientService.cart({
+        shopName: nextState.shopName,
+        data: {
+          orders: nextState.orders,
+          subTotal: nextState.subTotal,
+          offerDiscount: nextState.offerDiscount,
+          total: nextState.total,
+        },
+      });
+      console.log("orders", nextState.orders);
+    }
+  }
   componentDidMount = async () => {
     try {
       const shopUrl = this.props.match.params.shopUrl;
       const getShop = await ClientService.findShopByUrl({ shopUrl });
 
       const data = getShop.data;
-      console.log(data);
+
       const {
         id,
         shopName,
@@ -138,8 +152,24 @@ class ShopPage extends Component {
     } catch (err) {
       console.log(err);
     }
+    const getCart = await clientService.getCart(this.state.shopName);
+
+    const { total, subTotal, offerDiscount, orders } = getCart.data.data;
+    console.log("getCart", getCart);
+
+    if (orders.length > 0) {
+      this.setState({
+        total: total ? total : 0,
+        subTotal: subTotal ? subTotal : 0,
+        orders: orders,
+        offerDiscount: offerDiscount ? offerDiscount : 0,
+      });
+    }
+    //console.log("get Cart", getCart.data);
   };
-  handleAddOrder = (data) => {
+  handleAddOrder = async (data) => {
+    this.setState({ isAllowUpdate: true });
+
     const newOrder = {
       name: data.name,
       quantity: 1,
@@ -161,12 +191,23 @@ class ShopPage extends Component {
       newOfferDiscount = this.findDiscount(subTotal);
       newTotal = this.getTotal(subTotal, newOfferDiscount);
 
+      this.saveToServer =
+        (this.state.shopId,
+        this.state.orders,
+        subTotal,
+        newOfferDiscount,
+        newTotal);
       this.setState({
         orders: [...this.state.orders],
         subTotal: subTotal,
         offerDiscount: newOfferDiscount,
         total: newTotal,
       });
+      // const { shopName, orders, subTotal, offerDiscount, total } = this.state;
+      // const cart = clientService.cart({
+      //   shopName,
+      //   data: { orders, subTotal, offerDiscount, total },
+      // });
     } else {
       newOfferDiscount = this.findDiscount(subTotal);
       newTotal = this.getTotal(subTotal, newOfferDiscount);
@@ -177,10 +218,16 @@ class ShopPage extends Component {
         offerDiscount: newOfferDiscount,
         total: newTotal,
       });
+      // const { shopName, orders, subTotal, offerDiscount, total } = this.state;
+      // const cart = clientService.cart({
+      //   shopName,
+      //   data: { orders, subTotal, offerDiscount, total },
+      // });
     }
   };
 
   handleRemoveOrder = (id) => {
+    this.setState({ isAllowUpdate: true });
     const currentOrder = this.state.orders.filter((order) => order.id == id);
     const filteredOrder = this.state.orders.filter((order) => order.id != id);
 
@@ -188,11 +235,15 @@ class ShopPage extends Component {
       this.state.subTotal -
       parseFloat(currentOrder[0].price) * parseFloat(currentOrder[0].quantity);
 
+    
+    const newOfferDiscount = this.findDiscount(subTotal);
+    const newTotal = this.getTotal(subTotal, newOfferDiscount);
+
     this.setState({
       orders: [...filteredOrder],
       subTotal: subTotal,
-      offerDiscount: this.findDiscount(subTotal),
-      total: this.getTotal(subTotal),
+      offerDiscount: newOfferDiscount,
+      total: newTotal,
     });
   };
   handleTabChange = (e, { activeIndex }) => {
@@ -422,9 +473,9 @@ class ShopPage extends Component {
                   {!isShowDeliveryLimBox ? (
                     ""
                   ) : (
-                    <div className="alertBox">{`Spend ${
-                     formatPrice(minOrder - subTotal) 
-                    } more for delivery`}</div>
+                    <div className="alertBox">{`Spend ${formatPrice(
+                      minOrder - subTotal
+                    )} more for delivery`}</div>
                   )}
                   {hasOrder ? (
                     <Table color="red">
@@ -479,7 +530,7 @@ class ShopPage extends Component {
                     <Button
                       fluid
                       primary
-                      disabled={(parseFloat(subTotal) <= parseFloat(minOrder))}
+                      disabled={parseFloat(subTotal) <= parseFloat(minOrder)}
                     >
                       Checkout
                     </Button>

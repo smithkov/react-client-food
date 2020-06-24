@@ -61,6 +61,18 @@ class ClientService {
     return http.get(`/categoriesByShop/${userId}`);
   }
 
+  hasAuth() {
+    return http.get(`/user/isLogin`);
+  }
+
+  cart(data) {
+    return http.post(`/cart`,data);
+  }
+
+  getCart(shopId) {
+    return http.get(`/getCart/${shopId}`);
+  }
+
   createProduct(data) {
     return http.post("/product", data);
   }

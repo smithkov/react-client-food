@@ -5,7 +5,6 @@ import ClientService from "../services/clientService";
 import { Col, Container, Row } from "reactstrap";
 import clientService from "../services/clientService";
 import {
-  getUserProfile,
   MISSING_USER_MSG,
   DEFAULT_BANNER,
   IMAGE_URL,
@@ -42,11 +41,12 @@ export default class Social extends Component {
     showAlert: false,
     message: "",
     id: "",
-    userId:""
+    userId: "",
   };
 
-  componentDidMount() {
-    const user = getUserProfile();
+  componentDidMount = async () => {
+    const result = await ClientService.hasAuth();
+    const user = result.data.data;
     if (user) {
       ClientService.findSocialById(user.id)
         .then((response) => {
@@ -60,25 +60,26 @@ export default class Social extends Component {
             facebook,
             twitter,
             instagram,
-            userId: user.id
+            userId: user.id,
           });
         })
         .catch((err) => {
           //console.log(err);
         });
     }
-  }
+  };
   onChange = (e) => {
     this.setState({
       [e.target.name]: e.target.value,
     });
   };
 
-  onSubmit = (e) => {
+  onSubmit = async (e) => {
     e.preventDefault();
 
     const { id, facebook, twitter, instagram, userId } = this.state;
-    const user = getUserProfile();
+    const result = await ClientService.hasAuth();
+    const user = result.data.data;
     if (user) {
       if (facebook != "" || instagram != "" || twitter != "") {
         clientService

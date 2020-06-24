@@ -11,7 +11,6 @@ import ClientService from "../services/clientService";
 import { Col, Container, Row } from "reactstrap";
 import clientService from "../services/clientService";
 import {
-  getUserProfile,
   MISSING_USER_MSG,
   DEFAULT_BANNER,
   IMAGE_URL,
@@ -66,7 +65,7 @@ export default class Account extends Component {
     }
   };
 
-  componentDidMount() {
+  componentDidMount = async () => {
     ClientService.cities()
       .then((response) => {
         let cities = response.data.data.map((city) => {
@@ -84,37 +83,41 @@ export default class Account extends Component {
         //console.log(err);
       });
 
-    ClientService.findUserById(getUserProfile().id)
-      .then((response) => {
-        const data = response.data.data;
-        const {
-          firstName,
-          lastName,
-          email,
-          firstAddress,
-          secondAddress,
-          postCode,
-          cityId,
-          City,
-          photo
-        } = data;
-        const myPhoto = photo?`${IMAGE_URL}${photo}`:"";
-        this.setState({
-          photoPreviewUrl:myPhoto,
-          firstName,
-          lastName,
-          email,
-          firstAddress,
-          secondAddress,
-          postCode,
-          selectedCity: cityId,
-          cityText: City ? City.name : "City",
+    const result = await ClientService.hasAuth();
+    const user = result.data.data;
+    if (user) {
+      ClientService.findUserById(user.id)
+        .then((response) => {
+          const data = response.data.data;
+          const {
+            firstName,
+            lastName,
+            email,
+            firstAddress,
+            secondAddress,
+            postCode,
+            cityId,
+            City,
+            photo,
+          } = data;
+          const myPhoto = photo ? `${IMAGE_URL}${photo}` : "";
+          this.setState({
+            photoPreviewUrl: myPhoto,
+            firstName,
+            lastName,
+            email,
+            firstAddress,
+            secondAddress,
+            postCode,
+            selectedCity: cityId,
+            cityText: City ? City.name : "City",
+          });
+        })
+        .catch((err) => {
+          //console.log(err);
         });
-      })
-      .catch((err) => {
-        //console.log(err);
-      });
-  }
+    }
+  };
   onChange = (e) => {
     this.setState({
       [e.target.name]: e.target.value,
@@ -127,30 +130,33 @@ export default class Account extends Component {
     });
   };
 
-  onSubmit = (e) => {
+  onSubmit = async (e) => {
     e.preventDefault();
-    const {
-      firstName,
-      lastName,
-      email,
-      firstAddress,
-      secondAddress,
-      postCode,
-      selectedCity,
-      selectedPhoto
-    } = this.state;
-    const  formData = new FormData();
-    formData.append("firstName", firstName);
-    formData.append("lastName", lastName);
-    formData.append("email", email);
-    formData.append("firstAddress", firstAddress);
-    formData.append("secondAddress", secondAddress);
-    formData.append("postCode", postCode);
-    formData.append("selectedCity", selectedCity);
-    formData.append("photo", selectedPhoto);
-    if (getUserProfile()) {
+    const result = await ClientService.hasAuth();
+    const user = result.data.data;
+    if (user) {
+      const {
+        firstName,
+        lastName,
+        email,
+        firstAddress,
+        secondAddress,
+        postCode,
+        selectedCity,
+        selectedPhoto,
+      } = this.state;
+      const formData = new FormData();
+      formData.append("firstName", firstName);
+      formData.append("lastName", lastName);
+      formData.append("email", email);
+      formData.append("firstAddress", firstAddress);
+      formData.append("secondAddress", secondAddress);
+      formData.append("postCode", postCode);
+      formData.append("selectedCity", selectedCity);
+      formData.append("photo", selectedPhoto);
+
       clientService
-        .userUpdate(getUserProfile().id,formData)
+        .userUpdate(user.id, formData)
         .then((response) => {
           console.log(response);
           this.setState({
@@ -168,24 +174,21 @@ export default class Account extends Component {
     }
   };
   fileChangedHandler = (event) => {
-    try{
+    try {
       this.setState({
         selectedPhoto: event.target.files[0],
       });
-  
+
       let reader = new FileReader();
-  
+
       reader.onloadend = () => {
         this.setState({
           photoPreviewUrl: reader.result,
         });
       };
-  
+
       reader.readAsDataURL(event.target.files[0]);
-    }catch(err){
-      
-    }
-    
+    } catch (err) {}
   };
   render() {
     const userAlert = this.state.showAlert ? (

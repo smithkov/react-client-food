@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
 import axios from "axios";
 import { SERVER_URL } from "../src/utility/global";
-import {getUserProfile} from './utility/global'
+import clientService from "./services/clientService";
 
 export default function ProtectedRoute(ComponentToProtect) {
   return class extends Component {
@@ -14,34 +14,20 @@ export default function ProtectedRoute(ComponentToProtect) {
       };
     }
 
-    componentDidMount() {
-      const data = getUserProfile();
-     
-      if (data) {
-        axios
-          .post(
-            SERVER_URL + "/user/isLogin",
-            { id: data.id },
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${data ? data.token : ""}`,
-              },
-            }
-          )
-          .then((response) => {
-            //if(!response.data.error){
+    componentDidMount = async () => {
+      try {
+        const result = await clientService.hasAuth();
+        const error = result.data.error;
 
-            if (!response.data.error) this.setState({ loading: false });
-            //}
-          })
-          .catch((err) => {
-            this.setState({ loading: false, redirect: true });
-          });
-      }else{
+        if (!error) {
+          this.setState({ loading: false });
+        } else {
+          this.setState({ loading: false, redirect: true });
+        }
+      } catch (err) {
         this.setState({ loading: false, redirect: true });
       }
-    }
+    };
 
     render() {
       const { loading, redirect } = this.state;

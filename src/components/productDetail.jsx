@@ -6,7 +6,6 @@ import Review from "./widgets/Review";
 import ReviewList from "./widgets/reviewList";
 
 import {
-  getUserProfile,
   DEFAULT_USER,
   DEFAULT_BANNER,
   IMAGE_URL,

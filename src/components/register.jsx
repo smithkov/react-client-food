@@ -4,6 +4,7 @@ import ClientService from "../services/clientService";
 import { Redirect, Link } from "react-router-dom";
 import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
+import { CRED } from "../utility/global";
 import {
   Button,
   Form,
@@ -78,6 +79,8 @@ class Register extends Component {
 
     ClientService.register(data)
       .then((response) => {
+        const { data } = response.data;
+        localStorage.set(CRED, data)
         this.props.history.push("/listing/");
       })
       .catch((err) => {

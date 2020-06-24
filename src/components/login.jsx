@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import clientService from "../services/clientService";
-import { CRED } from "../utility/global";
+import { setUserProfile } from "../utility/global";
 import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
-import Cookies from 'js-cookie'
+
 import {
   Button,
   Form,
@@ -12,7 +12,7 @@ import {
   Image,
   Message,
   Segment,
-  Icon
+  Icon,
 } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 
@@ -36,17 +36,16 @@ class Login extends Component {
       password: this.state.password,
     };
 
-    clientService.login(data)
+    clientService
+      .login(data)
 
       .then((response) => {
-        const { token, data } = response.data;
-        data.token = token;
-        Cookies.set(CRED, data, { expires: 7, path: '' })
-        
+        const { data } = response.data;
 
         this.props.history.push("/dashboard/");
       })
       .catch((err) => {
+        console.log(err)
         const { error, message } = err.response.data;
         console.log(error);
         this.setState({
@@ -60,7 +59,7 @@ class Login extends Component {
   };
   responseFacebook = (res) => {
     //const firstName
-    
+
     if (res) {
       const { email, name, graphDomain, id } = res;
       const nameArray = name.split(" ");
@@ -72,10 +71,9 @@ class Login extends Component {
       clientService
         .socialAccess({ email, firstName, lastName, source, password })
         .then((response) => {
-         
           const { token, data } = response.data;
           data.token = token;
-          Cookies.set(CRED, data, { expires: 7, path: '' })
+          //Cookies.set(CRED, data, { expires: 7, path: "" });
           //localStorage.setItem(CRED, JSON.stringify(data));
           this.props.history.push("/listing/");
         })
@@ -126,7 +124,11 @@ class Login extends Component {
               <GoogleLogin
                 clientId="489905510114-d9395vk5dso3h7bb07rlfv492u444ebs.apps.googleusercontent.com"
                 render={(renderProps) => (
-                  <button onClick={renderProps.onClick} type="button" className="google">
+                  <button
+                    onClick={renderProps.onClick}
+                    type="button"
+                    className="google"
+                  >
                     &nbsp;&nbsp;
                     <Icon name="google" />
                     Sign In with Google

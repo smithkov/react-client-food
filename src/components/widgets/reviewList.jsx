@@ -3,7 +3,6 @@ import { Button, Comment, Form, Header, Rating } from "semantic-ui-react";
 import Moment from "react-moment";
 
 import {
-  getUserProfile,
   DEFAULT_USER,
   DEFAULT_BANNER,
   IMAGE_URL,
