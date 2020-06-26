@@ -7,6 +7,7 @@ import Footer from "./components/Footer";
 import Login from "./components/login";
 import Register from "./components/register";
 import ShopPage from "./components/ShopPage";
+import Payment from "./components/payment";
 import FoodListing from "./components/FoodListing";
 import Dashboard from "../src/adminComponents/dashboard";
 import ShopForm from "../src/adminComponents/shopForm";
@@ -16,6 +17,7 @@ import ShopSetting from "../src/adminComponents/shopSetting";
 import ShopSocial from "../src/adminComponents/social";
 import Account from "../src/adminComponents/account";
 import ProductDetail from "./components/productDetail";
+import DeliveryDetail from "./components/deliveryDetail";
 import { Provider } from "react-redux";
 import store from "./store";
 import ProtectedRoute from "./ProtectedRoute";
@@ -24,7 +26,6 @@ class App extends React.Component {
   state = {
     isAuthenticated: false,
   };
- 
 
   render() {
     return (
@@ -38,13 +39,31 @@ class App extends React.Component {
             <Route exact path="/seller_reg" component={ShopForm} />
             <Route exact path="/product_reg" component={ProductForm} />
             <Route exact path="/product_list" component={ProductList} />
-           
+
             <Route exact path="/myAccount" component={Account} />
-            <Route exact path="/dashboard" component={ProtectedRoute(Dashboard)} />
-            <Route exact  path="/:shopUrl" component={ShopPage} />
-            <Route exact  path="/shop/settings" component={ShopSetting} />
-            <Route exact  path="/shop/social" component={ShopSocial} />
-            <Route exact  path="/item_meal_detail/product/:id" component={ProductDetail} />
+            <Route
+              exact
+              path="/dashboard"
+              component={ProtectedRoute(Dashboard)}
+            />
+            <Route exact path="/:shopUrl" component={ShopPage} />
+            <Route exact path="/shop/settings" component={ShopSetting} />
+            <Route exact path="/shop/social" component={ShopSocial} />
+            <Route
+              exact
+              path="/delivery/detail/:by/:sel"
+              component={ProtectedRoute(DeliveryDetail)}
+            />
+            <Route
+              exact
+              path="/payment/:by/:sel"
+              component={ProtectedRoute(Payment)}
+            />
+            <Route
+              exact
+              path="/item_meal_detail/product/:id"
+              component={ProductDetail}
+            />
 
             {/* <Route path="/add" component={AddUser} />
         <Route path="/edit/:id" component={EditUser} /> */}

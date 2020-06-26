@@ -35,19 +35,19 @@ class Login extends Component {
       email: this.state.email,
       password: this.state.password,
     };
-
+    let { from } = this.props.location.state || {
+      from: { pathname: "/dashboard" },
+    };
     clientService
       .login(data)
 
       .then((response) => {
         const { data } = response.data;
 
-        this.props.history.push("/dashboard/");
+        this.props.history.replace(from);
       })
       .catch((err) => {
-        console.log(err)
         const { error, message } = err.response.data;
-        console.log(error);
         this.setState({
           hasError: error,
         });
@@ -58,7 +58,9 @@ class Login extends Component {
     console.log(response);
   };
   responseFacebook = (res) => {
-    //const firstName
+    let { from } = this.props.location.state || {
+      from: { pathname: "/dashboard" },
+    };
 
     if (res) {
       const { email, name, graphDomain, id } = res;
@@ -75,7 +77,7 @@ class Login extends Component {
           data.token = token;
           //Cookies.set(CRED, data, { expires: 7, path: "" });
           //localStorage.setItem(CRED, JSON.stringify(data));
-          this.props.history.push("/listing/");
+          this.props.history.replace(from);
         })
         .catch((err) => {
           const { error, message } = err.response.data;

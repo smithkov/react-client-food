@@ -13,6 +13,7 @@ import "./listing.css";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { fetchProducts } from "../../actions/productActions";
+
 import {
   Button,
   Icon,
@@ -32,6 +33,10 @@ const options = [
 ];
 
 class Listing extends Component {
+
+  constructor(props){
+    super(props)
+  }
   componentDidMount() {
     this.props.fetchProducts();
   }

@@ -35,6 +35,7 @@
     "react-google-maps": "^9.4.5",
     "react-icons-kit": "^1.2.0",
     "react-moment": "^0.9.7",
+    "react-paypal-button-v2": "^2.6.2",
     "react-redux": "^7.2.0",
     "react-responsive-carousel": "^3.2.7",
     "react-router-dom": "^5.2.0",

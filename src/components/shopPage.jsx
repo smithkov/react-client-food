@@ -32,6 +32,7 @@ import {
   DEFAULT_LOGO,
   Rating,
   formatPrice,
+  getTempId,
 } from "../utility/global";
 import clientService from "../services/clientService";
 import { Link } from "react-router-dom";
@@ -72,20 +73,21 @@ class ShopPage extends Component {
   contextRef = createRef();
   componentWillUpdate(nextProps, nextState) {
     if (nextState.isAllowUpdate) {
+      const {shopId, orders, subTotal, offerDiscount, total, deliveryPrice} = nextState;
       const cart = clientService.cart({
-        shopName: nextState.shopName,
-        data: {
-          orders: nextState.orders,
-          subTotal: nextState.subTotal,
-          offerDiscount: nextState.offerDiscount,
-          total: nextState.total,
-        },
+        shopId,
+        orders,
+        subTotal,
+        offerDiscount,
+        total,
+        deliveryPrice,
+        tempId: getTempId(),
       });
-      console.log("orders", nextState.orders);
     }
   }
   componentDidMount = async () => {
     try {
+      console.log(getTempId());
       const shopUrl = this.props.match.params.shopUrl;
       const getShop = await ClientService.findShopByUrl({ shopUrl });
 
@@ -119,6 +121,7 @@ class ShopPage extends Component {
         minTime,
         maxTime,
         minOrder,
+        orders: [],
         deliveryPrice: deliveryPrice ? deliveryPrice : 0,
         city: City ? City.name : "",
         postCode,
@@ -152,17 +155,21 @@ class ShopPage extends Component {
     } catch (err) {
       console.log(err);
     }
-    const getCart = await clientService.getCart(this.state.shopName);
+    const getCart = await clientService.getCartByTempId({
+      shopId: this.state.shopId,
+      tempId: getTempId(),
+    });
+    console.log("getCart", getCart.data);
 
-    const { total, subTotal, offerDiscount, orders } = getCart.data.data;
-    console.log("getCart", getCart);
-
-    if (orders.length > 0) {
+    const data = getCart.data.data;
+    
+    if (data) {
+      const { total, orders, subTotal, offerDiscount } = data;
       this.setState({
-        total: total ? total : 0,
-        subTotal: subTotal ? subTotal : 0,
-        orders: orders,
-        offerDiscount: offerDiscount ? offerDiscount : 0,
+        total: total ? parseFloat(total) : 0,
+        subTotal: subTotal ? parseFloat(subTotal) : 0,
+        orders: orders ? orders : [],
+        offerDiscount: offerDiscount ? parseFloat(offerDiscount) : 0,
       });
     }
     //console.log("get Cart", getCart.data);
@@ -231,13 +238,18 @@ class ShopPage extends Component {
     const currentOrder = this.state.orders.filter((order) => order.id == id);
     const filteredOrder = this.state.orders.filter((order) => order.id != id);
 
-    const subTotal =
+    let subTotal =
       this.state.subTotal -
       parseFloat(currentOrder[0].price) * parseFloat(currentOrder[0].quantity);
 
-    
-    const newOfferDiscount = this.findDiscount(subTotal);
-    const newTotal = this.getTotal(subTotal, newOfferDiscount);
+    let newOfferDiscount = this.findDiscount(subTotal);
+    let newTotal = this.getTotal(subTotal, newOfferDiscount);
+
+    if (filteredOrder.length == 0) {
+      newTotal = 0;
+      newOfferDiscount = 0;
+      subTotal = 0;
+    }
 
     this.setState({
       orders: [...filteredOrder],
@@ -402,6 +414,7 @@ class ShopPage extends Component {
       percentageDiscount,
       discountAmount,
       subTotal,
+      shopId,
       deliveryPrice,
       offerDiscount,
     } = this.state;
@@ -527,13 +540,15 @@ class ShopPage extends Component {
                     ``
                   )}
                   {hasOrder ? (
-                    <Button
-                      fluid
-                      primary
-                      disabled={parseFloat(subTotal) <= parseFloat(minOrder)}
-                    >
-                      Checkout
-                    </Button>
+                    <Link to={`/delivery/detail/${getTempId()}/${shopId}`}>
+                      <Button
+                        fluid
+                        primary
+                        disabled={parseFloat(subTotal) <= parseFloat(minOrder)}
+                      >
+                        Checkout
+                      </Button>
+                    </Link>
                   ) : (
                     ""
                   )}

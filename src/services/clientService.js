@@ -34,7 +34,7 @@ class ClientService {
   }
 
   social(data) {
-    return http.post(`/social`,data);
+    return http.post(`/social`, data);
   }
 
   findSocialById(userId) {
@@ -66,11 +66,24 @@ class ClientService {
   }
 
   cart(data) {
-    return http.post(`/cart`,data);
+    return http.post(`/cart`, data);
+  }
+  transaction(data) {
+    return http.post(`/transaction`, data);
   }
 
-  getCart(shopId) {
-    return http.get(`/getCart/${shopId}`);
+  /* This route updates order message if there is one, and takes a user to payment. 
+   If there is no order associated with tempId and ShopId, it returns 404  */
+  orderMessage(data) {
+    return http.post(`/order/messageUpdate`, data);
+  }
+
+  getCartByTempId(data) {
+    return http.post(`/retriveCartByTempId`, data);
+  }
+
+  getCartByShopId(shopId) {
+    return http.get(`/retriveCartByShopId/${shopId}`);
   }
 
   createProduct(data) {
@@ -112,19 +125,19 @@ class ClientService {
   }
 
   findReviewByShop(data) {
-    return http.post(`/rating/shop`,data);
+    return http.post(`/rating/shop`, data);
   }
 
   findReviewByProduct(data) {
-    return http.post(`/productRating/product`,data);
+    return http.post(`/productRating/product`, data);
   }
 
   findShopByName(data) {
-    return http.post(`/shopByName`,data);
+    return http.post(`/shopByName`, data);
   }
 
   findShopByUrl(data) {
-    return http.post(`/shopByUrl`,data);
+    return http.post(`/shopByUrl`, data);
   }
 
   findShopById(id) {
@@ -137,8 +150,6 @@ class ClientService {
   findUserById(id) {
     return http.get(`/user/${id}`);
   }
-
-
 }
 
 export default new ClientService();
