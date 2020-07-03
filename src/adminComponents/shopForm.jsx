@@ -27,9 +27,6 @@ export default class ShopForm extends Component {
     super(props);
   }
   state = {
-    shopType: [],
-    selectedShopType: "",
-    shopTypeText: "Shop Types",
     showAlert: false,
     shopName: "",
     initialShopName: "",
@@ -47,7 +44,7 @@ export default class ShopForm extends Component {
     firstAddress: "",
     secondAddress: "",
     postCode: "",
-    cityText: "",
+    cityText: "City",
     disabled: false,
     isDuplicateUrl: false,
     isDuplicateName: false,
@@ -92,24 +89,6 @@ export default class ShopForm extends Component {
     reader.readAsDataURL(event.target.files[0]);
   };
   componentDidMount = async () => {
-    ClientService.shopTypes()
-      .then((response) => {
-        let shopTypes = response.data.data.map((shopType) => {
-          return {
-            key: shopType.id,
-            value: shopType.id,
-            text: shopType.name,
-          };
-        });
-        this.setState({
-          shopType: [{ value: "", text: "--Select shop type--" }].concat(
-            shopTypes
-          ),
-        });
-      })
-      .catch((err) => {
-        //console.log(err);
-      });
     const result = await ClientService.hasAuth();
     const user = result.data.data;
     if (user) {
@@ -123,7 +102,6 @@ export default class ShopForm extends Component {
             logo,
             shopBanners,
             cityId,
-            ShopType,
             firstAddress,
             secondAddress,
             postCode,
@@ -132,13 +110,11 @@ export default class ShopForm extends Component {
 
           this.setState({
             shopName,
-            shopTypeText: ShopType.name,
             bannerPreviewUrl:
               shopBanners.length > 0
                 ? `${IMAGE_URL}${shopBanners[0].bannerPath}`
                 : DEFAULT_BANNER,
             logoPreviewUrl: logo ? `${IMAGE_URL}${logo}` : DEFAULT_LOGO,
-            selectedShopType: ShopType.id,
             hasShop: data,
             firstAddress,
             shopUrl,
@@ -193,7 +169,6 @@ export default class ShopForm extends Component {
         selectedBanner,
         shopName,
         shopUrl,
-        selectedShopType,
         secondAddress,
         firstAddress,
         postCode,
@@ -208,7 +183,6 @@ export default class ShopForm extends Component {
       formData.append("banner", selectedBanner);
       formData.append("shopName", shopName);
       formData.append("shopUrl", shopUrl);
-      formData.append("shopTypeId", selectedShopType);
       formData.append("userId", user.id);
       clientService
         .createShop(formData)
@@ -279,12 +253,9 @@ export default class ShopForm extends Component {
     const {
       shopName,
       shopUrl,
-      selectedShopType,
-      shopType,
       logoPreviewUrl,
       hasShop,
       bannerPreviewUrl,
-      shopTypeText,
       firstAddress,
       secondAddress,
       postCode,
@@ -354,17 +325,8 @@ export default class ShopForm extends Component {
               <p class="h4 mb-4">Shop Details</p>
               {alert}
 
-              <Dropdown
-                fluid
-                selection
-                name="selectedShopType"
-                label="Shop type"
-                placeholder={shopTypeText}
-                options={shopType}
-                onChange={this.onChangeDropdown}
-              />
               {nameAlert}
-              <Form.Field>
+              <Form.Field required>
                 <label>Shop name</label>
                 <input
                   type="text"
@@ -407,7 +369,7 @@ export default class ShopForm extends Component {
               <br />
               <hr></hr>
               <Message floating content="Business Address" />
-              <Form.Field>
+              <Form.Field required>
                 <label>Address 1</label>
                 <input
                   type="text"
@@ -429,7 +391,7 @@ export default class ShopForm extends Component {
                 />
               </Form.Field>
               <Form.Group widths="equal">
-                <Form.Field>
+                <Form.Field required>
                   <input
                     type="text"
                     required
@@ -439,19 +401,20 @@ export default class ShopForm extends Component {
                     placeholder="Post code"
                   />
                 </Form.Field>
-
-                <Dropdown
-                  required
-                  fluid
-                  selection
-                  search
-                  defaultValue={selectedCity}
-                  name="selectedCity"
-                  label="City"
-                  placeholder={cityText}
-                  options={city}
-                  onChange={this.onChangeDropdown}
-                />
+                <Form.Field required>
+                  <Dropdown
+                    required
+                    fluid
+                    selection
+                    search
+                    defaultValue={selectedCity}
+                    name="selectedCity"
+                    label="City"
+                    placeholder={cityText}
+                    options={city}
+                    onChange={this.onChangeDropdown}
+                  />
+                </Form.Field>
               </Form.Group>
 
               <Button disabled={disabled} type="submit">

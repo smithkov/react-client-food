@@ -5,6 +5,10 @@ class ClientService {
     return http.get("/products");
   }
 
+  productUpdate(id, data) {
+    return http.patch(`/product/${id}`,data);
+  }
+
   productsByOrigin(id) {
     return http.get("/product/origin/" + id);
   }
@@ -57,8 +61,12 @@ class ClientService {
     return http.post("/shop", data);
   }
 
-  category(userId) {
-    return http.get(`/categoriesByShop/${userId}`);
+  category() {
+    return http.get(`/categories`);
+  }
+
+  getMealByCategoryId(id) {
+    return http.get(`/product/category/${id}`);
   }
 
   hasAuth() {
@@ -70,6 +78,10 @@ class ClientService {
   }
   transaction(data) {
     return http.post(`/transaction`, data);
+  }
+
+  transactionByUser(data) {
+    return http.post(`/user/transaction`, data);
   }
 
   /* This route updates order message if there is one, and takes a user to payment. 
@@ -116,10 +128,6 @@ class ClientService {
     return http.patch(`/settings/${id}`, data);
   }
 
-  settings(id, data) {
-    return http.patch(`/settings/${id}`, data);
-  }
-
   findShopByUser(id) {
     return http.get(`/shops/byUser/${id}`);
   }
@@ -147,6 +155,9 @@ class ClientService {
     return http.post(`/product/byUser`, data);
   }
 
+  updateUserAddress(data) {
+    return http.post(`/userAddress/update`, data);
+  }
   findUserById(id) {
     return http.get(`/user/${id}`);
   }

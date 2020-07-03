@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import clientService from "../services/clientService";
-import { setUserProfile } from "../utility/global";
+import { setUserProfile, DASHBOARD_URL, REGISTER_URL } from "../utility/global";
 import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
 
@@ -36,7 +36,7 @@ class Login extends Component {
       password: this.state.password,
     };
     let { from } = this.props.location.state || {
-      from: { pathname: "/dashboard" },
+      from: { pathname: DASHBOARD_URL },
     };
     clientService
       .login(data)
@@ -59,7 +59,7 @@ class Login extends Component {
   };
   responseFacebook = (res) => {
     let { from } = this.props.location.state || {
-      from: { pathname: "/dashboard" },
+      from: { pathname: DASHBOARD_URL },
     };
 
     if (res) {
@@ -169,7 +169,7 @@ class Login extends Component {
               </Segment>
             </Form>
             <Message>
-              New to us? <Link to={"/register"}>Sign Up</Link>
+              New to us? <Link to={REGISTER_URL}>Sign Up</Link>
             </Message>
           </Grid.Column>
         </Grid>

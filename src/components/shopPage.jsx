@@ -33,10 +33,13 @@ import {
   Rating,
   formatPrice,
   getTempId,
+  toastOptions
 } from "../utility/global";
 import clientService from "../services/clientService";
 import { Link } from "react-router-dom";
 import Social from "../adminComponents/social";
+import { toast } from "react-toastify";
+
 
 class ShopPage extends Component {
   constructor(props) {
@@ -73,7 +76,14 @@ class ShopPage extends Component {
   contextRef = createRef();
   componentWillUpdate(nextProps, nextState) {
     if (nextState.isAllowUpdate) {
-      const {shopId, orders, subTotal, offerDiscount, total, deliveryPrice} = nextState;
+      const {
+        shopId,
+        orders,
+        subTotal,
+        offerDiscount,
+        total,
+        deliveryPrice,
+      } = nextState;
       const cart = clientService.cart({
         shopId,
         orders,
@@ -90,7 +100,7 @@ class ShopPage extends Component {
       console.log(getTempId());
       const shopUrl = this.props.match.params.shopUrl;
       const getShop = await ClientService.findShopByUrl({ shopUrl });
-
+      
       const data = getShop.data;
 
       const {
@@ -128,7 +138,6 @@ class ShopPage extends Component {
         firstAddress,
         percentageDiscount,
         discountAmount: discountAmount ? discountAmount : 0,
-        shopTypeText: ShopType.name,
         logoPreviewUrl: logo ? `${IMAGE_URL}${logo}` : DEFAULT_LOGO,
         bannerPreviewUrl:
           shopBanners.length > 0
@@ -162,7 +171,7 @@ class ShopPage extends Component {
     console.log("getCart", getCart.data);
 
     const data = getCart.data.data;
-    
+
     if (data) {
       const { total, orders, subTotal, offerDiscount } = data;
       this.setState({
@@ -175,88 +184,95 @@ class ShopPage extends Component {
     //console.log("get Cart", getCart.data);
   };
   handleAddOrder = async (data) => {
-    this.setState({ isAllowUpdate: true });
+    try {
+      this.setState({ isAllowUpdate: true });
 
-    const newOrder = {
-      name: data.name,
-      quantity: 1,
-      id: data.id,
-      price: data.price,
-    };
+      const newOrder = {
+        name: data.name,
+        quantity: 1,
+        id: data.id,
+        price: data.price,
+      };
 
-    const subTotal = parseFloat(newOrder.price) + this.state.subTotal;
+      const subTotal = parseFloat(newOrder.price) + this.state.subTotal;
 
-    const findOrder = this.state.orders.find(
-      (order) => order.id == newOrder.id
-    );
-    let newOfferDiscount = 0;
-    let newTotal = 0;
+      const findOrder = this.state.orders.find(
+        (order) => order.id == newOrder.id
+      );
+      let newOfferDiscount = 0;
+      let newTotal = 0;
 
-    if (findOrder) {
-      findOrder.quantity++;
+      if (findOrder) {
+        findOrder.quantity++;
 
-      newOfferDiscount = this.findDiscount(subTotal);
-      newTotal = this.getTotal(subTotal, newOfferDiscount);
+        newOfferDiscount = this.findDiscount(subTotal);
+        newTotal = this.getTotal(subTotal, newOfferDiscount);
 
-      this.saveToServer =
-        (this.state.shopId,
-        this.state.orders,
-        subTotal,
-        newOfferDiscount,
-        newTotal);
-      this.setState({
-        orders: [...this.state.orders],
-        subTotal: subTotal,
-        offerDiscount: newOfferDiscount,
-        total: newTotal,
-      });
-      // const { shopName, orders, subTotal, offerDiscount, total } = this.state;
-      // const cart = clientService.cart({
-      //   shopName,
-      //   data: { orders, subTotal, offerDiscount, total },
-      // });
-    } else {
-      newOfferDiscount = this.findDiscount(subTotal);
-      newTotal = this.getTotal(subTotal, newOfferDiscount);
+        this.saveToServer =
+          (this.state.shopId,
+          this.state.orders,
+          subTotal,
+          newOfferDiscount,
+          newTotal);
+        this.setState({
+          orders: [...this.state.orders],
+          subTotal: subTotal,
+          offerDiscount: newOfferDiscount,
+          total: newTotal,
+        });
+        // const { shopName, orders, subTotal, offerDiscount, total } = this.state;
+        // const cart = clientService.cart({
+        //   shopName,
+        //   data: { orders, subTotal, offerDiscount, total },
+        // });
+      } else {
+        newOfferDiscount = this.findDiscount(subTotal);
+        newTotal = this.getTotal(subTotal, newOfferDiscount);
 
-      this.setState({
-        orders: [...this.state.orders, newOrder],
-        subTotal: subTotal,
-        offerDiscount: newOfferDiscount,
-        total: newTotal,
-      });
-      // const { shopName, orders, subTotal, offerDiscount, total } = this.state;
-      // const cart = clientService.cart({
-      //   shopName,
-      //   data: { orders, subTotal, offerDiscount, total },
-      // });
-    }
+        this.setState({
+          orders: [...this.state.orders, newOrder],
+          subTotal: subTotal,
+          offerDiscount: newOfferDiscount,
+          total: newTotal,
+        });
+        // const { shopName, orders, subTotal, offerDiscount, total } = this.state;
+        // const cart = clientService.cart({
+        //   shopName,
+        //   data: { orders, subTotal, offerDiscount, total },
+        // });
+      }
+      toast.success("Item was added successfully.", toastOptions());
+    } catch (err) {}
   };
 
   handleRemoveOrder = (id) => {
-    this.setState({ isAllowUpdate: true });
-    const currentOrder = this.state.orders.filter((order) => order.id == id);
-    const filteredOrder = this.state.orders.filter((order) => order.id != id);
+    try {
+      this.setState({ isAllowUpdate: true });
+      const currentOrder = this.state.orders.filter((order) => order.id == id);
+      const filteredOrder = this.state.orders.filter((order) => order.id != id);
 
-    let subTotal =
-      this.state.subTotal -
-      parseFloat(currentOrder[0].price) * parseFloat(currentOrder[0].quantity);
+      let subTotal =
+        this.state.subTotal -
+        parseFloat(currentOrder[0].price) *
+          parseFloat(currentOrder[0].quantity);
 
-    let newOfferDiscount = this.findDiscount(subTotal);
-    let newTotal = this.getTotal(subTotal, newOfferDiscount);
+      let newOfferDiscount = this.findDiscount(subTotal);
+      let newTotal = this.getTotal(subTotal, newOfferDiscount);
 
-    if (filteredOrder.length == 0) {
-      newTotal = 0;
-      newOfferDiscount = 0;
-      subTotal = 0;
-    }
+      if (filteredOrder.length == 0) {
+        newTotal = 0;
+        newOfferDiscount = 0;
+        subTotal = 0;
+      }
 
-    this.setState({
-      orders: [...filteredOrder],
-      subTotal: subTotal,
-      offerDiscount: newOfferDiscount,
-      total: newTotal,
-    });
+      this.setState({
+        orders: [...filteredOrder],
+        subTotal: subTotal,
+        offerDiscount: newOfferDiscount,
+        total: newTotal,
+      });
+      toast.success("Item was removed successfully.", toastOptions());
+    } catch (err) {}
   };
   handleTabChange = (e, { activeIndex }) => {
     if (activeIndex === 2) {

@@ -21,6 +21,7 @@ import {
   MEAL_CREATE,
   MEAL_LIST,
   SAVE_SUCCESS,
+  IMAGE_URL,
 } from "../utility/global";
 import { Button, Message, Form } from "semantic-ui-react";
 import { fetchUser } from "../actions/productActions";
@@ -53,64 +54,93 @@ class ProductForm extends React.Component {
       hasImageLimit: false,
       redirect: false,
       photoPreviewUrl: null,
+      categoryText: "",
+      originText: "",
+      unitText: "",
+      oldPhoto: "",
+      productId: "",
+      userId:""
     };
   }
   componentDidMount = async () => {
-    this.props.fetchUser();
+    const productId = this.props.match.params.id;
+    const getMealById = await clientService.productById(productId);
+
+    if (getMealById) {
+      const {
+        name,
+        desc,
+        price,
+        discountPrice,
+        Category,
+        weight,
+        Origin,
+        Unit,
+        photo,
+        id,
+        userId
+      } = getMealById.data.data;
+      
+      this.setState({
+        name,
+        desc,
+        weight,
+        price,
+        userId,
+        categoryText: Category ? Category.name : "",
+        originText: Origin ? Origin.name : "",
+        unitText: Unit ? Unit.name : "",
+        discountPrice,
+        origin: [],
+        selectedPhoto: "",
+        selectedOrigin: Origin ? Origin.id : "",
+        selectedUnitType:Unit ? Unit.id : "",
+        oldPhoto: photo,
+        productId: id,
+        selectedCategory: Category ? Category.id : "",
+        photoPreviewUrl: photo ? `${IMAGE_URL}${photo}` : "",
+      });
+    }
+
+    const unitResponse = await ClientService.unitTypes();
+    let unitTypes = unitResponse.data.data.map((unitType) => {
+      return {
+        key: unitType.id,
+        value: unitType.id,
+        text: unitType.name,
+      };
+    });
+    this.setState({
+      unitType: [{ key: "", text: "--Select unit type--" }].concat(unitTypes),
+    });
+
+    const originResponse = await ClientService.origins();
+    let origins = originResponse.data.data.map((origin) => {
+      return {
+        key: origin.id,
+        value: origin.id,
+        text: origin.name,
+      };
+    });
+    this.setState({
+      origin: [{ key: "", text: "--Select product origin--" }].concat(origins),
+    });
+
+    const categoryResponse = await ClientService.category();
+
+    let categories = categoryResponse.data.data.map((category) => {
+      return {
+        key: category.id,
+        value: category.id,
+        text: category.name,
+      };
+    });
+    this.setState({
+      category: [{ value: "", text: "--Select category--" }].concat(categories),
+    });
   };
   componentWillReceiveProps = async (nextProps) => {
     if (nextProps) {
-      const user = nextProps.user;
-      if (user) {
-        const unitResponse = await ClientService.unitTypes();
-        let unitTypes = unitResponse.data.data.map((unitType) => {
-          return {
-            key: unitType.id,
-            value: unitType.id,
-            text: unitType.name,
-          };
-        });
-        this.setState({
-          unitType: [{ key: "", text: "--Select unit type--" }].concat(
-            unitTypes
-          ),
-        });
-
-        const originResponse = await ClientService.origins();
-        let origins = originResponse.data.data.map((origin) => {
-          return {
-            key: origin.id,
-            value: origin.id,
-            text: origin.name,
-          };
-        });
-        this.setState({
-          origin: [{ key: "", text: "--Select product origin--" }].concat(
-            origins
-          ),
-        });
-
-        const categoryResponse = await ClientService.category();
-
-        let categories = categoryResponse.data.data.map((category) => {
-          return {
-            key: category.id,
-            value: category.id,
-            text: category.name,
-          };
-        });
-        this.setState({
-          category: [{ value: "", text: "--Select category--" }].concat(
-            categories
-          ),
-        });
-      } else {
-        this.buttonRef.current.disabled = true;
-        this.setState({
-          message: MISSING_USER_MSG,
-          showAlert: true,
-        });
-      }
     }
   };
   fileChangedHandlerForPhoto = (event) => {
@@ -153,11 +183,15 @@ class ProductForm extends React.Component {
         price,
         name,
         desc,
+        oldPhoto,
+        productId,
+        userId,
+        shopId
       } = this.state;
-      if (selectedPhoto >= 0) {
+      if (selectedPhoto ) {
         if (selectedCategory || selectedOrigin) {
           let formData = new FormData();
-         
+
           if (discountPrice) formData.append("discountPrice", discountPrice);
           formData.append("price", price);
           formData.append("categoryId", selectedCategory);
@@ -167,26 +201,14 @@ class ProductForm extends React.Component {
           formData.append("name", name);
           formData.append("originId", selectedOrigin);
           formData.append("desc", desc);
-          formData.append("userId", user.id);
-
-          // //This shows progress bar on images
-          // const { loadedFiles } = this.state;
-          // loadedFiles.map((file, idx) => {
-          //   //Update file (Change it's state to uploading)
-          //   let newFile = this.updateLoadedFile(file, {
-          //     ...file,
-          //     isUploading: true,
-          //   });
-          // });
-
+          formData.append("photo", oldPhoto);
+          formData.append("userId", userId);
+          
           clientService
-            .createProduct(formData)
+            .productUpdate(productId,formData)
             .then((response) => {
               if (!response.data.error) {
-                toast.success(response.data.message, toastOptions());
-                this.setState({
-                  redirect: true,
-                });
+                this.props.history.push(`${MEAL_LIST}`);
               } else toast.success(response.data.message, toastOptions(true));
             })
             .catch((err) => {
@@ -200,7 +222,7 @@ class ProductForm extends React.Component {
         }
       } else {
         toast.success(
-          "At least one product photo is required.",
+          "A photo is required in order to proceed with update.",
           toastOptions(true)
         );
       }
@@ -214,6 +236,11 @@ class ProductForm extends React.Component {
 
   render() {
     const {
+      name,
+      price,
+      weight,
+      discountPrice,
+      desc,
       category,
       unitType,
       origin,
@@ -222,6 +249,9 @@ class ProductForm extends React.Component {
       hasImageLimit,
       redirect,
       photoPreviewUrl,
+      categoryText,
+      originText,
+      unitText,
     } = this.state;
 
     const alert = this.state.showAlert ? (
@@ -295,7 +325,7 @@ class ProductForm extends React.Component {
                       onChange={this.onChangeDropdown}
                       name="selectedCategory"
                       options={category}
-                      placeholder="Category"
+                      placeholder={categoryText}
                     />
                   </Form.Field>
                   <Form.Field required>
@@ -306,13 +336,14 @@ class ProductForm extends React.Component {
                       onChange={this.onChangeDropdown}
                       name="selectedOrigin"
                       options={origin}
-                      placeholder="Food origin"
+                      placeholder={originText}
                     />
                   </Form.Field>
 
                   <Form.Field required>
                     <label>Food name</label>
                     <input
+                      value={name}
                       type="text"
                       required
                       maxlength="40"
@@ -324,6 +355,7 @@ class ProductForm extends React.Component {
                   <Form.Field required>
                     <label>Price</label>
                     <input
+                      value={price}
                       type="number"
                       min="0"
                       step="0.01"
@@ -336,6 +368,7 @@ class ProductForm extends React.Component {
                   <Form.Field>
                     <label>Discount price</label>
                     <input
+                      value={discountPrice}
                       type="number"
                       min="0"
                       step="0.01"
@@ -353,11 +386,17 @@ class ProductForm extends React.Component {
                       onChange={this.onChangeDropdown}
                       placeholder="Unit"
                     />
-                    <Form.Input fluid label="Weight" onChange={this.onChange} />
+                    <Form.Input
+                      fluid
+                      label="Weight"
+                      value={weight}
+                      onChange={this.onChange}
+                    />
                   </Form.Group>
                   <Form.Field required>
                     <label>Food description</label>
                     <Form.TextArea
+                      value={desc}
                       required
                       name="desc"
                       onChange={this.onChange}

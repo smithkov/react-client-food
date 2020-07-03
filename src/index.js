@@ -4,7 +4,7 @@ import "core-js/stable";
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import './index.css'
+import './index.scss'
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
@@ -14,9 +14,7 @@ import "slick-carousel/slick/slick-theme.css";
 import "bootstrap/dist/css/bootstrap.css";
 
 import 'semantic-ui-css/semantic.min.css'
-
-
-
+ 
 
 ReactDOM.render(
  

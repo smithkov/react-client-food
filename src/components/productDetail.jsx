@@ -30,7 +30,6 @@ export default class ProductDetail extends Component {
     productImages: [],
     productRatings: [],
     category: "",
-    defaultImage: "",
     shop: "",
     overallRating: 0
   };
@@ -45,7 +44,6 @@ export default class ProductDetail extends Component {
     const productRatings = data.productRatings;
     
 
-    const images = data.productImages;
     const {
       id,
       name,
@@ -53,19 +51,18 @@ export default class ProductDetail extends Component {
       discountprice,
       desc,
       Category,
-      VirtualShop
+      VirtualShop,
+      photo
     } = data;
-    const defaultImage = images.length > 0 ? images[0].imagePath : "";
 
     this.setState({
       overallRating:displayRating(productRatings),
       productId: id,
       name,
+      photo,
       price,
       discountprice,
       desc,
-      productImages: images,
-      defaultImage,
       category: Category.name,
       shop: VirtualShop
     });
@@ -77,12 +74,6 @@ export default class ProductDetail extends Component {
       });
     });
   };
-  handleOnClick = (url) => {
-    this.setState({
-      defaultImage: url,
-    });
-  };
-
   render() {
     const styles = {
       objectFit: "cover",
@@ -90,8 +81,7 @@ export default class ProductDetail extends Component {
       padding: 5,
     };
     const {
-      productImages,
-      defaultImage,
+      photo,
       name,
       desc,
       price,
@@ -112,10 +102,9 @@ export default class ProductDetail extends Component {
                 style={{
                   objectFit: "cover",
                   objectPosition: "center center",
-                  height: 350,
                   width: "100%",
                 }}
-                src={`${IMAGE_URL}${defaultImage}`}
+                src={`${IMAGE_URL}${photo}`}
                 size="medium"
                 rounded
               />
@@ -147,22 +136,8 @@ export default class ProductDetail extends Component {
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
-            <Grid.Column width={8}>
-              <Card.Group itemsPerRow={4}>
-                {productImages.map((image) => {
-                  return (
-                    <Image
-                      onClick={(e) => this.handleOnClick(image.imagePath)}
-                      size="tiny"
-                      rounded
-                      style={styles}
-                      src={`${IMAGE_URL}${image.imagePath}`}
-                    />
-                  );
-                })}
-              </Card.Group>
-            </Grid.Column>
-            <Grid.Column width={8}></Grid.Column>
+          
+           
           </Grid.Row>
           <Grid.Row>
             <Grid.Column width={8}>

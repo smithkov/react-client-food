@@ -42,10 +42,11 @@
     "react-scripts": "3.2.0",
     "react-slick": "^0.26.1",
     "react-star-rating-component": "^1.4.1",
+    "react-toastify": "^6.0.6",
     "reactstrap": "^8.4.1",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
-    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-css": "^2.2.14",
     "semantic-ui-react": "^0.88.2",
     "slick-carousel": "^1.8.1",
     "superagent": "^5.2.2"

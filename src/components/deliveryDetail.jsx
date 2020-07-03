@@ -35,6 +35,10 @@ export default class DeliveryDetail extends Component {
     shopId: "",
     redirect: false,
     message: "",
+    firstAddress: "",
+    secondAddress: "",
+    postCode: "",
+    phone: "",
   };
   componentDidMount = async () => {
     try {
@@ -49,11 +53,25 @@ export default class DeliveryDetail extends Component {
         tempId: getTempId(),
       });
       const data = getCart.data.data;
-     
+
       if (!data)
         this.setState({
           redirect: true,
         });
+      const result = await clientService.hasAuth();
+      const auth = result.data.data;
+
+      if (auth) {
+        const user = await clientService.findUserById(auth.id);
+        const { firstAddress, secondAddress, postCode, phone } = user.data.data;
+
+        this.setState({
+          firstAddress,
+          secondAddress,
+          postCode,
+          phone,
+        });
+      }
     } catch (err) {
       this.setState({
         redirect: true,
@@ -66,10 +84,32 @@ export default class DeliveryDetail extends Component {
       [e.target.name]: e.target.value,
     });
   };
-  handleSubmit = async (url) => {
-    const { tempId, shopId } = this.state;
-    const paymentProceed = await clientService.orderMessage({ tempId, shopId });
+  handleSubmit = async () => {
+    const {
+      tempId,
+      shopId,
+      firstAddress,
+      secondAddress,
+      postCode,
+      message,
+      phone,
+    } = this.state;
+    const paymentProceed = await clientService.orderMessage({
+      tempId,
+      shopId,
+      message,
+    });
+
     if (!paymentProceed.data.error) {
+      const updateAddress = await clientService.updateUserAddress({
+        firstAddress,
+        secondAddress,
+        postCode,
+        phone,
+      });
+     
+      this.props.history.push(`/payment/${getTempId()}/${shopId}`);
+    } else {
     }
   };
 
@@ -78,6 +118,7 @@ export default class DeliveryDetail extends Component {
     if (redirect) {
       return <ErrorPage />;
     } else {
+      const { firstAddress, secondAddress, postCode, phone } = this.state;
       return (
         <React.Fragment>
           <NavBar />
@@ -96,23 +137,43 @@ export default class DeliveryDetail extends Component {
               >
                 <Form.Field>
                   <label>Mobile number</label>
-                  <input placeholder="Mobile number" />
+                  <input
+                    value={phone}
+                    name="phone"
+                    onChange={this.onChange}
+                    
+                    placeholder="Mobile number"
+                  />
                 </Form.Field>
-                <Form.Field>
+                <Form.Field required>
                   <label>Address line 1</label>
-                  <input placeholder="Address line 1" />
+                  <input
+                    value={firstAddress}
+                    name="firstAddress"
+                    onChange={this.onChange}
+                    required
+                    placeholder="Address line 1"
+                  />
                 </Form.Field>
                 <Form.Field>
                   <label>Address line 2</label>
-                  <input placeholder="Address line 2" />
+                  <input
+                    value={secondAddress}
+                    name="secondAddress"
+                    onChange={this.onChange}
+                    placeholder="Address line 2"
+                  />
                 </Form.Field>
-                <Form.Field>
-                  <label>City</label>
-                  <input placeholder="City" />
-                </Form.Field>
-                <Form.Field>
+
+                <Form.Field required>
                   <label>Post code</label>
-                  <input placeholder="Post code" />
+                  <input
+                    value={postCode}
+                    name="postCode"
+                    onChange={this.onChange}
+                    required
+                    placeholder="Post code"
+                  />
                 </Form.Field>
                 <hr />
                 <Message info>
@@ -130,11 +191,9 @@ export default class DeliveryDetail extends Component {
                   label="Leave a note"
                   placeholder="Eg. Please leave my order outside the door"
                 />
-                <Link to={`/payment/${getTempId()}/${shopId}`}>
-                  <Button fluid primary>
-                    Go to payment
-                  </Button>
-                </Link>
+                <Button type="submit" fluid primary>
+                  Go to payment
+                </Button>
               </Form>
             </Grid.Column>
             <Grid.Column width={5}></Grid.Column>

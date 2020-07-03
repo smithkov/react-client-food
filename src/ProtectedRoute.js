@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Redirect, useLocation } from "react-router-dom";
 import axios from "axios";
-import { SERVER_URL } from "../src/utility/global";
+import { SERVER_URL, LOGIN_URL } from "../src/utility/global";
 import clientService from "./services/clientService";
 
 export default function ProtectedRoute(ComponentToProtect) {
@@ -35,8 +35,8 @@ export default function ProtectedRoute(ComponentToProtect) {
         return null;
       }
       if (redirect) {
-        return <Redirect to={{pathname: '/login', state: {from: this.props.location}}}/>
-        //return <Redirect to="/login" />;
+        return <Redirect to={{pathname: LOGIN_URL, state: {from: this.props.location}}}/>
+       
       }
       return <ComponentToProtect {...this.props} />;
     }

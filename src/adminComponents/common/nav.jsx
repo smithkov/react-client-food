@@ -1,19 +1,31 @@
 import React, { Component } from "react";
 import { Menu } from "semantic-ui-react";
 import { Link } from "react-router-dom";
+import { addUser } from "../../actions/productActions";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import {DASHBOARD_URL} from '../../utility/global'
 
-export default class Nav extends Component {
+class Nav extends Component {
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
   state = {
     activeItem: "",
   };
+  componentDidMount(){
+    this.props.addUser();
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps) {
+      //console.log("Next prop",nextProps)
+    }
+  }
   render() {
     return (
-      <Menu stackable>
+      <Menu fixed>
         <Menu.Item>
           <img src="/images/logo.png" />
         </Menu.Item>
-        <Link to={`/dashboard/`}>
+        <Link to={`${DASHBOARD_URL}`}>
           <Menu.Item
             name="dashboard"
             active={this.state.activeItem === "dashboard"}
@@ -34,3 +46,11 @@ export default class Nav extends Component {
     );
   }
 }
+Nav.propTypes = {
+  addUser: PropTypes.func.isRequired,
+};
+const mapStateToProps = (state) => ({
+  user: state.products.user,
+});
+
+export default connect(mapStateToProps, { addUser })(Nav);

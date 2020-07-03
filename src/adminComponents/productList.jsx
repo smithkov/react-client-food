@@ -4,7 +4,7 @@ import { Col, Container, Row } from "reactstrap";
 import Nav from "./common/nav";
 import { Button, Checkbox, Icon, Table } from "semantic-ui-react";
 import AfterNav from "./common/afterNav";
-import { MISSING_USER_MSG, ERROR_MSG } from "../utility/global";
+import { MISSING_USER_MSG, ERROR_MSG, MEAL_CREATE } from "../utility/global";
 import clientService from "../services/clientService";
 import { Link } from "react-router-dom";
 
@@ -67,7 +67,7 @@ export default class ShopForm extends Component {
                     <Table.HeaderCell>Category</Table.HeaderCell>
                     <Table.HeaderCell>Price</Table.HeaderCell>
                     <Table.HeaderCell>Discount Price</Table.HeaderCell>
-                    <Table.HeaderCell>Quantity</Table.HeaderCell>
+                    <Table.HeaderCell></Table.HeaderCell>
                   </Table.Row>
                 </Table.Header>
 
@@ -86,7 +86,11 @@ export default class ShopForm extends Component {
                         <Table.Cell>
                           £{parseInt(product.discountPrice).toFixed(2)}
                         </Table.Cell>
-                        <Table.Cell>{product.quantity}</Table.Cell>
+                        <Table.Cell title="Click to edit meal">
+                          <Link to={`/meal/update/${product.id}`}>
+                            <Icon color="blue" name="edit" /> Edit
+                          </Link>
+                        </Table.Cell>
                       </Table.Row>
                     );
                   })}
@@ -96,7 +100,7 @@ export default class ShopForm extends Component {
                   <Table.Row>
                     <Table.HeaderCell />
                     <Table.HeaderCell colSpan="4">
-                      <Link to={`/product_reg/`}>
+                      <Link to={MEAL_CREATE}>
                         <Button
                           floated="right"
                           icon
@@ -112,7 +116,7 @@ export default class ShopForm extends Component {
                 </Table.Footer>
               </Table>
             ) : (
-              <Link to={`/product_reg/`}>
+              <Link to={MEAL_CREATE}>
                 <Button type="submit" color="teal" fluid size="large">
                   Create new products
                 </Button>

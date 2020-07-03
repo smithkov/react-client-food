@@ -4,11 +4,13 @@ import SideMenu from "./common/sideMenu";
 import ClientService from "../services/clientService";
 import { Col, Container, Row } from "reactstrap";
 import clientService from "../services/clientService";
+import { toast } from "react-toastify";
 import {
   MISSING_USER_MSG,
   DEFAULT_BANNER,
   IMAGE_URL,
   DEFAULT_LOGO,
+  toastOptions,
 } from "../utility/global";
 import {
   Button,
@@ -40,8 +42,6 @@ export default class ShopSetting extends Component {
     minOrder: "",
     maxTime: "",
     minTime: "",
-    showAlert: false,
-    message: "",
     discountAmount: "",
     percentageDiscount: "",
     notice: "",
@@ -120,17 +120,16 @@ export default class ShopSetting extends Component {
           minTime,
         })
         .then((response) => {
-          this.setState({
-            showAlert: true,
-            message: response.data.message,
-          });
+          toast.success(response.data.message, toastOptions());
         })
         .catch((err) => {
           const message = err.response.data.message;
-          this.setState({ showAlert: true, message: message });
+          
+          toast.success(message, toastOptions(true));
         });
     } else {
-      this.setState({ showAlert: true, message: MISSING_USER_MSG });
+      toast.success(MISSING_USER_MSG, toastOptions(true));
+      
     }
   };
 
@@ -144,17 +143,9 @@ export default class ShopSetting extends Component {
       maxTime,
       minTime,
       shopId,
-      message,
-      showAlert,
     } = this.state;
 
-    const alert = showAlert ? (
-      <div className="ui info message">
-        <p>{message}</p>
-      </div>
-    ) : (
-      ""
-    );
+ 
 
     return (
       <Container fluid={true}>
@@ -173,7 +164,11 @@ export default class ShopSetting extends Component {
               <Header as="h3">
                 Delivery <Icon name="time" />
               </Header>
-              <Form onSubmit={this.onSubmit} size="tiny">
+              <Form
+                className="attached fluid segment"
+                onSubmit={this.onSubmit}
+                size="tiny"
+              >
                 <Form.Group>
                   <Form.Field width={5}>
                     <label>Min. delivery time</label>

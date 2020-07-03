@@ -1,114 +1,177 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Menu, Modal, Button } from "semantic-ui-react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { fetchUser } from "../../actions/productActions";
+import {
+  MEAL_CREATE,
+  MEAL_LIST,
+  SHOP_CREATE,
+  MY_ACCOUNT,
+  USER_ORDER_URL,
+  SHOP_SETTING_URL,
+  SHOP_SOCIAL_URL,
+} from "../../utility/global";
 
-export default class SideMenu extends Component {
+class SideMenu extends Component {
   state = {
     activeItem: "",
   };
 
+  componentDidMount() {
+    this.props.fetchUser();
+    //console.log("next propdddddd", this.props.role)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps) {
+      
+    }
+  }
+
   render() {
-    return (
-      <Menu vertical>
-        <Menu.Item>
-          <Menu.Header>Products</Menu.Header>
+    if (this.props.user.role == "Customer") {
+      return (
+        <Menu fluid vertical>
+          <Menu.Item>
+            <Menu.Header>Orders</Menu.Header>
+            <Menu.Menu>
+              <Link to={USER_ORDER_URL}>
+                <Menu.Item
+                  name="Your-orders"
+                  active={this.state.activeItem === "Your-orders"}
+                  onClick={this.handleItemClick}
+                />
+              </Link>
+            </Menu.Menu>
+          </Menu.Item>
+          <Menu.Item>
+            <Menu.Header>Settings</Menu.Header>
+            <Menu.Menu>
+              <Link to={MY_ACCOUNT}>
+                <Menu.Item
+                  name="Account-info"
+                  active={this.state.activeItem === "Account-info"}
+                  onClick={this.handleItemClick}
+                />
+              </Link>
+            </Menu.Menu>
+          </Menu.Item>
+        </Menu>
+      );
+    } else {
+      return (
+        <Menu fluid vertical>
+          <Menu.Item>
+            <Menu.Header>Food</Menu.Header>
 
-          <Menu.Menu>
-            <Link to={`/product_reg/`}>
+            <Menu.Menu>
+              <Link to={MEAL_CREATE}>
+                <Menu.Item
+                  name="Create-food"
+                  active={this.state.activeItem === "enterprise"}
+                  onClick={this.handleItemClick}
+                />
+              </Link>
+              <Link to={MEAL_LIST}>
+                <Menu.Item
+                  name="food-listing"
+                  active={this.state.activeItem === "meal-listing"}
+                  onClick={this.handleItemClick}
+                />
+              </Link>
+            </Menu.Menu>
+          </Menu.Item>
+
+          <Menu.Item>
+            <Menu.Header>Orders</Menu.Header>
+
+            <Menu.Menu>
               <Menu.Item
-                name="Create-product"
-                active={this.state.activeItem === "enterprise"}
+                name="Fulfilled-orders"
+                active={this.state.activeItem === "Fulfilled-orders"}
                 onClick={this.handleItemClick}
               />
-            </Link>
-            <Link to={`/product_list/`}>
+
               <Menu.Item
-                name="Product-listing"
-                active={this.state.activeItem === "Product-listing"}
+                name="Unfulfilled-orders"
+                active={this.state.activeItem === "Unfulfilled-orders"}
                 onClick={this.handleItemClick}
               />
-            </Link>
-          </Menu.Menu>
-        </Menu.Item>
+            </Menu.Menu>
+          </Menu.Item>
 
-        <Menu.Item>
-          <Menu.Header>Orders</Menu.Header>
+          <Menu.Item>
+            <Menu.Header>Settings</Menu.Header>
 
-          <Menu.Menu>
-            <Menu.Item
-              name="Fulfilled-orders"
-              active={this.state.activeItem === "Fulfilled-orders"}
-              onClick={this.handleItemClick}
-            />
-
-            <Menu.Item
-              name="Unfulfilled-orders"
-              active={this.state.activeItem === "Unfulfilled-orders"}
-              onClick={this.handleItemClick}
-            />
-          </Menu.Menu>
-        </Menu.Item>
-
-        <Menu.Item>
-          <Menu.Header>Settings</Menu.Header>
-
-          <Menu.Menu>
-            <Link to={`/myAccount/`}>
+            <Menu.Menu>
+              <Link to={MY_ACCOUNT}>
+                <Menu.Item
+                  name="Account-info"
+                  active={this.state.activeItem === "Account-info"}
+                  onClick={this.handleItemClick}
+                />
+              </Link>
+              <Link to={SHOP_SETTING_URL}>
               <Menu.Item
-                name="Account-info"
-                active={this.state.activeItem === "Account-info"}
+                name="Seller-settings"
+                active={this.state.activeItem === "Seller-settings"}
                 onClick={this.handleItemClick}
-              />
-            </Link>
-            <Menu.Item
-              name="Seller-settings"
-              active={this.state.activeItem === "Seller-settings"}
-              onClick={this.handleItemClick}
-            />
-          </Menu.Menu>
-        </Menu.Item>
+              /></Link>
+            </Menu.Menu>
+          </Menu.Item>
 
-        <Menu.Item>
-          <Menu.Header>Shop</Menu.Header>
+          <Menu.Item>
+            <Menu.Header>Shop</Menu.Header>
 
-          <Menu.Menu>
-            <Link to={`/seller_reg/`}>
+            <Menu.Menu>
+              <Link to={SHOP_CREATE}>
+                <Menu.Item
+                  name="create-shop"
+                  active={this.state.activeItem === "create-shop"}
+                  onClick={this.handleItemClick}
+                >
+                  My Shop
+                </Menu.Item>
+              </Link>
+              <Link to={SHOP_SETTING_URL}>
+                <Menu.Item
+                  name="shop-settings"
+                  active={this.state.activeItem === "shop-settings"}
+                  onClick={this.handleItemClick}
+                >
+                  Settings
+                </Menu.Item>
+              </Link>
+              <Link to={SHOP_SOCIAL_URL}>
+                <Menu.Item
+                  name="shop-social"
+                  active={this.state.activeItem === "shop-social"}
+                  onClick={this.handleItemClick}
+                >
+                  Social
+                </Menu.Item>
+              </Link>
               <Menu.Item
-                name="create-shop"
-                active={this.state.activeItem === "create-shop"}
-                onClick={this.handleItemClick}
-              >
-                My Shop
-              </Menu.Item>
-            </Link>
-            <Link to={`/shop/settings`}>
-              <Menu.Item
-                name="shop-settings"
-                active={this.state.activeItem === "shop-settings"}
-                onClick={this.handleItemClick}
-              >
-                Settings
-              </Menu.Item>
-            </Link>
-            <Link to={`/shop/social`}>
-              <Menu.Item
-                name="shop-social"
-                active={this.state.activeItem === "shop-social"}
+                name="faq"
+                active={this.state.activeItem === "faq"}
                 onClick={this.handleItemClick}
               >
-                Social
+                FAQs
               </Menu.Item>
-            </Link>
-            <Menu.Item
-              name="faq"
-              active={this.state.activeItem === "faq"}
-              onClick={this.handleItemClick}
-            >
-              FAQs
-            </Menu.Item>
-          </Menu.Menu>
-        </Menu.Item>
-      </Menu>
-    );
+            </Menu.Menu>
+          </Menu.Item>
+        </Menu>
+      );
+    }
   }
 }
+SideMenu.propTypes = {
+  fetchUser: PropTypes.func.isRequired,
+};
+const mapStateToProps = (state) => ({
+  user: state.products.user,
+});
+
+export default connect(mapStateToProps, { fetchUser })(SideMenu);

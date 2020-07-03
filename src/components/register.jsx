@@ -4,7 +4,7 @@ import ClientService from "../services/clientService";
 import { Redirect, Link } from "react-router-dom";
 import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
-import { CRED } from "../utility/global";
+import { CRED, LISTING_URL, LOGIN_URL } from "../utility/global";
 import {
   Button,
   Form,
@@ -46,7 +46,7 @@ class Register extends Component {
       clientService
         .socialAccess({ email, firstName, lastName, source, password })
         .then((response) => {
-          this.props.history.push("/listing/");
+          this.props.history.push(LISTING_URL);
         })
         .catch((err) => {
           const { error, message } = err.response.data;
@@ -81,7 +81,7 @@ class Register extends Component {
       .then((response) => {
         const { data } = response.data;
         localStorage.set(CRED, data)
-        this.props.history.push("/listing/");
+        this.props.history.push(LISTING_URL);
       })
       .catch((err) => {
         const { error, message } = err.response.data;
@@ -203,7 +203,7 @@ class Register extends Component {
                     </Segment>
                   </Form>
                   <Message>
-                    Already have an account? <Link to={"/login"}>Log In</Link>
+                    Already have an account? <Link to={LOGIN_URL}>Log In</Link>
                   </Message>
                 </Grid.Column>
               </Grid>

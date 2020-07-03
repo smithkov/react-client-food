@@ -26,6 +26,7 @@ import {
   DEFAULT_LOGO,
   totalRating,
   displayRating,
+  PAY_STATUS_URL,
   formatPrice,
   getTempId,
 } from "../utility/global";
@@ -133,7 +134,7 @@ export default class Payment extends Component {
       tempId: getTempId(),
       shopId: shopId,
     });
-    console.log(transac)
+    this.props.history.push(`${PAY_STATUS_URL}`)
   };
   handleClick = (e, titleProps) => {
     const { index } = titleProps;

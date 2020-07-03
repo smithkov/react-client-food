@@ -33,9 +33,8 @@ const options = [
 ];
 
 class Listing extends Component {
-
-  constructor(props){
-    super(props)
+  constructor(props) {
+    super(props);
   }
   componentDidMount() {
     this.props.fetchProducts();
@@ -59,15 +58,10 @@ class Listing extends Component {
           <Grid.Column width={3}>{this.props.children}</Grid.Column>
           <Grid.Column width={10}>
             <React.Fragment>
-              <Input
-                style={{ width: "100%" }}
-                type="text"
-                placeholder="Search..."
-                action
-              >
+              <Input fluid type="text" placeholder="Search..." action>
                 <input />
-                
-                <Button type="submit">Search</Button>
+
+                <Button color="blue" type="submit">Search</Button>
               </Input>
               <br />
               <br />
@@ -86,7 +80,7 @@ class Listing extends Component {
                               height: 200,
                               width: "100%",
                             }}
-                            src={`${IMAGE_URL}${seller.productImages[0].imagePath}`}
+                            src={`${IMAGE_URL}${seller.photo}`}
                             rounded
                           />
                         </Grid.Column>
@@ -94,7 +88,7 @@ class Listing extends Component {
                           <Grid>
                             <Grid.Row>
                               <Grid.Column width={8}>
-                                <Header as="h2">{seller.name}</Header>
+                                <Header as="h4">{seller.name}</Header>
                                 <span>{seller.desc}</span>
                                 <Header color="red" as="h4">
                                   {formatPrice(seller.price)}
