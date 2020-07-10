@@ -53,7 +53,7 @@ class SideMenu extends Component {
                 name="inbox"
                 onClick={() => this.onChange(menu.id)}
               >
-                <Label color="red">{menu.products.length}</Label>
+                <Label color="green">{menu.products.length}</Label>
                 {menu.name}
               </Menu.Item>
             );
@@ -68,7 +68,7 @@ class SideMenu extends Component {
                 name="inbox"
                 onClick={() => this.onChangeCategory(category.id)}
               >
-                <Label color="red">{category.products.length}</Label>
+                <Label color="green">{category.products.length}</Label>
                 {category.name}
               </Menu.Item>
             );

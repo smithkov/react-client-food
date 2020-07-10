@@ -152,10 +152,22 @@ body {
   background: #3b5998;
   opacity: 0.6;
 }
+.padding{
+  padding: 10px;
+}
 .alertBox{
   background-color: #F1DFC9   ;
   padding: 5px;
   border-radius: 5px;
+}
+.capitalize{
+  text-transform: capitalize;
+}
+h4,h1,h3,h4 {
+  margin: 0;
+  font-family: Ubuntu,Arial,sans-serif;
+  font-weight: 300;
+  color: #535353;
 }
 @media only screen and (min-width: 992px){
   .ui.tiny.modal {

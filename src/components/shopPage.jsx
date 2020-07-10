@@ -1,6 +1,7 @@
 import React, { Component, createRef } from "react";
 import ClientService from "../services/clientService";
 import Geocode from "react-geocode";
+import Footer from "./Footer";
 import {
   Map,
   GoogleApiWrapper,
@@ -576,6 +577,7 @@ class ShopPage extends Component {
             </Grid.Row>
           </Grid>
         </Ref>
+        <Footer/>
       </React.Fragment>
     );
   }

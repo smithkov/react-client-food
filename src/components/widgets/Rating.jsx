@@ -10,7 +10,7 @@ class Rating extends Component {
     };
   }
   onStarClick(nextValue, prevValue, name) {
-      console.log(name)
+     
     this.setState({ rating: nextValue });
   }
   render() {
@@ -21,6 +21,7 @@ class Rating extends Component {
         <StarRatingComponent
           name={this.props.rating.id.toString()}
           starCount={5}
+          id={this.props.rating.id.toString()}
           value={this.props.rating.value}
           onStarClick={this.onStarClick.bind(this)}
         />

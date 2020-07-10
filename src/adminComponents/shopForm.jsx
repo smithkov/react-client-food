@@ -185,9 +185,8 @@ export default class ShopForm extends Component {
       formData.append("shopUrl", shopUrl);
       formData.append("userId", user.id);
       clientService
-        .createShop(formData)
+        .updateShop(formData)
         .then((response) => {
-          console.log(response);
           this.setState({
             showAlert: true,
             message: response.data.message,

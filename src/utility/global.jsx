@@ -14,11 +14,14 @@ export const DASHBOARD_URL = "/dashboard";
 export const SHOP_SETTING_URL = "/shop/settings";
 export const SHOP_SOCIAL_URL = "/shop/social";
 export const USER_ORDER_URL = "/user/order";
+export const SHOP_SIGNUP = "/business-signup";
 export const DELIVERY_DETAIL_URL = "/delivery/detail/:by/:sel";
 export const PAYMENT_URL = "/payment/:by/:sel";
 export const PRODUCT_DETAIL_URL = "/item_meal_detail/product/:id";
 export const PAY_STATUS_URL = "/payment/status";
 export const SHOP_PAGE_URL = "/:shopUrl";
+export const ORDER_DETAIL_URL = "/user/order/:id";
+export const VENDOR_APPLY_SUCCESS = "/food_vendor/application-success/:id";
 
 export const DEFAULT_LOGO =
   "https://react.semantic-ui.com/images/wireframe/image.png";

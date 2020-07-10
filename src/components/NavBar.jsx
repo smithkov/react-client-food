@@ -6,10 +6,11 @@ import {
   DEFAULT_LOGO,
   USER_ORDER_URL,
   MY_ACCOUNT,
-  LISTING_URL
+  LISTING_URL,
+  LOGIN_URL,
 } from "../utility/global";
 
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { addUser } from "../actions/productActions";
@@ -26,6 +27,10 @@ import {
 } from "semantic-ui-react";
 import clientService from "../services/clientService";
 class NavBar extends Component {
+  constructor(props) {
+    super(props);
+  }
+
   state = {
     firstName: "",
     avatar: DEFAULT_USER,
@@ -45,9 +50,13 @@ class NavBar extends Component {
   };
   componentWillReceiveProps(nextProps) {
     if (nextProps) {
-      
     }
   }
+  logout = async (e) => {
+    e.preventDefault();
+    const response = await clientService.logout();
+    this.props.history.push(LOGIN_URL);
+  };
   render() {
     const { firstName, avatar } = this.state;
 
@@ -71,7 +80,15 @@ class NavBar extends Component {
         ),
         icon: "clipboard outline",
       },
-      { key: "sign-out", text: "Sign Out", icon: "sign out" },
+      {
+        key: "sign-out",
+        text: (
+          <Link onClick={this.logout} style={styles}>
+            Logout
+          </Link>
+        ),
+        icon: "sign out",
+      },
     ];
     const trigger = (
       <span>
@@ -85,14 +102,20 @@ class NavBar extends Component {
         <Menu color="red" fixed="top" inverted>
           <Container>
             <Menu.Item as="a" header>
-             <Link to={'/'}> <Image
-                size="mini"
-                src="/images/logo.png"
-                style={{ marginRight: "1.5em" }}
-              /></Link>
-             Foodengo
+              <Link to={"/"}>
+                <img
+                  style={{
+                    marginRight: "1.5em",
+                    height: "35px",
+                    width: "100px",
+                  }}
+                  src="/images/foodengo_logo2.png"
+                />{" "}
+              </Link>
             </Menu.Item>
-            <Menu.Item as="a"><Link to={LISTING_URL}>Home</Link></Menu.Item>
+            <Menu.Item as="a">
+              <Link to={LISTING_URL}>Home</Link>
+            </Menu.Item>
             {firstName ? (
               <Menu.Menu position="right">
                 <Menu.Item>
@@ -105,25 +128,10 @@ class NavBar extends Component {
                 </Menu.Item>
               </Menu.Menu>
             ) : (
-              ""
+              <Menu.Item position="right" as="a">
+                <Link to={LOGIN_URL}>Log in</Link>
+              </Menu.Item>
             )}
-            {/* <Dropdown item simple text="Dropdown">
-              <Dropdown.Menu>
-                <Dropdown.Item>List Item</Dropdown.Item>
-                <Dropdown.Item>List Item</Dropdown.Item>
-                <Dropdown.Divider />
-                <Dropdown.Header>Header Item</Dropdown.Header>
-                <Dropdown.Item>
-                  <i className="dropdown icon" />
-                  <span className="text">Submenu</span>
-                  <Dropdown.Menu>
-                    <Dropdown.Item>List Item</Dropdown.Item>
-                    <Dropdown.Item>List Item</Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown.Item>
-                <Dropdown.Item>List Item</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown> */}
           </Container>
         </Menu>
       </div>
@@ -138,4 +146,4 @@ const mapStateToProps = (state) => ({
   user: state.products.user,
 });
 
-export default connect(mapStateToProps, { addUser })(NavBar);
+export default withRouter(connect(mapStateToProps, { addUser })(NavBar));

@@ -17,6 +17,10 @@ class ClientService {
     return http.get("/product/" + id);
   }
 
+  frontPageMeals() {
+    return http.get("/front-page-meals");
+  }
+  
   productsByShopId(id) {
     return http.get("/products/byShopId/" + id);
   }
@@ -58,11 +62,23 @@ class ClientService {
   }
 
   createShop(data) {
+    return http.post("/create-shop", data);
+  }
+  
+  updateShop(data) {
     return http.post("/shop", data);
+  }
+
+  hasExpiredLinkForSellerReg(id) {
+    return http.get(`/hasUserExpired/${id}`);
   }
 
   category() {
     return http.get(`/categories`);
+  }
+
+  logout() {
+    return http.post(`/logout`);
   }
 
   getMealByCategoryId(id) {
@@ -82,6 +98,14 @@ class ClientService {
 
   transactionByUser(data) {
     return http.post(`/user/transaction`, data);
+  }
+
+  transactionByShop(data) {
+    return http.post(`/shop/transaction`, data);
+  }
+
+  transactionById(id) {
+    return http.get(`/shop/transaction/${id}`);
   }
 
   /* This route updates order message if there is one, and takes a user to payment. 

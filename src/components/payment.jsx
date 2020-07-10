@@ -32,6 +32,7 @@ import {
 } from "../utility/global";
 import clientService from "../services/clientService";
 import { Link, Redirect } from "react-router-dom";
+import Footer from "./Footer";
 
 export default class Payment extends Component {
   constructor(props) {
@@ -280,17 +281,10 @@ export default class Payment extends Component {
                         </Accordion.Title>
                         <Accordion.Content active={activeIndex === 2}>
                           <p>
-                            Three common ways for a prospective owner to acquire
-                            a dog is from pet shops, private owners, or
-                            shelters.
+                           
                           </p>
                           <p>
-                            A pet shop may be the most convenient way to buy a
-                            dog. Buying a dog from a private owner allows you to
-                            assess the pedigree and upbringing of your dog
-                            before choosing to take it home. Lastly, finding
-                            your dog from a shelter, helps give a good home to a
-                            dog who may not find one so readily.
+                           
                           </p>
                         </Accordion.Content>
                       </Accordion>
@@ -357,6 +351,7 @@ export default class Payment extends Component {
               <Grid.Column width={2}></Grid.Column>
             </Grid>
           </Container>
+          <Footer/>
         </React.Fragment>
       );
     }

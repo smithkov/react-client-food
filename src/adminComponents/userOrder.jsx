@@ -2,7 +2,14 @@ import React, { Component, Fragment } from "react";
 import SideMenu from "./common/sideMenu";
 import { Col, Container, Row } from "reactstrap";
 import Nav from "./common/nav";
-import { Button, Checkbox, Icon, Table, Accordion } from "semantic-ui-react";
+import {
+  Button,
+  Checkbox,
+  Icon,
+  Table,
+  Accordion,
+  Message,
+} from "semantic-ui-react";
 import AfterNav from "./common/afterNav";
 import { MISSING_USER_MSG, ERROR_MSG, formatPrice } from "../utility/global";
 import clientService from "../services/clientService";
@@ -20,6 +27,7 @@ class UserOrder extends Component {
       orders: [],
       hasData: false,
       activeIndex: 1,
+      isSeller: false,
     };
   }
   handleClick = (e, titleProps) => {
@@ -35,17 +43,26 @@ class UserOrder extends Component {
   };
   componentWillReceiveProps = async (nextProps) => {
     if (nextProps) {
-      const result = await clientService.transactionByUser({
-        userId: nextProps.user.id,
-      });
-      this.setState({ orders: result.data.data });
+      const { user } = nextProps;
+      console.log(user);
+      if (user.role == "Customer") {
+        const result = await clientService.transactionByUser({
+          userId: user.id,
+        });
+        this.setState({ orders: result.data.data });
+      } else {
+        const result = await clientService.transactionByShop({
+          shopId: user.shopId,
+        });
+        this.setState({ orders: result.data.data, isSeller: true });
+      }
     }
   };
   onSubmit = (e) => {
     e.preventDefault();
   };
   render() {
-    const { activeIndex } = this.state;
+    const { activeIndex, orders, isSeller } = this.state;
     let indexCounter = 0;
     return (
       <Fragment>
@@ -61,53 +78,38 @@ class UserOrder extends Component {
             <Col lg="1"></Col>
 
             <Col className="dashboard-panel" lg="6">
-              <Accordion styled>
-                {this.state.orders.map((order) => {
-                  indexCounter++;
-
-                  return (
-                    <div>
-                      <Accordion.Title
-                        active={indexCounter==1? activeIndex === 1:""}
-                        index={indexCounter}
-                        onClick={this.handleClick}
-                      >
-                        <Icon name="dropdown" />
-                        Order Ref: {order.refNo}{" "}
-                        <span className="pull-right">
-                          Date :
-                          <Moment format="DD/MM/YYYY">{order.createdAt}</Moment>{" "}
-                        </span>
-                      </Accordion.Title>
-                      <Accordion.Content active={activeIndex === indexCounter}>
-                        <Table singleLine>
-                          <Table.Header>
-                            <Table.Row>
-                              <Table.HeaderCell>Quantity</Table.HeaderCell>
-                              <Table.HeaderCell>Name</Table.HeaderCell>
-                              <Table.HeaderCell>Price</Table.HeaderCell>
-                              <Table.HeaderCell>Total</Table.HeaderCell>
-                            </Table.Row>
-                          </Table.Header>
-
-                          <Table.Body>
-                            {order.soldProducts.map((item) => {
-                              return (
-                                <Table.Row>
-                                  <Table.Cell>{item.quantity}</Table.Cell>
-                              <Table.Cell>{item.name}</Table.Cell>
-                              <Table.Cell>{formatPrice(item.price) }</Table.Cell>
-                              <Table.Cell>{formatPrice(item.total)}</Table.Cell>
-                                </Table.Row>
-                              );
-                            })}
-                          </Table.Body>
-                        </Table>
-                      </Accordion.Content>
-                    </div>
-                  );
-                })}
-              </Accordion>
+              {orders.length == 0 ? (
+                <Message style={{ textAlign: "center" }} floating>
+                  <Message.Header>You currently have no orders.</Message.Header>
+                </Message>
+              ) : (
+                <Table color="red" >
+                  <Table.Header>
+                    <Table.Row>
+                      <Table.HeaderCell>Ref. No</Table.HeaderCell>
+                      <Table.HeaderCell>Date</Table.HeaderCell>
+                      <Table.HeaderCell>Total Items</Table.HeaderCell>
+                      <Table.HeaderCell>Grand Total</Table.HeaderCell>
+                      <Table.HeaderCell></Table.HeaderCell>
+                    </Table.Row>
+                  </Table.Header>
+                  {orders.map((order) => {
+                    return (<Table.Body>
+                      <Table.Row>
+                        <Table.Cell>{order.refNo}</Table.Cell>
+                        <Table.Cell>
+                          {" "}
+                          <Moment format="DD/MM/YYYY">{order.createdAt}</Moment>
+                        </Table.Cell>
+                        <Table.Cell>{order.soldProducts.length}</Table.Cell>
+                        <Table.Cell>{formatPrice(order.total)}</Table.Cell>
+                        <Table.Cell><a target="_blank" href={`/user/order/${order.id}`}><Icon color="red" name="external alternate"/></a></Table.Cell>
+                      </Table.Row>
+                     
+                    </Table.Body>);
+                  })}
+                </Table>
+              )}
             </Col>
           </Row>
         </Container>

@@ -4,6 +4,7 @@ import NavBar from "./NavBar";
 import { Grid, Image, Card, Header, Rating } from "semantic-ui-react";
 import Review from "./widgets/Review";
 import ReviewList from "./widgets/reviewList";
+import Footer from "./Footer";
 
 import {
   DEFAULT_USER,
@@ -158,6 +159,7 @@ export default class ProductDetail extends Component {
             <Grid.Column width={8}></Grid.Column>
           </Grid.Row>
         </Grid>
+        <Footer/>
       </React.Fragment>
     );
   }

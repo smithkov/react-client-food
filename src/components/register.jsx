@@ -65,9 +65,7 @@ class Register extends Component {
     });
   };
 
-  addOrder(){
-
-  }
+  addOrder() {}
   register = (e) => {
     e.preventDefault();
     const data = {
@@ -79,16 +77,15 @@ class Register extends Component {
 
     ClientService.register(data)
       .then((response) => {
-        const { data } = response.data;
-        localStorage.set(CRED, data)
-        this.props.history.push(LISTING_URL);
+        const error = response.data.error;
+        if (!error) this.props.history.push(LISTING_URL);
+        else {
+        }
       })
       .catch((err) => {
-        const { error, message } = err.response.data;
-
         this.setState({
           showAlert: true,
-          message: message,
+          message: "User could not be registered.",
         });
       });
   };

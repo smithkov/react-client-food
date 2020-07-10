@@ -12,6 +12,7 @@ import {
 } from "semantic-ui-react";
 import ErrorPage from "./errorPage";
 import ReviewList from "./widgets/reviewList";
+import Footer from "./Footer";
 
 import {
   DEFAULT_USER,
@@ -198,6 +199,7 @@ export default class DeliveryDetail extends Component {
             </Grid.Column>
             <Grid.Column width={5}></Grid.Column>
           </Grid>
+          <Footer/>
         </React.Fragment>
       );
     }

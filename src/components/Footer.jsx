@@ -10,6 +10,12 @@ import {
   Menu,
   Segment,
 } from "semantic-ui-react";
+import { Link } from "react-router-dom";
+import {
+ 
+  REGISTER_URL,
+  LOGIN_URL
+} from "../utility/global";
 
 const Footer = () => {
   return (
@@ -21,21 +27,21 @@ const Footer = () => {
       <Container textAlign="center">
         <Grid divided inverted stackable>
           <Grid.Column width={3}>
-            <Header inverted as="h4" content="Top cuisines" />
+            <Header inverted as="h4" content="Customer service" />
             <List link inverted>
-              <List.Item as="a">Nigerian</List.Item>
-              <List.Item as="a">Kenyan</List.Item>
-              <List.Item as="a">Ghana</List.Item>
-              <List.Item as="a">Cameroun</List.Item>
+              <List.Item as="a">Contact us</List.Item>
+              <List.Item as="a"><Link to={LOGIN_URL}>Log in</Link></List.Item>
+              <List.Item as="a"><Link to={REGISTER_URL}>Sign up</Link></List.Item>
+              <List.Item as="a"><Link to={REGISTER_URL}>My account</Link></List.Item>
             </List>
           </Grid.Column>
           <Grid.Column width={3}>
-            <Header inverted as="h4" content="Grocery categories" />
+            <Header inverted as="h4" content="Top cuisines" />
             <List link inverted>
-              <List.Item as="a">Vegetables</List.Item>
-              <List.Item as="a">Canned</List.Item>
-              <List.Item as="a">Drinks</List.Item>
-              <List.Item as="a">Cosmetics</List.Item>
+              <List.Item as="a">Nigerian</List.Item>
+              <List.Item as="a">Ghanian</List.Item>
+              <List.Item as="a">South-African</List.Item>
+              <List.Item as="a">Zimbabwean</List.Item>
             </List>
           </Grid.Column>
           <Grid.Column width={3}>
@@ -56,7 +62,7 @@ const Footer = () => {
         </Grid>
 
         <Divider inverted section />
-        <Image centered size="mini" src="/images/logo.png" />
+        <Image centered size="small" src="/images/foodengo_logo2.png" />
         <List horizontal inverted divided link size="small">
           <List.Item as="a" href="#">
             Site Map

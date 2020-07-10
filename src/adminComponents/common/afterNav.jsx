@@ -40,7 +40,7 @@ class AfterNav extends Component {
           <Grid.Column floated="right" width={5}>
             <span className="float-right">
               Logged In as {this.props.user.firstName}
-              <Link onClick={this.onClick}> (Sign Out)</Link>
+              <Link onClick={this.onClick}></Link>
             </span>
           </Grid.Column>
         </Grid>

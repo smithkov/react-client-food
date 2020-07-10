@@ -24,6 +24,7 @@ import {
   Rating,
   Select,
   Input,
+  Card,
 } from "semantic-ui-react";
 
 const options = [
@@ -52,6 +53,7 @@ class Listing extends Component {
       objectFit: "cover",
       objectPosition: "center center",
     };
+    
     return (
       <Grid style={{ paddingTop: 80, paddingLeft: 30 }} stackable>
         <Grid.Row>
@@ -61,7 +63,9 @@ class Listing extends Component {
               <Input fluid type="text" placeholder="Search..." action>
                 <input />
 
-                <Button color="blue" type="submit">Search</Button>
+                <Button color="blue" type="submit">
+                  Search
+                </Button>
               </Input>
               <br />
               <br />
@@ -70,10 +74,17 @@ class Listing extends Component {
                 // const rating = { id: 2, value: seller.rating}
                 return (
                   <React.Fragment>
-                    <Grid style={{ backgroundColor: "#F2F2F2" }} stackable>
+                    <Grid style={{ backgroundColor: "white" }} stackable>
                       <Grid.Row>
                         <Grid.Column width={5}>
-                          <Image
+                          <Card fluid color="red" raised>
+                            <Image
+                              style={styles}
+                              src={`${IMAGE_URL}${seller.photo}`}
+                              ui={false}
+                            />
+                          </Card>
+                          {/* <Image
                             style={{
                               objectFit: "cover",
                               objectPosition: "center center",
@@ -82,7 +93,7 @@ class Listing extends Component {
                             }}
                             src={`${IMAGE_URL}${seller.photo}`}
                             rounded
-                          />
+                          /> */}
                         </Grid.Column>
                         <Grid.Column width={11}>
                           <Grid>
@@ -95,7 +106,6 @@ class Listing extends Component {
                                 </Header>
                                 <Rating
                                   maxRating={5}
-                                  defaultRating={0}
                                   rating={displayRating(seller.productRatings)}
                                   disabled
                                   icon="star"
@@ -103,9 +113,9 @@ class Listing extends Component {
                                 />{" "}
                                 | {totalRating(seller.productRatings)}
                                 <br />
-                                <Link to={`/${seller.VirtualShop.shopUrl}`}>
+                               
                                   {seller.VirtualShop.shopName}
-                                </Link>
+                                
                               </Grid.Column>
                               <Grid.Column width={8}>
                                 {seller.VirtualShop.maxTime ? (
@@ -141,6 +151,7 @@ class Listing extends Component {
                                 ) : (
                                   ""
                                 )}
+                                 <Link to={`/${seller.VirtualShop.shopUrl}`}><Button color="red">Order from vendor</Button></Link>
                               </Grid.Column>
                             </Grid.Row>
                           </Grid>
