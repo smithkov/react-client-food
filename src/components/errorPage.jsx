@@ -45,19 +45,20 @@ export default class ErrorPage extends Component {
       <React.Fragment>
         <NavBar />
         <Grid style={{ margin: 70 }} stackable>
-          <Grid.Column width={2}></Grid.Column>
-          <Grid.Column width={12}>
+          <Grid.Column width={4}></Grid.Column>
+          <Grid.Column width={8}>
             <Header as="h2" icon textAlign="center">
-              <Icon color="red" name="exclamation triangle" circular />
-              <Header.Content>PAGE NOT FOUND</Header.Content>
+              
             </Header>
             <Image
               centered
               size="large"
-              src="https://react.semantic-ui.com/images/wireframe/centered-paragraph.png"
+              src="./images/foodengo-error.jpg"
             />
+            <hr></hr>
+            <Link to={`/listing`}><Button fluid color="red">Go to listing</Button></Link>
           </Grid.Column>
-          <Grid.Column width={2}></Grid.Column>
+          <Grid.Column width={4}></Grid.Column>
         </Grid>
       </React.Fragment>
     );

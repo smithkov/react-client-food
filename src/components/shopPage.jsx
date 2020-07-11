@@ -2,6 +2,7 @@ import React, { Component, createRef } from "react";
 import ClientService from "../services/clientService";
 import Geocode from "react-geocode";
 import Footer from "./Footer";
+import ErrorPage from "./errorPage";
 import {
   Map,
   GoogleApiWrapper,
@@ -34,13 +35,12 @@ import {
   Rating,
   formatPrice,
   getTempId,
-  toastOptions
+  toastOptions,
 } from "../utility/global";
 import clientService from "../services/clientService";
 import { Link } from "react-router-dom";
 import Social from "../adminComponents/social";
 import { toast } from "react-toastify";
-
 
 class ShopPage extends Component {
   constructor(props) {
@@ -73,6 +73,7 @@ class ShopPage extends Component {
     subTotal: 0,
     total: 0,
     deliveryPrice: 0,
+    redirect: false,
   };
   contextRef = createRef();
   componentWillUpdate(nextProps, nextState) {
@@ -101,7 +102,7 @@ class ShopPage extends Component {
       console.log(getTempId());
       const shopUrl = this.props.match.params.shopUrl;
       const getShop = await ClientService.findShopByUrl({ shopUrl });
-      
+
       const data = getShop.data;
 
       const {
@@ -163,7 +164,9 @@ class ShopPage extends Component {
         (error) => {}
       );
     } catch (err) {
-      console.log(err);
+      this.setState({
+        redirect: true,
+      });
     }
     const getCart = await clientService.getCartByTempId({
       shopId: this.state.shopId,
@@ -307,279 +310,288 @@ class ShopPage extends Component {
   }
 
   render() {
-    const mapStyles = {
-      width: "100%",
-      margin: "auto",
-      height: "100%",
-    };
-    const { socials } = this.state;
-    let socialRender;
+    if (this.state.redirect) {
+      return <ErrorPage />;
+    } else {
+      const mapStyles = {
+        width: "100%",
+        margin: "auto",
+        height: "100%",
+      };
+      const { socials } = this.state;
+      let socialRender;
 
-    if (socials.length > 0) {
-      let social = socials[0];
+      if (socials.length > 0) {
+        let social = socials[0];
 
-      const facebook = social.facebook ? (
-        <a target="blank" href={social.facebook}>
-          <Button circular color="facebook" icon="facebook" />
-        </a>
-      ) : (
-        ""
-      );
-      const twitter = social.twitter ? (
-        <a target="blank" href={social.twitter}>
-          <Button circular color="twitter" icon="twitter" />
-        </a>
-      ) : (
-        ""
-      );
-      const instagram = social.instagram ? (
-        <a target="blank" href={social.instagram}>
-          <Button circular color="instagram" icon="instagram" />
-        </a>
-      ) : (
-        ""
-      );
+        const facebook = social.facebook ? (
+          <a target="blank" href={social.facebook}>
+            <Button circular color="facebook" icon="facebook" />
+          </a>
+        ) : (
+          ""
+        );
+        const twitter = social.twitter ? (
+          <a target="blank" href={social.twitter}>
+            <Button circular color="twitter" icon="twitter" />
+          </a>
+        ) : (
+          ""
+        );
+        const instagram = social.instagram ? (
+          <a target="blank" href={social.instagram}>
+            <Button circular color="instagram" icon="instagram" />
+          </a>
+        ) : (
+          ""
+        );
 
-      socialRender = (
-        <div>
-          {facebook}
-          {instagram}
-          {twitter}
-        </div>
+        socialRender = (
+          <div>
+            {facebook}
+            {instagram}
+            {twitter}
+          </div>
+        );
+      }
+      const panes = [
+        {
+          menuItem: "Menu",
+          render: () => (
+            <React.Fragment>
+              <Tab.Pane>
+                <Grid doubling relaxed="very" columns={3}>
+                  {this.state.products.map((product) => {
+                    return (
+                      <ItemCard
+                        handleAdd={this.handleAddOrder}
+                        key={product.id}
+                        product={product}
+                      />
+                    );
+                  })}
+                </Grid>
+              </Tab.Pane>
+            </React.Fragment>
+          ),
+        },
+        {
+          menuItem: "Contact Us",
+          render: () => (
+            <Tab.Pane>
+              <div>
+                <Grid style={{ height: 220, padding: 20 }} columns={2} padded>
+                  <Grid.Column>
+                    <Card
+                      header={this.state.firstAddress}
+                      meta={this.state.city}
+                      description={this.state.postCode}
+                    />
+                    {socialRender}
+                  </Grid.Column>
+                  <Grid.Column>
+                    <Map
+                      google={this.props.google}
+                      zoom={15}
+                      style={mapStyles}
+                      initialCenter={{
+                        lat: this.state.lat,
+                        lng: this.state.lng,
+                      }}
+                    >
+                      <Marker
+                        position={{ lat: this.state.lat, lng: this.state.lng }}
+                      />
+                    </Map>
+                  </Grid.Column>
+                </Grid>
+              </div>
+            </Tab.Pane>
+          ),
+        },
+        {
+          menuItem: "Rating",
+          render: () => (
+            <Tab.Pane>
+              <Review isForShop={true} shopId={this.state.shopId} />
+              <hr></hr>
+              {this.state.comments.map((comment) => {
+                return <ReviewList key={comment.id} data={comment} />;
+              })}
+            </Tab.Pane>
+          ),
+        },
+      ];
+      const styles = {
+        height: 150,
+        width: "100%",
+        objectFit: "cover",
+        objectPosition: "center center",
+      };
+      const {
+        logoPreviewUrl,
+        bannerPreviewUrl,
+        notice,
+        minTime,
+        maxTime,
+        minOrder,
+        total,
+        orders,
+        percentageDiscount,
+        discountAmount,
+        subTotal,
+        shopId,
+        deliveryPrice,
+        offerDiscount,
+      } = this.state;
+
+      const orderLength = orders.length;
+      const hasOrder = orderLength > 0;
+
+      const isShowDeliveryLimBox = subTotal < minOrder && orderLength > 0;
+
+      return (
+        <React.Fragment>
+          <NavBar />
+          <Ref innerRef={this.contextRef}>
+            <Grid stackable style={{ margin: 70 }}>
+              <Grid.Row>
+                <Grid.Column width={4}>
+                  <Image
+                    className="img-resize"
+                    src={logoPreviewUrl || DEFAULT_LOGO}
+                  />
+                </Grid.Column>
+                <Grid.Column width={12}>
+                  <Image
+                    style={styles}
+                    className="img-resize"
+                    src={bannerPreviewUrl}
+                  />
+                  {notice ? (
+                    <Message
+                      icon="announcement"
+                      // header="Have you heard about our mailing list?"
+                      content={notice}
+                    />
+                  ) : (
+                    ""
+                  )}
+                </Grid.Column>
+              </Grid.Row>
+              <Grid.Row>
+                <Grid.Column width={4}>
+                  <Message floating>
+                    <List>
+                      {percentageDiscount ? (
+                        <List.Item>
+                          <List.Icon color="red" name="fire" />
+                          <List.Content className="red">
+                            {" "}
+                            {percentageDiscount}% off when you spend £
+                            {discountAmount}
+                          </List.Content>
+                          <hr />
+                        </List.Item>
+                      ) : (
+                        ""
+                      )}
+                      {minTime ? (
+                        <List.Item>
+                          <List.Icon name="shipping fast" />
+                          <List.Content>
+                            {" "}
+                            Delivery {minTime}-{maxTime} mins
+                          </List.Content>
+                          <hr />
+                        </List.Item>
+                      ) : (
+                        ""
+                      )}
+                    </List>
+                    {!isShowDeliveryLimBox ? (
+                      ""
+                    ) : (
+                      <div className="alertBox">{`Spend ${formatPrice(
+                        minOrder - subTotal
+                      )} more for delivery`}</div>
+                    )}
+                    {hasOrder ? (
+                      <Table color="red">
+                        <Table.Body>
+                          {orders.map((order) => {
+                            return (
+                              <Order
+                                handleRemove={this.handleRemoveOrder}
+                                item={order}
+                              />
+                            );
+                          })}
+                        </Table.Body>
+                      </Table>
+                    ) : (
+                      `There are no items in your basket`
+                    )}
+
+                    {hasOrder ? (
+                      <Table color="orange">
+                        <Table.Body>
+                          <Table.Row>
+                            <Table.Cell>SubTotal:</Table.Cell>
+                            <Table.Cell textAlign="right">
+                              {formatPrice(subTotal)}
+                            </Table.Cell>
+                          </Table.Row>
+                          <Table.Row>
+                            <Table.Cell>Delivery:</Table.Cell>{" "}
+                            <Table.Cell textAlign="right">
+                              {formatPrice(deliveryPrice)}
+                            </Table.Cell>
+                          </Table.Row>
+                          <Table.Row>
+                            <Table.Cell>Discount:</Table.Cell>{" "}
+                            <Table.Cell textAlign="right">
+                              {formatPrice(offerDiscount)}
+                            </Table.Cell>
+                          </Table.Row>
+                          <Table.Row>
+                            <Table.Cell>Total:</Table.Cell>{" "}
+                            <Table.Cell textAlign="right">
+                              {formatPrice(total)}
+                            </Table.Cell>
+                          </Table.Row>
+                        </Table.Body>
+                      </Table>
+                    ) : (
+                      ``
+                    )}
+                    {hasOrder ? (
+                      <Link to={`/delivery/detail/${getTempId()}/${shopId}`}>
+                        <Button
+                          fluid
+                          primary
+                          disabled={
+                            parseFloat(subTotal) <= parseFloat(minOrder)
+                          }
+                        >
+                          Checkout
+                        </Button>
+                      </Link>
+                    ) : (
+                      ""
+                    )}
+                  </Message>
+                </Grid.Column>
+                <Grid.Column width={12}>
+                  <Tab panes={panes} onTabChange={this.handleTabChange} />
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
+          </Ref>
+          <Footer />
+        </React.Fragment>
       );
     }
-    const panes = [
-      {
-        menuItem: "Menu",
-        render: () => (
-          <React.Fragment>
-            <Tab.Pane>
-              <Grid doubling relaxed="very" columns={3}>
-                {this.state.products.map((product) => {
-                  return (
-                    <ItemCard
-                      handleAdd={this.handleAddOrder}
-                      key={product.id}
-                      product={product}
-                    />
-                  );
-                })}
-              </Grid>
-            </Tab.Pane>
-          </React.Fragment>
-        ),
-      },
-      {
-        menuItem: "Contact Us",
-        render: () => (
-          <Tab.Pane>
-            <div>
-              <Grid style={{ height: 220, padding: 20 }} columns={2} padded>
-                <Grid.Column>
-                  <Card
-                    header={this.state.firstAddress}
-                    meta={this.state.city}
-                    description={this.state.postCode}
-                  />
-                  {socialRender}
-                </Grid.Column>
-                <Grid.Column>
-                  <Map
-                    google={this.props.google}
-                    zoom={15}
-                    style={mapStyles}
-                    initialCenter={{ lat: this.state.lat, lng: this.state.lng }}
-                  >
-                    <Marker
-                      position={{ lat: this.state.lat, lng: this.state.lng }}
-                    />
-                  </Map>
-                </Grid.Column>
-              </Grid>
-            </div>
-          </Tab.Pane>
-        ),
-      },
-      {
-        menuItem: "Rating",
-        render: () => (
-          <Tab.Pane>
-            <Review isForShop={true} shopId={this.state.shopId} />
-            <hr></hr>
-            {this.state.comments.map((comment) => {
-              return <ReviewList key={comment.id} data={comment} />;
-            })}
-          </Tab.Pane>
-        ),
-      },
-    ];
-    const styles = {
-      height: 150,
-      width: "100%",
-      objectFit: "cover",
-      objectPosition: "center center",
-    };
-    const {
-      logoPreviewUrl,
-      bannerPreviewUrl,
-      notice,
-      minTime,
-      maxTime,
-      minOrder,
-      total,
-      orders,
-      percentageDiscount,
-      discountAmount,
-      subTotal,
-      shopId,
-      deliveryPrice,
-      offerDiscount,
-    } = this.state;
-
-    const orderLength = orders.length;
-    const hasOrder = orderLength > 0;
-
-    const isShowDeliveryLimBox = subTotal < minOrder && orderLength > 0;
-
-    return (
-      <React.Fragment>
-        <NavBar />
-        <Ref innerRef={this.contextRef}>
-          <Grid stackable style={{ margin: 70 }}>
-            <Grid.Row>
-              <Grid.Column width={4}>
-                <Image
-                  className="img-resize"
-                  src={logoPreviewUrl || DEFAULT_LOGO}
-                />
-              </Grid.Column>
-              <Grid.Column width={12}>
-                <Image
-                  style={styles}
-                  className="img-resize"
-                  src={bannerPreviewUrl}
-                />
-                {notice ? (
-                  <Message
-                    icon="announcement"
-                    // header="Have you heard about our mailing list?"
-                    content={notice}
-                  />
-                ) : (
-                  ""
-                )}
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-              <Grid.Column width={4}>
-                <Message floating>
-                  <List>
-                    {percentageDiscount ? (
-                      <List.Item>
-                        <List.Icon color="red" name="fire" />
-                        <List.Content className="red">
-                          {" "}
-                          {percentageDiscount}% off when you spend £
-                          {discountAmount}
-                        </List.Content>
-                        <hr />
-                      </List.Item>
-                    ) : (
-                      ""
-                    )}
-                    {minTime ? (
-                      <List.Item>
-                        <List.Icon name="shipping fast" />
-                        <List.Content>
-                          {" "}
-                          Delivery {minTime}-{maxTime} mins
-                        </List.Content>
-                        <hr />
-                      </List.Item>
-                    ) : (
-                      ""
-                    )}
-                  </List>
-                  {!isShowDeliveryLimBox ? (
-                    ""
-                  ) : (
-                    <div className="alertBox">{`Spend ${formatPrice(
-                      minOrder - subTotal
-                    )} more for delivery`}</div>
-                  )}
-                  {hasOrder ? (
-                    <Table color="red">
-                      <Table.Body>
-                        {orders.map((order) => {
-                          return (
-                            <Order
-                              handleRemove={this.handleRemoveOrder}
-                              item={order}
-                            />
-                          );
-                        })}
-                      </Table.Body>
-                    </Table>
-                  ) : (
-                    `There are no items in your basket`
-                  )}
-
-                  {hasOrder ? (
-                    <Table color="orange">
-                      <Table.Body>
-                        <Table.Row>
-                          <Table.Cell>SubTotal:</Table.Cell>
-                          <Table.Cell textAlign="right">
-                            {formatPrice(subTotal)}
-                          </Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                          <Table.Cell>Delivery:</Table.Cell>{" "}
-                          <Table.Cell textAlign="right">
-                            {formatPrice(deliveryPrice)}
-                          </Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                          <Table.Cell>Discount:</Table.Cell>{" "}
-                          <Table.Cell textAlign="right">
-                            {formatPrice(offerDiscount)}
-                          </Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                          <Table.Cell>Total:</Table.Cell>{" "}
-                          <Table.Cell textAlign="right">
-                            {formatPrice(total)}
-                          </Table.Cell>
-                        </Table.Row>
-                      </Table.Body>
-                    </Table>
-                  ) : (
-                    ``
-                  )}
-                  {hasOrder ? (
-                    <Link to={`/delivery/detail/${getTempId()}/${shopId}`}>
-                      <Button
-                        fluid
-                        primary
-                        disabled={parseFloat(subTotal) <= parseFloat(minOrder)}
-                      >
-                        Checkout
-                      </Button>
-                    </Link>
-                  ) : (
-                    ""
-                  )}
-                </Message>
-              </Grid.Column>
-              <Grid.Column width={12}>
-                <Tab panes={panes} onTabChange={this.handleTabChange} />
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
-        </Ref>
-        <Footer/>
-      </React.Fragment>
-    );
   }
 }
 

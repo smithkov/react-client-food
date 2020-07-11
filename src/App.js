@@ -6,6 +6,7 @@ import Landing from "./components/Landing";
 import Login from "./components/login";
 import Register from "./components/register";
 import ShopPage from "./components/ShopPage";
+import ErrorPage from "./components/errorPage";
 import Payment from "./components/payment";
 import FoodListing from "./components/FoodListing";
 import Dashboard from "../src/adminComponents/dashboard";
@@ -23,6 +24,7 @@ import DeliveryDetail from "./components/deliveryDetail";
 import ShopCreate from "./components/shopCreate";
 import UserOrder from "../src/adminComponents/userOrder";
 import OrderDetail from "../src/adminComponents/orderDetail";
+import Privacy from "./components/static/privacy";
 import { Provider } from "react-redux";
 import store from "./store";
 import ProtectedRoute from "./ProtectedRoute";
@@ -48,7 +50,8 @@ import {
   PRODUCT_DETAIL_URL,
   SHOP_SIGNUP,
   VENDOR_APPLY_SUCCESS,
-  ORDER_DETAIL_URL
+  ORDER_DETAIL_URL,
+  PRIVACY_URL
 } from "./utility/global";
 
 class App extends React.Component {
@@ -63,6 +66,7 @@ class App extends React.Component {
             <Route exact path={REGISTER_URL} component={Register} />
             <Route exact path={SHOP_SIGNUP} component={ShopCreate} />
             <Route exact path={SHOP_CREATE} component={ShopForm} />
+            <Route exact path={PRIVACY_URL} component={Privacy} />
             <Route
               exact
               path={VENDOR_APPLY_SUCCESS}
@@ -116,6 +120,7 @@ class App extends React.Component {
               path={PAYMENT_URL}
               component={ProtectedRoute(Payment)}
             />
+            <Route component={ErrorPage} />
             <Route exact path={PRODUCT_DETAIL_URL} component={ProductDetail} />
             <Route exact path={PAY_STATUS_URL} component={PaymentSuccess} />
           </Switch>

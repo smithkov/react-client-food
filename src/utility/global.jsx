@@ -12,6 +12,7 @@ export const LISTING_URL = "/listing";
 export const MY_ACCOUNT = "/myAccount";
 export const DASHBOARD_URL = "/dashboard";
 export const SHOP_SETTING_URL = "/shop/settings";
+export const PRIVACY_URL = "/user-seller/privacy";
 export const SHOP_SOCIAL_URL = "/shop/social";
 export const USER_ORDER_URL = "/user/order";
 export const SHOP_SIGNUP = "/business-signup";
