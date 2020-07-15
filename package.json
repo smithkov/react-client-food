@@ -1,5 +1,6 @@
 {
   "name": "food-app",
+  "homepage": "http://foodengo.co.uk",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -16,6 +17,7 @@
     "bootstrap": "^4.5.0",
     "concurrently": "^5.2.0",
     "core-js": "^3.6.4",
+    "express": "^4.17.1",
     "google-map-react": "^1.1.7",
     "google-maps-react": "^2.0.6",
     "js-cookie": "^2.2.1",

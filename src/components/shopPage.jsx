@@ -360,7 +360,7 @@ class ShopPage extends Component {
           render: () => (
             <React.Fragment>
               <Tab.Pane>
-                <Grid doubling relaxed="very" columns={3}>
+                <Grid stackable columns={3}>
                   {this.state.products.map((product) => {
                     return (
                       <ItemCard

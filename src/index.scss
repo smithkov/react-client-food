@@ -163,11 +163,19 @@ body {
 .capitalize{
   text-transform: capitalize;
 }
-h4,h1,h3,h4, h2,p {
+h5,h4,h1,h3,h4, h2,p {
   margin: 0;
   font-family: Ubuntu,Arial,sans-serif;
   font-weight: 300;
   color: #535353;
+}
+.desc{
+  font-size: .875rem;
+  margin: 0;
+  font-family: Hind Vadodara,Helvetica Neue,Helvetica,sans-serif;
+  font-weight: 300;
+  color: #333;
+  
 }
 @media only screen and (min-width: 992px){
   .ui.tiny.modal {

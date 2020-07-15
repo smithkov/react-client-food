@@ -53,12 +53,14 @@ class Listing extends Component {
       objectFit: "cover",
       objectPosition: "center center",
     };
-    
+
     return (
-      <Grid style={{ paddingTop: 80, paddingLeft: 30 }} stackable>
+      <Grid style={{ paddingTop: 80 }} stackable>
         <Grid.Row>
-          <Grid.Column width={3}>{this.props.children}</Grid.Column>
-          <Grid.Column width={10}>
+          <Grid.Column style={{ paddingLeft: 40 }} width={3}>
+            {this.props.children}
+          </Grid.Column>
+          <Grid.Column style={{ padding: 20 }} width={10}>
             <React.Fragment>
               <Input fluid type="text" placeholder="Search..." action>
                 <input />
@@ -74,7 +76,10 @@ class Listing extends Component {
                 // const rating = { id: 2, value: seller.rating}
                 return (
                   <React.Fragment>
-                    <Grid style={{ backgroundColor: "white" }} stackable>
+                    <Grid
+                      style={{ backgroundColor: "white", padding: 10 }}
+                      stackable
+                    >
                       <Grid.Row>
                         <Grid.Column width={5}>
                           <Card fluid color="red" raised>
@@ -84,22 +89,17 @@ class Listing extends Component {
                               ui={false}
                             />
                           </Card>
-                          {/* <Image
-                            style={{
-                              objectFit: "cover",
-                              objectPosition: "center center",
-                              height: 200,
-                              width: "100%",
-                            }}
-                            src={`${IMAGE_URL}${seller.photo}`}
-                            rounded
-                          /> */}
+                          <Link to={`/${seller.VirtualShop.shopUrl}`}>
+                            <Button basic color='red' fluid>
+                              Order from vendor
+                            </Button>
+                          </Link>
                         </Grid.Column>
                         <Grid.Column width={11}>
-                          <Grid>
+                          <Grid stackable>
                             <Grid.Row>
                               <Grid.Column width={8}>
-                                <Header as="h4">{seller.name}</Header>
+                                <h4>{seller.name}</h4>
                                 <span>{seller.desc}</span>
                                 <Header color="red" as="h4">
                                   {formatPrice(seller.price)}
@@ -112,12 +112,9 @@ class Listing extends Component {
                                   size="small"
                                 />{" "}
                                 | {totalRating(seller.productRatings)}
-                                <br />
-                               
-                                  {seller.VirtualShop.shopName}
-                                
+                                <h5>{seller.VirtualShop.shopName}</h5>
                               </Grid.Column>
-                              <Grid.Column width={8}>
+                              <Grid.Column className="desc" width={8}>
                                 {seller.VirtualShop.maxTime ? (
                                   <p>
                                     <Icon name="time" />
@@ -151,7 +148,9 @@ class Listing extends Component {
                                 ) : (
                                   ""
                                 )}
-                                 <Link to={`/${seller.VirtualShop.shopUrl}`}><Button color="red">Order from vendor</Button></Link>
+                                {/* <Link to={`/${seller.VirtualShop.shopUrl}`}>
+                                  <Button fluid color="red">Order from vendor</Button>
+                                </Link> */}
                               </Grid.Column>
                             </Grid.Row>
                           </Grid>

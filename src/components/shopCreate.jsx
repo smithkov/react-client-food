@@ -51,6 +51,8 @@ export default class ShopCreate extends Component {
     cityText: "City",
     loading: false,
     isDuplicateName: false,
+    emailMessage: "",
+    isDuplicateEmail: false,
   };
 
   componentDidMount = async () => {
@@ -101,26 +103,33 @@ export default class ShopCreate extends Component {
     this.setState({
       loading: true,
     });
+    try {
+      const response = await clientService.createShop({
+        firstAddress,
+        lastName,
+        email,
+        phone,
+        firstName,
+        postCode,
+        password,
+        shopName,
+        cityId: selectedCity,
+      });
 
-    const response = await clientService.createShop({
-      firstAddress,
-      lastName,
-      email,
-      phone,
-      firstName,
-      postCode,
-      password,
-      shopName,
-      cityId: selectedCity,
-    });
-    console.log(response);
-    if (response.data.error) {
-      toast.success(response.data.message, toastOptions(true));
+      if (response.data.error) {
+        toast.success(response.data.message, toastOptions(true));
+        this.setState({
+          loading: false,
+        });
+      } else {
+        this.props.history.push(
+          `/food_vendor/application-success/${response.data.id}`
+        );
+      }
+    } catch (err) {
       this.setState({
         loading: false,
       });
-    } else {
-      this.props.history.push(`/food_vendor/application-success/${response.data.id}`);
     }
   };
 
@@ -128,7 +137,7 @@ export default class ShopCreate extends Component {
     const { shopName } = this.state;
     if (e.target.name == "shopName") {
       const response = await clientService.findShopByName({ shopName });
-      
+
       if (response.data) {
         this.setState({
           disabled: true,
@@ -141,6 +150,25 @@ export default class ShopCreate extends Component {
         });
       }
     }
+  };
+  onBlurEmail = (e) => {
+    const { email } = this.state;
+
+    clientService.findEmail({ email }).then((response) => {
+      const { hasEmail, message } = response.data;
+      if (hasEmail) {
+        this.setState({
+          disabled: true,
+          emailMessage: message,
+          isDuplicateEmail: true,
+        });
+      } else {
+        this.setState({
+          disabled: false,
+          isDuplicateEmail: false,
+        });
+      }
+    });
   };
   render() {
     const {
@@ -155,15 +183,23 @@ export default class ShopCreate extends Component {
       selectedCity,
       cityText,
       city,
+      email,
       disabled,
       isDuplicateName,
+      isDuplicateEmail,
       isDuplicateUrl,
       loading,
+      emailMessage
     } = this.state;
     const nameAlert = isDuplicateName ? (
       <Message color="yellow">
         The restaurant name is already taken. Please choose a different one.
       </Message>
+    ) : (
+      ""
+    );
+    const emailAlert = isDuplicateEmail ? (
+      <Message color="yellow">{emailMessage}</Message>
     ) : (
       ""
     );
@@ -192,7 +228,7 @@ export default class ShopCreate extends Component {
           <Col className="dashboard-panel" lg="6">
             <Message
               warning
-              header="All fields marked with asterisk (*) are required"
+              header="All fields marked with asterisk (*) are required."
             />
             <Message
               attached
@@ -302,13 +338,14 @@ export default class ShopCreate extends Component {
                 </Form.Field>
               </Form.Group>
               <Message floating content="Login Details" />
-
+              {emailAlert}
               <Form.Group widths="equal">
                 <Form.Field required>
                   <label>Email</label>
                   <input
                     type="email"
                     required
+                    onBlur={this.onBlurEmail}
                     name="email"
                     onChange={this.onChange}
                     placeholder="Email"

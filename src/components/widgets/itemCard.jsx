@@ -34,7 +34,7 @@ export default class ItemCard extends Component {
     return (
       <React.Fragment>
         <Grid.Column>
-          <Card color="red">
+          <Card fluid color="red">
             <Image
               style={styles}
               src={photo ? `${IMAGE_URL}${photo}` : DEFAULT_LOGO}

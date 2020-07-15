@@ -14,7 +14,8 @@ import { Link } from "react-router-dom";
 import {
  
   REGISTER_URL,
-  LOGIN_URL
+  LOGIN_URL,
+  SHOP_SIGNUP
 } from "../utility/global";
 
 const Footer = () => {
@@ -33,6 +34,7 @@ const Footer = () => {
               <List.Item as="a"><Link to={LOGIN_URL}>Log in</Link></List.Item>
               <List.Item as="a"><Link to={REGISTER_URL}>Sign up</Link></List.Item>
               <List.Item as="a"><Link to={REGISTER_URL}>My account</Link></List.Item>
+              <List.Item as="a"><Link to={SHOP_SIGNUP}>Vendor sign up</Link></List.Item>
             </List>
           </Grid.Column>
           <Grid.Column width={3}>
@@ -62,7 +64,7 @@ const Footer = () => {
         </Grid>
 
         <Divider inverted section />
-        <Image centered size="small" src="/images/foodengo_logo2.png" />
+        <Image centered size="small" src="/images/foodengo_logo.png" />
         <List horizontal inverted divided link size="small">
           <List.Item as="a" href="#">
             Site Map

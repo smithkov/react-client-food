@@ -49,7 +49,7 @@ export default class ShopForm extends Component {
     return (
       <Container fluid={true}>
         <Nav />
-        <AfterNav form={"Product List"} />
+        <AfterNav form={"Food List"} />
         <hr></hr>
         <Row className="dash-layout">
           <Col lg="2">
@@ -108,7 +108,7 @@ export default class ShopForm extends Component {
                           primary
                           size="small"
                         >
-                          <Icon name="add circle" /> Add product
+                          <Icon name="add circle" /> Add food
                         </Button>
                       </Link>
                     </Table.HeaderCell>
@@ -118,7 +118,7 @@ export default class ShopForm extends Component {
             ) : (
               <Link to={MEAL_CREATE}>
                 <Button type="submit" color="teal" fluid size="large">
-                  Create new products
+                  Create new food
                 </Button>
               </Link>
             )}

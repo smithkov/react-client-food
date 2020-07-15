@@ -172,6 +172,10 @@ class ClientService {
     return http.post(`/shopByUrl`, data);
   }
 
+  findEmail(data) {
+    return http.post(`/findEmail`, data);
+  }
+
   findShopById(id) {
     return http.get(`/shop/${id}`);
   }

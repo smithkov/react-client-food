@@ -26,7 +26,6 @@ class SideMenu extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps) {
-      
     }
   }
 
@@ -88,17 +87,13 @@ class SideMenu extends Component {
             <Menu.Header>Orders</Menu.Header>
 
             <Menu.Menu>
-              <Menu.Item
-                name="Fulfilled-orders"
-                active={this.state.activeItem === "Fulfilled-orders"}
-                onClick={this.handleItemClick}
-              />
-
-              <Menu.Item
-                name="Unfulfilled-orders"
-                active={this.state.activeItem === "Unfulfilled-orders"}
-                onClick={this.handleItemClick}
-              />
+              <Link to={USER_ORDER_URL}>
+                <Menu.Item
+                  name="customer orders"
+                  active={this.state.activeItem === "customer orders"}
+                  onClick={this.handleItemClick}
+                />
+              </Link>
             </Menu.Menu>
           </Menu.Item>
 
@@ -114,31 +109,32 @@ class SideMenu extends Component {
                 />
               </Link>
               <Link to={SHOP_SETTING_URL}>
-              <Menu.Item
-                name="Seller-settings"
-                active={this.state.activeItem === "Seller-settings"}
-                onClick={this.handleItemClick}
-              /></Link>
+                <Menu.Item
+                  name="Seller-settings"
+                  active={this.state.activeItem === "Seller-settings"}
+                  onClick={this.handleItemClick}
+                />
+              </Link>
             </Menu.Menu>
           </Menu.Item>
 
           <Menu.Item>
-            <Menu.Header>Shop</Menu.Header>
+            <Menu.Header>Online Store</Menu.Header>
 
             <Menu.Menu>
               <Link to={SHOP_CREATE}>
                 <Menu.Item
-                  name="create-shop"
-                  active={this.state.activeItem === "create-shop"}
+                  name="my-store"
+                  active={this.state.activeItem === "my-store"}
                   onClick={this.handleItemClick}
                 >
-                  My Shop
+                  My Store
                 </Menu.Item>
               </Link>
               <Link to={SHOP_SETTING_URL}>
                 <Menu.Item
-                  name="shop-settings"
-                  active={this.state.activeItem === "shop-settings"}
+                  name="store-settings"
+                  active={this.state.activeItem === "store-settings"}
                   onClick={this.handleItemClick}
                 >
                   Settings

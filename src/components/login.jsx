@@ -123,7 +123,7 @@ class Login extends Component {
                 icon={<Icon name="facebook" />}
                 textButton="&nbsp;&nbsp;Sign In with Facebook"
               />
-              <GoogleLogin
+              {/* <GoogleLogin
                 clientId="489905510114-d9395vk5dso3h7bb07rlfv492u444ebs.apps.googleusercontent.com"
                 render={(renderProps) => (
                   <button
@@ -141,7 +141,7 @@ class Login extends Component {
                 className="google"
                 style={{ textAlign: "center" }}
                 buttonText="Sign In with Google"
-              />
+              /> */}
               <div class="ui horizontal divider">Or</div>
               <Segment stacked>
                 <Form.Input

@@ -85,7 +85,7 @@ class ProductForm extends React.Component {
           };
         });
         this.setState({
-          origin: [{ key: "", text: "--Select product origin--" }].concat(
+          origin: [{ key: "", text: "--Select food origin--" }].concat(
             origins
           ),
         });
@@ -200,7 +200,7 @@ class ProductForm extends React.Component {
         }
       } else {
         toast.success(
-          "At least one product photo is required.",
+          "At least one food photo is required.",
           toastOptions(true)
         );
       }
@@ -235,7 +235,7 @@ class ProductForm extends React.Component {
     return (
       <Container fluid={true}>
         <Nav />
-        <AfterNav form={"Create Product"} />
+        <AfterNav form={"Create Food"} />
         <hr></hr>
         <Row className="dash-layout">
           <Col lg="2">
@@ -246,9 +246,9 @@ class ProductForm extends React.Component {
             {redirect ? (
               <SaveSuccess
                 data={{
-                  message: "Your meal was created successfully.",
-                  btnText1: "Create Another Meal",
-                  btnText2: "Go to Meal List",
+                  message: "Your food was created successfully.",
+                  btnText1: "Create another food",
+                  btnText2: "Go to food list",
                   url1: MEAL_CREATE,
                   url2: MEAL_LIST,
                 }}

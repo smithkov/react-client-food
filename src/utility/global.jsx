@@ -1,9 +1,9 @@
 import clientService from "../services/clientService";
 import { toast } from "react-toastify";
-// export const SERVER_URL = "http://localhost:8000/api";
-// export const IMAGE_URL = "http://localhost:8000/uploads/category/";
-export const SERVER_URL = "http://api.foodengo.co.uk/api";
-export const IMAGE_URL = "http://api.foodengo.co.uk/uploads/category/";
+export const SERVER_URL = "http://localhost:8000/api";
+export const IMAGE_URL = "http://localhost:8000/uploads/category/";
+// export const SERVER_URL = "https://api.foodengo.co.uk/api";
+// export const IMAGE_URL = "https://api.foodengo.co.uk/uploads/category/";
 export const MEAL_CREATE = "/meal/food_reg";
 export const MEAL_LIST = "/meal/food_list";
 export const MEAL_UPDATE = "/meal/update/:id";

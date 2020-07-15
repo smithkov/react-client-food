@@ -29,7 +29,8 @@ import {
   REGISTER_URL,
   LOGIN_URL,
 } from "../utility/global";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
+import HomepageHeading from '../components/homePageHeading'
 // Heads up!
 // We using React Static to prerender our docs with server side rendering, this is a quite simple solution.
 // For more advanced usage please check Responsive docs under the "Usage" section.
@@ -43,46 +44,7 @@ const getWidth = () => {
 /* Heads up! HomepageHeading uses inline styling, however it's not the best practice. Use CSS or styled components for
  * such things.
  */
-const HomepageHeading = ({ mobile }) => (
-  <Container style={{ backgroundColor: "white", paddingBottom: 30 }} text>
-    <Header
-      as="h1"
-      content="Foodengo"
-      inverted
-      style={{
-        fontSize: mobile ? "2em" : "4em",
-        fontWeight: "normal",
-        marginBottom: 0,
-        color: "#660000",
-        marginTop: mobile ? "1.5em" : "3em",
-      }}
-    />
-    <Header
-      as="h2"
-      content="Get your African/Caribbean food delivered to your doorstep"
-      inverted
-      style={{
-        fontSize: mobile ? "1.5em" : "1.7em",
-        fontWeight: "normal",
-        color: "#660000",
-        marginTop: mobile ? "0.5em" : "1.5em",
-      }}
-    />
-    <Input fluid type="text" placeholder="Edinburgh" action>
-      <input />
-      <Link to={LISTING_URL}>
-        <Button color="red" type="submit">
-          Find Food
-        </Button>
-      </Link>
-    </Input>
-  </Container>
-);
-
-HomepageHeading.propTypes = {
-  mobile: PropTypes.bool,
-};
-
+ 
 /* Heads up!
  * Neither Semantic UI nor Semantic UI React offer a responsive navbar, however, it can be implemented easily.
  * It can be more complicated, but you can create really flexible markup.
@@ -178,10 +140,10 @@ class MobileContainer extends Component {
           <Menu.Item as="a" active>
             Home
           </Menu.Item>
-          <Menu.Item as="a">Work</Menu.Item>
+          {/* <Menu.Item as="a">Work</Menu.Item>
           <Menu.Item as="a">Company</Menu.Item>
           <Menu.Item as="a">Careers</Menu.Item>
-          <Menu.Item as="a">Log in</Menu.Item>
+          <Menu.Item as="a">Log in</Menu.Item> */}
         </Sidebar>
 
         <Sidebar.Pusher dimmed={sidebarOpened}>
@@ -206,7 +168,7 @@ class MobileContainer extends Component {
                 </Menu.Item>
               </Menu>
             </Container>
-            <HomepageHeading mobile />
+            <HomepageHeading mobile={true} />
           </Segment>
 
           {children}
@@ -294,4 +256,4 @@ class Landing extends Component {
   }
 }
 
-export default Landing;
+export default withRouter(Landing);

@@ -109,7 +109,7 @@ class NavBar extends Component {
                     height: "35px",
                     width: "100px",
                   }}
-                  src="/images/foodengo_logo2.png"
+                  src="/images/foodengo_logo.png"
                 />{" "}
               </Link>
             </Menu.Item>
