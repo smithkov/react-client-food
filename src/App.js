@@ -24,6 +24,7 @@ import DeliveryDetail from "./components/deliveryDetail";
 import ShopCreate from "./components/shopCreate";
 import UserOrder from "../src/adminComponents/userOrder";
 import OrderDetail from "./adminComponents/orderDetail";
+import AvailableTime from "./adminComponents/availableTime";
 import Privacy from "./components/static/privacy";
 import { Provider } from "react-redux";
 import store from "./store";
@@ -37,6 +38,7 @@ import {
   SHOP_CREATE,
   LOGIN_URL,
   REGISTER_URL,
+  AVAILABILITY_URL,
   MY_ACCOUNT,
   DASHBOARD_URL,
   PAYMENT_URL,
@@ -81,6 +83,11 @@ class App extends React.Component {
               exact
               path={ORDER_DETAIL_URL}
               component={ProtectedRoute(OrderDetail)}
+            />
+            <Route
+              exact
+              path={AVAILABILITY_URL}
+              component={ProtectedRoute(AvailableTime)}
             />
             <Route
               exact

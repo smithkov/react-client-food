@@ -17,6 +17,7 @@ import {
   Image,
   Message,
   Input,
+  Icon
 } from "semantic-ui-react";
 import AfterNav from "./common/afterNav";
 //import "date-fns";
@@ -416,10 +417,10 @@ export default class ShopForm extends Component {
                 </Form.Field>
               </Form.Group>
 
-              <Button disabled={disabled} type="submit">
-                Create Shop
+              <Button color="red" disabled={disabled} type="submit">
+                Save store <Icon name="save" />
               </Button>
-            </Form>
+            </Form><br/><br/>
           </Col>
         </Row>
       </Container>

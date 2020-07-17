@@ -101,11 +101,11 @@ export default class ShopForm extends Component {
                     <Table.HeaderCell />
                     <Table.HeaderCell colSpan="4">
                       <Link to={MEAL_CREATE}>
-                        <Button
+                        <Button 
                           floated="right"
                           icon
                           labelPosition="left"
-                          primary
+                          color="red"
                           size="small"
                         >
                           <Icon name="add circle" /> Add food
@@ -117,8 +117,8 @@ export default class ShopForm extends Component {
               </Table>
             ) : (
               <Link to={MEAL_CREATE}>
-                <Button type="submit" color="teal" fluid size="large">
-                  Create new food
+                <Button type="submit" color="red" fluid size="large">
+                  Save food <Icon name="save" />
                 </Button>
               </Link>
             )}

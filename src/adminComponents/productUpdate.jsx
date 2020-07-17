@@ -5,7 +5,7 @@ import AfterNav from "./common/afterNav";
 
 import _ from "lodash";
 
-import { Icon } from "react-icons-kit";
+
 import { remove } from "react-icons-kit/fa/remove";
 import Nav from "./common/nav";
 import SideMenu from "./common/sideMenu";
@@ -23,7 +23,7 @@ import {
   SAVE_SUCCESS,
   IMAGE_URL,
 } from "../utility/global";
-import { Button, Message, Form } from "semantic-ui-react";
+import { Button, Message, Form , Icon} from "semantic-ui-react";
 import { fetchUser } from "../actions/productActions";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -403,8 +403,8 @@ class ProductForm extends React.Component {
                       placeholder="Food description"
                     />
                   </Form.Field>
-                  <Button ref={this.buttonRef} type="submit">
-                    Submit
+                  <Button color="red" ref={this.buttonRef} type="submit">
+                    Submit <Icon name="save" />
                   </Button>
                 </Form>{" "}
                 {/* <AnchorButton

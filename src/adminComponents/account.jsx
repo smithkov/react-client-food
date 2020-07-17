@@ -16,7 +16,7 @@ import {
   IMAGE_URL,
   DEFAULT_USER,
 } from "../utility/global";
-import { Button, Dropdown, Form, Image, Message } from "semantic-ui-react";
+import { Button, Dropdown, Form, Image, Message, Icon } from "semantic-ui-react";
 import AfterNav from "./common/afterNav";
 //import "date-fns";
 //import MomentUtils from "@date-io/moment";
@@ -340,8 +340,8 @@ export default class Account extends Component {
                 />
               </Form.Group>
 
-              <Button type="submit">Update</Button>
-            </Form>
+              <Button color="red" type="submit">Save  <Icon name="save" /></Button>
+            </Form><br/><br/>
           </Col>
         </Row>
       </Container>

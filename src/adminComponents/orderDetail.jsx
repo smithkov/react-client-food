@@ -192,7 +192,7 @@ class OrderDetail extends Component {
                     and does not require physical signature.
                   </p>
                   <hr></hr>
-                  <Button onClick={this.print}>
+                  <Button color="red" onClick={this.print}>
                     Print <Icon name="print" />
                   </Button>
                 </div>

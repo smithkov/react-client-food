@@ -169,8 +169,8 @@ export default class Social extends Component {
                 ></Input>
               </Form.Field>
               <br />
-              <Button size="mini" type="submit">
-                Save
+              <Button color="red" size="mini" type="submit">
+                Save  <Icon name="save" />
               </Button>
             </Form>
           </Col>

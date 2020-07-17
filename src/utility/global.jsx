@@ -16,6 +16,7 @@ export const DASHBOARD_URL = "/dashboard";
 export const SHOP_SETTING_URL = "/shop/settings";
 export const PRIVACY_URL = "/user-seller/privacy";
 export const SHOP_SOCIAL_URL = "/shop/social";
+export const AVAILABILITY_URL = "/shop/opening-hours";
 export const USER_ORDER_URL = "/user/order";
 export const SHOP_SIGNUP = "/business-signup";
 export const DELIVERY_DETAIL_URL = "/delivery/detail/:by/:sel";
@@ -25,6 +26,8 @@ export const PAY_STATUS_URL = "/payment/status";
 export const SHOP_PAGE_URL = "/:shopUrl";
 export const ORDER_DETAIL_URL = "/user/order/:id";
 export const VENDOR_APPLY_SUCCESS = "/food_vendor/application-success/:id";
+
+export const SERVER_ERROR = "Your request can't be completed at the moment. Please try again later."
 
 export const DEFAULT_LOGO =
   "https://react.semantic-ui.com/images/wireframe/image.png";

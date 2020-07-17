@@ -1,6 +1,11 @@
 import React, { Component } from "react";
 import clientService from "../services/clientService";
-import { setUserProfile, DASHBOARD_URL, REGISTER_URL } from "../utility/global";
+import {
+  setUserProfile,
+  DASHBOARD_URL,
+  REGISTER_URL,
+  SERVER_ERROR,
+} from "../utility/global";
 import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
 
@@ -21,6 +26,7 @@ class Login extends Component {
     email: "",
     password: "",
     hasError: false,
+    loading:false
   };
 
   onChange = (e) => {
@@ -31,6 +37,8 @@ class Login extends Component {
 
   login = (e) => {
     e.preventDefault();
+    this.setState({loading:true})
+
     const data = {
       email: this.state.email,
       password: this.state.password,
@@ -42,14 +50,16 @@ class Login extends Component {
       .login(data)
 
       .then((response) => {
+        this.setState({loading:false})
         const { data } = response.data;
 
         this.props.history.replace(from);
       })
       .catch((err) => {
-        const { error, message } = err.response.data;
+        this.setState({loading:false})
         this.setState({
-          hasError: error,
+          hasError: true,
+          message: SERVER_ERROR,
         });
       });
   };
@@ -80,16 +90,15 @@ class Login extends Component {
           this.props.history.replace(from);
         })
         .catch((err) => {
-          const { error, message } = err.response.data;
-
           this.setState({
             showAlert: true,
-            message: message,
+            message: SERVER_ERROR,
           });
         });
     }
   };
   render() {
+    const {loading} = this.state;
     const alert = (
       <div className="ui info message">
         <div className="header">Login refusal</div>
@@ -108,8 +117,9 @@ class Login extends Component {
           verticalAlign="middle"
         >
           <Grid.Column style={{ maxWidth: 450 }}>
-            <Header as="h2" color="teal" textAlign="center">
-              <Image src="./images/logo.png" /> Log-in to your account
+            <Header as="h2" color="black" textAlign="center">
+              <Image size="mini" src="./images/onelogo.jpg" /> Log-in to your
+              account
             </Header>
 
             <Form size="large">
@@ -163,7 +173,7 @@ class Login extends Component {
                   type="password"
                 />
 
-                <Button type="submit" color="teal" fluid size="large">
+                <Button loading={loading} type="submit" color="red" fluid size="large">
                   Login
                 </Button>
               </Segment>

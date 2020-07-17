@@ -10,6 +10,7 @@ import {
   USER_ORDER_URL,
   SHOP_CREATE,
   MY_ACCOUNT,
+  AVAILABILITY_URL,
 } from "../utility/global";
 import { Link } from "react-router-dom";
 
@@ -26,8 +27,8 @@ export default class Dashboard extends Component {
             <SideMenu />
           </Col>
           <Col lg="10">
-            <hr></hr>
-            <Grid stackable>
+            
+            <Grid padded stackable>
               {" "}
               <Grid.Row columns={4}>
                 <Grid.Column>
@@ -96,7 +97,7 @@ export default class Dashboard extends Component {
               </Grid.Row>
               <Grid.Row columns={4}>
                 <Grid.Column>
-                  <Link to={USER_ORDER_URL}>
+                  <Link to={AVAILABILITY_URL}>
                     <Card color="blue" fluid>
                       <Card.Content>
                         <Image
@@ -134,10 +135,8 @@ export default class Dashboard extends Component {
                           size="tiny"
                           src="/images/ratings.png"
                         />
-                        <Card.Header>Ratings</Card.Header>
-                        <Card.Meta>
-                          View your shop ratings
-                        </Card.Meta>
+                        <Card.Header>Reviews</Card.Header>
+                        <Card.Meta>View your shop reviews</Card.Meta>
                       </Card.Content>
                     </Card>
                   </Link>

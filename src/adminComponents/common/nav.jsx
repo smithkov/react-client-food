@@ -6,6 +6,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { DASHBOARD_URL, LOGIN_URL } from "../../utility/global";
 import clientService from "../../services/clientService";
+import { Icon } from "semantic-ui-react";
 
 class Nav extends Component {
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
@@ -37,7 +38,7 @@ class Nav extends Component {
             active={this.state.activeItem === "dashboard"}
             onClick={this.handleItemClick}
           >
-            Dashboard
+            Dashboard  <Icon name="dashboard"/>
           </Menu.Item>
         </Link>
 
@@ -46,7 +47,8 @@ class Nav extends Component {
             name="logout"
             active={this.state.activeItem === "logout"}
             onClick={this.logout}
-          />
+          > Logout  <Icon name="sign out"/></Menu.Item>
+         
         </Menu.Menu>
       </Menu>
     );

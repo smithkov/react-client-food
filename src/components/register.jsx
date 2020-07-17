@@ -4,7 +4,7 @@ import ClientService from "../services/clientService";
 import { Redirect, Link } from "react-router-dom";
 import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
-import { CRED, LISTING_URL, LOGIN_URL } from "../utility/global";
+import { CRED, LISTING_URL, LOGIN_URL, SERVER_ERROR } from "../utility/global";
 import {
   Button,
   Form,
@@ -28,6 +28,7 @@ class Register extends Component {
     showAlert: false,
     message: "",
     orders: [],
+    loading: false,
   };
   responseGoogle = (response) => {
     console.log(response);
@@ -50,7 +51,6 @@ class Register extends Component {
         })
         .catch((err) => {
           const { error, message } = err.response.data;
-
           this.setState({
             showAlert: true,
             message: message,
@@ -68,6 +68,9 @@ class Register extends Component {
   addOrder() {}
   register = (e) => {
     e.preventDefault();
+    this.setState({
+      loading: true,
+    });
     const data = {
       email: this.state.email,
       password: this.state.password,
@@ -77,6 +80,9 @@ class Register extends Component {
 
     ClientService.register(data)
       .then((response) => {
+        this.setState({
+          loading: false,
+        });
         const error = response.data.error;
         if (!error) this.props.history.push(LISTING_URL);
         else {
@@ -84,8 +90,11 @@ class Register extends Component {
       })
       .catch((err) => {
         this.setState({
+          loading: false,
+        });
+        this.setState({
           showAlert: true,
-          message: "User could not be registered.",
+          message: SERVER_ERROR,
         });
       });
   };
@@ -110,8 +119,9 @@ class Register extends Component {
                 verticalAlign="middle"
               >
                 <Grid.Column style={{ maxWidth: 450 }}>
-                  <Header as="h2" color="teal" textAlign="center">
-                    <Image src="./images/logo.png" /> Sign-up to order
+                  <Header as="h2" color="black" textAlign="center">
+                    <Image size="mini" src="./images/onelogo.jpg" /> Sign-up to
+                    order
                   </Header>
 
                   <Form size="large">
@@ -194,7 +204,7 @@ class Register extends Component {
                         />
                       </Form.Input>
 
-                      <Button type="submit" color="teal" fluid size="large">
+                      <Button loading={this.state.loading} type="submit" color="red" fluid size="large">
                         Sign up
                       </Button>
                     </Segment>

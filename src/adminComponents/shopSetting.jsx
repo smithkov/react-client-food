@@ -150,7 +150,7 @@ export default class ShopSetting extends Component {
     return (
       <Container fluid={true}>
         <Nav />
-        <AfterNav form={"Shop Settings"} />
+        <AfterNav form={"Store Settings"} />
         <hr></hr>
         <Row style={{ paddingTop: "10px" }}>
           <Col lg="2">
@@ -158,7 +158,7 @@ export default class ShopSetting extends Component {
           </Col>
           <Col lg="1"></Col>
           <Col className="dashboard-panel" lg="6">
-            <Message attached header="Shop settings" />
+            <Message attached header="Store settings" />
 
             <Segment>
               <Header as="h3">
@@ -204,8 +204,8 @@ export default class ShopSetting extends Component {
                   </Form.Field>
                 </Form.Group>
                 <br />
-                <Button size="mini" type="submit">
-                  Save
+                <Button color="red" size="mini" type="submit">
+                  Save <Icon name="save" />
                 </Button>
               </Form>
               <Divider hidden />
@@ -233,8 +233,8 @@ export default class ShopSetting extends Component {
                   </Input>
                 </Form.Field>
 
-                <Button size="mini" type="submit">
-                  Save
+                <Button color="red" size="mini" type="submit">
+                  Save  <Icon name="save" />
                 </Button>
               </Form>
               <Divider section />
@@ -260,8 +260,8 @@ export default class ShopSetting extends Component {
                   </Input>
                 </Form.Field>
 
-                <Button size="mini" type="submit">
-                  Save
+                <Button color="red" size="mini" type="submit">
+                  Save  <Icon name="save" />
                 </Button>
               </Form>
               <Divider section />
@@ -308,8 +308,8 @@ export default class ShopSetting extends Component {
                 </Form.Group>
 
                 <br />
-                <Button size="mini" type="submit">
-                  Save
+                <Button color="red" size="mini" type="submit">
+                  Save  <Icon name="save" />
                 </Button>
               </Form>
               <Divider section />
@@ -324,13 +324,13 @@ export default class ShopSetting extends Component {
                   value={notice}
                   placeholder="Write a short welcome message for customers..."
                 />
-                <Button size="mini" type="submit">
-                  Save
+                <Button color="red" size="mini" type="submit">
+                  Save  <Icon name="save" />
                 </Button>
                 <br />
                 <br />
               </Form>
-            </Segment>
+            </Segment><br/><br/>
           </Col>
         </Row>
       </Container>

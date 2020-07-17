@@ -133,6 +133,13 @@ class ClientService {
   createReview(data) {
     return http.post("/rating", data);
   }
+  
+  findOpeningDaysByShop(data) {
+    return http.post("/openingDaysByShop", data);
+  }
+  createOpeningDay(data) {
+    return http.post("/openingDay", data);
+  }
 
   createProductReview(data) {
     return http.post("/productRating", data);

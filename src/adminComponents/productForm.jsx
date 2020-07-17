@@ -1,11 +1,10 @@
-import React from "react";
+import React, { Fragment } from "react";
 
 import { AnchorButton, Intent, ProgressBar } from "@blueprintjs/core";
 import AfterNav from "./common/afterNav";
 
 import _ from "lodash";
 
-import { Icon } from "react-icons-kit";
 import { remove } from "react-icons-kit/fa/remove";
 import Nav from "./common/nav";
 import SideMenu from "./common/sideMenu";
@@ -22,7 +21,7 @@ import {
   MEAL_LIST,
   SAVE_SUCCESS,
 } from "../utility/global";
-import { Button, Message, Form } from "semantic-ui-react";
+import { Button, Message, Form, Icon, Segment } from "semantic-ui-react";
 import { fetchUser } from "../actions/productActions";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -85,9 +84,7 @@ class ProductForm extends React.Component {
           };
         });
         this.setState({
-          origin: [{ key: "", text: "--Select food origin--" }].concat(
-            origins
-          ),
+          origin: [{ key: "", text: "--Select food origin--" }].concat(origins),
         });
 
         const categoryResponse = await ClientService.category();
@@ -157,7 +154,7 @@ class ProductForm extends React.Component {
       if (selectedPhoto >= 0) {
         if (selectedCategory || selectedOrigin) {
           let formData = new FormData();
-         
+
           if (discountPrice) formData.append("discountPrice", discountPrice);
           formData.append("price", price);
           formData.append("categoryId", selectedCategory);
@@ -254,128 +251,131 @@ class ProductForm extends React.Component {
                 }}
               />
             ) : (
-              <div
-                className="inner-container"
-                style={{
-                  padding: 10,
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <Form
-                  style={{ width: "80%" }}
-                  onSubmit={this.onUpload.bind(this)}
-                >
-                  {alert}
-                  <Form.Group widths="equal">
-                    <Form.Field>
-                      <label>Photo</label>
-                      <input
-                        type="file"
-                        onChange={this.fileChangedHandlerForPhoto}
+              <Fragment>
+                <Message attached header="Create food" />
+                <Segment raised>
+                  <Form
+                    style={{ width: "80%" }}
+                    onSubmit={this.onUpload.bind(this)}
+                  >
+                    {alert}
+                    <Form.Group widths="equal">
+                      <Form.Field>
+                        <label>Photo</label>
+                        <input
+                          type="file"
+                          onChange={this.fileChangedHandlerForPhoto}
+                        />
+                      </Form.Field>
+                      <Form.Field>
+                        <img
+                          style={{
+                            objectFit: "cover",
+                            objectPosition: "center center",
+                            height: 100,
+                            width: "100",
+                          }}
+                          src={photoPreviewUrl}
+                        />
+                      </Form.Field>
+                    </Form.Group>
+                    <Form.Field required>
+                      <label>Category</label>
+                      <Form.Select
+                        required
+                        fluid
+                        onChange={this.onChangeDropdown}
+                        name="selectedCategory"
+                        options={category}
+                        placeholder="Category"
                       />
                     </Form.Field>
-                    <Form.Field>
-                      <img
-                        style={{
-                          objectFit: "cover",
-                          objectPosition: "center center",
-                          height: 100,
-                          width: "100",
-                        }}
-                        src={photoPreviewUrl}
+                    <Form.Field required>
+                      <label>Food origin</label>
+                      <Form.Select
+                        required
+                        fluid
+                        onChange={this.onChangeDropdown}
+                        name="selectedOrigin"
+                        options={origin}
+                        placeholder="Food origin"
                       />
                     </Form.Field>
-                  </Form.Group>
-                  <Form.Field required>
-                    <label>Category</label>
-                    <Form.Select
-                      required
-                      fluid
-                      onChange={this.onChangeDropdown}
-                      name="selectedCategory"
-                      options={category}
-                      placeholder="Category"
-                    />
-                  </Form.Field>
-                  <Form.Field required>
-                    <label>Food origin</label>
-                    <Form.Select
-                      required
-                      fluid
-                      onChange={this.onChangeDropdown}
-                      name="selectedOrigin"
-                      options={origin}
-                      placeholder="Food origin"
-                    />
-                  </Form.Field>
 
-                  <Form.Field required>
-                    <label>Food name</label>
-                    <input
-                      type="text"
-                      required
-                      maxlength="40"
-                      name="name"
-                      onChange={this.onChange}
-                      placeholder="Food name"
-                    />
-                  </Form.Field>
-                  <Form.Field required>
-                    <label>Price</label>
-                    <input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      required
-                      name="price"
-                      onChange={this.onChange}
-                      placeholder="Price"
-                    />
-                  </Form.Field>
-                  <Form.Field>
-                    <label>Discount price</label>
-                    <input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      name="discountPrice"
-                      onChange={this.onChange}
-                      placeholder="Discount price"
-                    />
-                  </Form.Field>
-                  <Form.Group widths="equal">
-                    <Form.Select
-                      fluid
-                      label="Unit"
-                      name="selectedUnitType"
-                      options={unitType}
-                      onChange={this.onChangeDropdown}
-                      placeholder="Unit"
-                    />
-                    <Form.Input fluid label="Weight" onChange={this.onChange} />
-                  </Form.Group>
-                  <Form.Field required>
-                    <label>Food description</label>
-                    <Form.TextArea
-                      required
-                      name="desc"
-                      onChange={this.onChange}
-                      placeholder="Food description"
-                    />
-                  </Form.Field>
-                  <Button ref={this.buttonRef} type="submit">
-                    Submit
-                  </Button>
-                </Form>{" "}
-                {/* <AnchorButton
+                    <Form.Field required>
+                      <label>Food name</label>
+                      <input
+                        type="text"
+                        required
+                        maxlength="40"
+                        name="name"
+                        onChange={this.onChange}
+                        placeholder="Food name"
+                      />
+                    </Form.Field>
+                    <Form.Field required>
+                      <label>Price</label>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        required
+                        name="price"
+                        onChange={this.onChange}
+                        placeholder="Price"
+                      />
+                    </Form.Field>
+                    <Form.Field>
+                      <label>Discount price</label>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        name="discountPrice"
+                        onChange={this.onChange}
+                        placeholder="Discount price"
+                      />
+                    </Form.Field>
+                    <Form.Group widths="equal">
+                      <Form.Select
+                        fluid
+                        label="Unit"
+                        name="selectedUnitType"
+                        options={unitType}
+                        onChange={this.onChangeDropdown}
+                        placeholder="Unit"
+                      />
+                      <Form.Input
+                        fluid
+                        label="Weight"
+                        onChange={this.onChange}
+                      />
+                    </Form.Group>
+                    <Form.Field required>
+                      <label>Food description</label>
+                      <Form.TextArea
+                        required
+                        name="desc"
+                        onChange={this.onChange}
+                        placeholder="Food description"
+                      />
+                    </Form.Field>
+                    <hr />
+                    <Button color="red" ref={this.buttonRef} type="submit">
+                      Save <Icon name="save" />
+                    </Button>
+                  </Form>{" "}
+                  {/* <AnchorButton
                 text="Upload"
                 intent={Intent.SUCCESS}
                 onClick={this.onUpload.bind(this)}
               /> */}
-                <p></p>
-              </div>
+                  <p></p>
+                </Segment>
+              </Fragment>
             )}
+            <br />
+            <br />
           </Col>
         </Row>
       </Container>

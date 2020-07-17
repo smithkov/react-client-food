@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { Menu, Modal, Button } from "semantic-ui-react";
+import { Menu, Modal, Button, List } from "semantic-ui-react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { fetchUser } from "../../actions/productActions";
@@ -12,7 +12,9 @@ import {
   USER_ORDER_URL,
   SHOP_SETTING_URL,
   SHOP_SOCIAL_URL,
+  AVAILABILITY_URL,
 } from "../../utility/global";
+import Icon from "react-icons-kit";
 
 class SideMenu extends Component {
   state = {
@@ -64,9 +66,10 @@ class SideMenu extends Component {
         <Menu fluid vertical>
           <Menu.Item>
             <Menu.Header>Food</Menu.Header>
-
+            
             <Menu.Menu>
               <Link to={MEAL_CREATE}>
+                
                 <Menu.Item
                   name="Create-food"
                   active={this.state.activeItem === "enterprise"}
@@ -149,13 +152,16 @@ class SideMenu extends Component {
                   Social
                 </Menu.Item>
               </Link>
-              <Menu.Item
-                name="faq"
-                active={this.state.activeItem === "faq"}
-                onClick={this.handleItemClick}
-              >
-                FAQs
-              </Menu.Item>
+
+              <Link to={AVAILABILITY_URL}>
+                <Menu.Item
+                  name="availability"
+                  active={this.state.activeItem === "availability"}
+                  onClick={this.handleItemClick}
+                >
+                  Availability
+                </Menu.Item>
+              </Link>
             </Menu.Menu>
           </Menu.Item>
         </Menu>
