@@ -5,6 +5,9 @@ import { Grid, Image, Card, Header, Rating } from "semantic-ui-react";
 import Review from "./widgets/Review";
 import ReviewList from "./widgets/reviewList";
 import Footer from "./Footer";
+import { fetchUser } from "../actions/productActions";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
 import {
   DEFAULT_USER,
@@ -12,12 +15,12 @@ import {
   IMAGE_URL,
   DEFAULT_LOGO,
   totalRating,
-  displayRating
+  displayRating,
 } from "../utility/global";
 import clientService from "../services/clientService";
 import { Link } from "react-router-dom";
 
-export default class ProductDetail extends Component {
+class ProductDetail extends Component {
   constructor(props) {
     super(props);
   }
@@ -32,7 +35,9 @@ export default class ProductDetail extends Component {
     productRatings: [],
     category: "",
     shop: "",
-    overallRating: 0
+    overallRating: 0,
+    replyResult: "",
+    posterName: "",
   };
   componentDidMount = async () => {
     const productId = this.props.match.params.id;
@@ -43,7 +48,6 @@ export default class ProductDetail extends Component {
     //Get overall ratings
     let ratingCount = 0;
     const productRatings = data.productRatings;
-    
 
     const {
       id,
@@ -53,11 +57,11 @@ export default class ProductDetail extends Component {
       desc,
       Category,
       VirtualShop,
-      photo
+      photo,
     } = data;
 
     this.setState({
-      overallRating:displayRating(productRatings),
+      overallRating: displayRating(productRatings),
       productId: id,
       name,
       photo,
@@ -65,15 +69,34 @@ export default class ProductDetail extends Component {
       discountprice,
       desc,
       category: Category.name,
-      shop: VirtualShop
+      shop: VirtualShop,
     });
 
     clientService.findReviewByProduct({ productId }).then((response) => {
       this.setState({
         productRatings: response.data.data,
-        
       });
     });
+  };
+
+  componentWillReceiveProps = async (nextProps) => {
+    if (nextProps) {
+      const user = nextProps.user;
+      if (user) {
+        this.setState({
+          posterName: user.firstName,
+        });
+      }
+    }
+  };
+  handleReply = async (data) => {
+    const { content, userId, ratingId } = data;
+    const result = await clientService.createProductRatingResponse({
+      content,
+      userId,
+      ratingId,
+    });
+    this.setState({ replyResult: result.data.data });
   };
   render() {
     const styles = {
@@ -90,7 +113,9 @@ export default class ProductDetail extends Component {
       shop,
       productId,
       overallRating,
-      productRatings
+      productRatings,
+      replyResult,
+      posterName,
     } = this.state;
 
     return (
@@ -136,10 +161,7 @@ export default class ProductDetail extends Component {
               </Header>
             </Grid.Column>
           </Grid.Row>
-          <Grid.Row>
-          
-           
-          </Grid.Row>
+          <Grid.Row></Grid.Row>
           <Grid.Row>
             <Grid.Column width={8}>
               <hr />
@@ -147,20 +169,37 @@ export default class ProductDetail extends Component {
               <br />
               <br />
               <Review
+                poster={posterName}
                 productId={productId}
                 isForShop={false}
                 shopId={shop.id}
               />
               <hr />
               {this.state.productRatings.map((rating) => {
-                return <ReviewList key={rating.id} data={rating} />;
+                return (
+                  <ReviewList
+                    poster={posterName}
+                    handleReply={this.handleReply}
+                    replyResult={replyResult}
+                    key={rating.id}
+                    data={rating}
+                  />
+                );
               })}
             </Grid.Column>
             <Grid.Column width={8}></Grid.Column>
           </Grid.Row>
         </Grid>
-        <Footer/>
+        <Footer />
       </React.Fragment>
     );
   }
 }
+ProductDetail.propTypes = {
+  fetchUser: PropTypes.func.isRequired,
+};
+const mapStateToProps = (state) => ({
+  user: state.products.user,
+});
+
+export default connect(mapStateToProps, { fetchUser })(ProductDetail);

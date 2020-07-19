@@ -6,7 +6,9 @@ import {
   DEFAULT_BANNER,
   IMAGE_URL,
   DEFAULT_LOGO,
+  LOGIN_URL,
 } from "../../utility/global";
+import { Link } from "react-router-dom";
 
 export default class Review extends Component {
   constructor(props) {
@@ -40,9 +42,8 @@ export default class Review extends Component {
       const response = isForShop
         ? await ClientService.createReview(payload)
         : await ClientService.createProductReview(payload);
-      
+
       if (response) {
-       
         this.setState({
           showAlert: true,
           message: response.data.message,
@@ -58,6 +59,7 @@ export default class Review extends Component {
   };
 
   render() {
+    const poster = this.props.poster;
     const alert = this.state.showAlert ? (
       <Message
         info
@@ -85,21 +87,29 @@ export default class Review extends Component {
             />
             <hr></hr>
             <Form.Field>
-              <label>Add a headline</label>
+              {poster ? <h5>Posting publicly as: {poster}</h5> : ""}
               <input
+                disabled={!poster}
                 name="title"
                 onChange={this.onChange}
                 placeholder="What's most important to know?"
               />
             </Form.Field>
             <Form.TextArea
+              disabled={!poster}
               onChange={this.onChange}
               name="content"
               label="Write your review"
               placeholder="What did you like or dislike?"
             />
 
-            <Button type="submit">Submit</Button>
+            {poster ? (
+              <Button type="submit">Submit</Button>
+            ) : (
+              <Link to={LOGIN_URL}>
+                <Button>Sign in to review</Button>
+              </Link>
+            )}
           </Form>
         </div>
       );

@@ -41,6 +41,9 @@ import clientService from "../services/clientService";
 import { Link } from "react-router-dom";
 import Social from "../adminComponents/social";
 import { toast } from "react-toastify";
+import { fetchUser } from "../actions/productActions";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
 class ShopPage extends Component {
   constructor(props) {
@@ -74,6 +77,8 @@ class ShopPage extends Component {
     total: 0,
     deliveryPrice: 0,
     redirect: false,
+    posterName: "",
+    replyResult:""
   };
   contextRef = createRef();
   componentWillUpdate(nextProps, nextState) {
@@ -97,6 +102,16 @@ class ShopPage extends Component {
       });
     }
   }
+  componentWillReceiveProps = async (nextProps) => {
+    if (nextProps) {
+      const user = nextProps.user;
+      if (user) {
+        this.setState({
+          posterName: user.firstName,
+        });
+      }
+    }
+  };
   componentDidMount = async () => {
     try {
       console.log(getTempId());
@@ -308,7 +323,15 @@ class ShopPage extends Component {
 
     return subTotal - offerDiscount + parseFloat(deliveryPrice);
   }
-
+  handleReply = async (data) => {
+    const { content, userId, ratingId } = data;
+    const result = await clientService.createShopReviewResponse({
+      content,
+      userId,
+      ratingId,
+    });
+    this.setState({ replyResult: result.data.data });
+  };
   render() {
     if (this.state.redirect) {
       return <ErrorPage />;
@@ -413,10 +436,22 @@ class ShopPage extends Component {
           menuItem: "Rating",
           render: () => (
             <Tab.Pane>
-              <Review isForShop={true} shopId={this.state.shopId} />
+              <Review
+                isForShop={true}
+                poster={this.state.posterName}
+                shopId={this.state.shopId}
+              />
               <hr></hr>
               {this.state.comments.map((comment) => {
-                return <ReviewList key={comment.id} data={comment} />;
+                return (
+                  <ReviewList
+                    poster={this.state.posterName}
+                    key={comment.id}
+                    handleReply={this.handleReply}
+                    replyResult={this.state.replyResult}
+                    data={comment}
+                  />
+                );
               })}
             </Tab.Pane>
           ),
@@ -594,7 +629,14 @@ class ShopPage extends Component {
     }
   }
 }
+ShopPage.propTypes = {
+  fetchUser: PropTypes.func.isRequired,
+};
+const mapStateToProps = (state) => ({
+  user: state.products.user,
+});
 
-export default GoogleApiWrapper({
-  apiKey: "AIzaSyDSYuGeHrv1KmGmB-mU1PdtvBNozgoYctU",
-})(ShopPage);
+export default connect(mapStateToProps, { fetchUser })(ShopPage);
+// export GoogleApiWrapper({
+//   apiKey: "AIzaSyDSYuGeHrv1KmGmB-mU1PdtvBNozgoYctU",
+// })(ShopPage);

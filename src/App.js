@@ -24,6 +24,7 @@ import DeliveryDetail from "./components/deliveryDetail";
 import ShopCreate from "./components/shopCreate";
 import UserOrder from "../src/adminComponents/userOrder";
 import OrderDetail from "./adminComponents/orderDetail";
+import StoreReview from "./adminComponents/storeReview";
 import AvailableTime from "./adminComponents/availableTime";
 import Privacy from "./components/static/privacy";
 import { Provider } from "react-redux";
@@ -37,6 +38,7 @@ import {
   MEAL_UPDATE,
   SHOP_CREATE,
   LOGIN_URL,
+  SHOP_REVIEW,
   REGISTER_URL,
   AVAILABILITY_URL,
   MY_ACCOUNT,
@@ -69,6 +71,7 @@ class App extends React.Component {
             <Route exact path={SHOP_SIGNUP} component={ShopCreate} />
             <Route exact path={SHOP_CREATE} component={ShopForm} />
             <Route exact path={PRIVACY_URL} component={Privacy} />
+            <Route exact path={PRODUCT_DETAIL_URL} component={ProductDetail} />
             <Route
               exact
               path={VENDOR_APPLY_SUCCESS}
@@ -88,6 +91,11 @@ class App extends React.Component {
               exact
               path={AVAILABILITY_URL}
               component={ProtectedRoute(AvailableTime)}
+            />
+            <Route
+              exact
+              path={SHOP_REVIEW}
+              component={ProtectedRoute(StoreReview)}
             />
             <Route
               exact
@@ -128,7 +136,7 @@ class App extends React.Component {
               component={ProtectedRoute(Payment)}
             />
             <Route component={ErrorPage} />
-            <Route exact path={PRODUCT_DETAIL_URL} component={ProductDetail} />
+            
             <Route exact path={PAY_STATUS_URL} component={PaymentSuccess} />
           </Switch>
         </Router>

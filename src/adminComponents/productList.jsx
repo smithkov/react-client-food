@@ -7,8 +7,12 @@ import AfterNav from "./common/afterNav";
 import { MISSING_USER_MSG, ERROR_MSG, MEAL_CREATE } from "../utility/global";
 import clientService from "../services/clientService";
 import { Link } from "react-router-dom";
+import { fetchUser } from "../actions/productActions";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { toast } from "react-toastify";
 
-export default class ShopForm extends Component {
+class ShopForm extends Component {
   constructor(props) {
     super(props);
 
@@ -17,30 +21,28 @@ export default class ShopForm extends Component {
       hasData: false,
     };
   }
-
-  componentDidMount = async () => {
-    const result = await clientService.hasAuth();
-    const user = result.data.data;
-    if (user) {
-      clientService
-        .productsByUser({ userId: user.id })
-        .then((response) => {
-          //const data = response.data;
-          const data = response.data.data;
-
-          this.setState({
-            products: data,
-            hasData: data.length > 0 ? true : false,
+  componentWillReceiveProps = async (nextProps) => {
+    if (nextProps) {
+      const shopId = nextProps.user.shopId;
+      if (shopId) {
+        clientService
+          .productsByShopId(shopId)
+          .then((response) => {
+            //const data = response.data;
+            const data = response.data.data;
+            console.log(data);
+            this.setState({
+              products: data,
+              hasData: data.length > 0 ? true : false,
+            });
+          })
+          .catch((err) => {
+            //console.log(err);
           });
-          // this.setState({
-          //   sellers: response.data.data,
-          // });
-        })
-        .catch((err) => {
-          //console.log(err);
-        });
+      }
     }
   };
+  componentDidMount = async () => {};
 
   onSubmit = (e) => {
     e.preventDefault();
@@ -101,7 +103,7 @@ export default class ShopForm extends Component {
                     <Table.HeaderCell />
                     <Table.HeaderCell colSpan="4">
                       <Link to={MEAL_CREATE}>
-                        <Button 
+                        <Button
                           floated="right"
                           icon
                           labelPosition="left"
@@ -128,3 +130,11 @@ export default class ShopForm extends Component {
     );
   }
 }
+ShopForm.propTypes = {
+  fetchUser: PropTypes.func.isRequired,
+};
+const mapStateToProps = (state) => ({
+  user: state.products.user,
+});
+
+export default connect(mapStateToProps, { fetchUser })(ShopForm);

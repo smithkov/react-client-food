@@ -129,7 +129,14 @@ class ClientService {
   createHomeAddress(data) {
     return http.post("/homeAddress", data);
   }
+  
+  createReviewResponse(data) {
+    return http.post("/productRatingResponse", data);
+  }
 
+  createShopReviewResponse(data) {
+    return http.post("/ratingResponse", data);
+  }
   createReview(data) {
     return http.post("/rating", data);
   }
@@ -170,7 +177,13 @@ class ClientService {
   findReviewByProduct(data) {
     return http.post(`/productRating/product`, data);
   }
-
+  createProductRatingResponse(data){
+    return http.post(`/productRatingResponse`, data)
+  }
+  
+  findProductReviewByShop(data) {
+    return http.post(`/productRating/shop`, data);
+  }
   findShopByName(data) {
     return http.post(`/shopByName`, data);
   }

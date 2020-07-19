@@ -53,6 +53,7 @@ class NavBar extends Component {
     }
   }
   logout = async (e) => {
+   
     e.preventDefault();
     const response = await clientService.logout();
     this.props.history.push(LOGIN_URL);
@@ -83,9 +84,9 @@ class NavBar extends Component {
       {
         key: "sign-out",
         text: (
-          <Link onClick={this.logout} style={styles}>
+          <a onClick={this.logout} style={styles}>
             Logout
-          </Link>
+          </a>
         ),
         icon: "sign out",
       },

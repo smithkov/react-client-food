@@ -11,6 +11,7 @@ import {
   SHOP_CREATE,
   MY_ACCOUNT,
   AVAILABILITY_URL,
+  SHOP_REVIEW
 } from "../utility/global";
 import { Link } from "react-router-dom";
 
@@ -27,7 +28,6 @@ export default class Dashboard extends Component {
             <SideMenu />
           </Col>
           <Col lg="10">
-            
             <Grid padded stackable>
               {" "}
               <Grid.Row columns={4}>
@@ -127,7 +127,7 @@ export default class Dashboard extends Component {
                   </Link>
                 </Grid.Column>
                 <Grid.Column>
-                  <Link to={SHOP_SETTING_URL}>
+                  <Link to={SHOP_REVIEW}>
                     <Card color="red" fluid>
                       <Card.Content>
                         <Image
@@ -142,19 +142,17 @@ export default class Dashboard extends Component {
                   </Link>
                 </Grid.Column>
                 <Grid.Column>
-                  <Link to={SHOP_CREATE}>
-                    <Card color="yellow" fluid>
-                      <Card.Content>
-                        <Image
-                          floated="right"
-                          size="tiny"
-                          src="/images/chart.png"
-                        />
-                        <Card.Header>Sales Chart</Card.Header>
-                        <Card.Meta>Manage your store information</Card.Meta>
-                      </Card.Content>
-                    </Card>
-                  </Link>
+                  <Card color="yellow" fluid>
+                    <Card.Content>
+                      <Image
+                        floated="right"
+                        size="tiny"
+                        src="/images/chart.png"
+                      />
+                      <Card.Header>Sales Chart</Card.Header>
+                      <Card.Meta>Manage your store information</Card.Meta>
+                    </Card.Content>
+                  </Card>
                 </Grid.Column>
               </Grid.Row>
             </Grid>

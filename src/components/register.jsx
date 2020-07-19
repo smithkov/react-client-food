@@ -109,7 +109,7 @@ class Register extends Component {
 
     return (
       <Container fluid={true}>
-        <Row style={{ paddingTop: "100px", position: "relative" }}>
+        <Row style={{ paddingTop: "40px", position: "relative" }}>
           <Col lg="4"></Col>
           <Col lg="4">
             <form onSubmit={this.register}>
@@ -120,7 +120,7 @@ class Register extends Component {
               >
                 <Grid.Column style={{ maxWidth: 450 }}>
                   <Header as="h2" color="black" textAlign="center">
-                    <Image size="mini" src="./images/onelogo.jpg" /> Sign-up to
+                    <Image circular size="mini" src="./images/onelogo.jpg" /> Sign-up to
                     order
                   </Header>
 

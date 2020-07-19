@@ -60,7 +60,7 @@ export default class ItemCard extends Component {
               </Card.Meta>
               <Card.Description>
                 {Category ? Category.name : ""}
-                <Link to={`/item_meal_detail/product/${id}`}>
+                <Link to={`/item_meal/${id}`}>
                   {" "}
                   <span style={{ float: "right" }}>Details</span>
                 </Link>
