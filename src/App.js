@@ -26,7 +26,8 @@ import UserOrder from "../src/adminComponents/userOrder";
 import OrderDetail from "./adminComponents/orderDetail";
 import StoreReview from "./adminComponents/storeReview";
 import AvailableTime from "./adminComponents/availableTime";
-import Privacy from "./components/static/privacy";
+import Privacy from "./documents/privacy";
+import TermsAndCondition from "./documents/termsAndCondition";
 import { Provider } from "react-redux";
 import store from "./store";
 import ProtectedRoute from "./ProtectedRoute";
@@ -55,7 +56,8 @@ import {
   SHOP_SIGNUP,
   VENDOR_APPLY_SUCCESS,
   ORDER_DETAIL_URL,
-  PRIVACY_URL
+  PRIVACY_URL, 
+  TERMS_AND_CONDITION
 } from "./utility/global";
 
 class App extends React.Component {
@@ -71,6 +73,7 @@ class App extends React.Component {
             <Route exact path={SHOP_SIGNUP} component={ShopCreate} />
             <Route exact path={SHOP_CREATE} component={ShopForm} />
             <Route exact path={PRIVACY_URL} component={Privacy} />
+            <Route exact path={TERMS_AND_CONDITION} component={TermsAndCondition} />
             <Route exact path={PRODUCT_DETAIL_URL} component={ProductDetail} />
             <Route
               exact

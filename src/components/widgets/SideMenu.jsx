@@ -3,8 +3,18 @@ import ClientService from "../../services/clientService";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
+import LoaderTemp from "../loader";
 import { updateProduct, updateCategory } from "../../actions/productActions";
-import { Input, Label, Menu, Icon } from "semantic-ui-react";
+import {
+  Input,
+  Label,
+  Menu,
+  Icon,
+  Segment,
+  Dimmer,
+  Loader,
+  Image,
+} from "semantic-ui-react";
 class SideMenu extends Component {
   constructor(props) {
     super(props);
@@ -13,11 +23,16 @@ class SideMenu extends Component {
       category: [],
     };
   }
+  state = {
+    hasOrigin: false,
+    hasCategory: false,
+  };
   componentDidMount() {
     ClientService.origins()
       .then((response) => {
         this.setState({
           menu: response.data.data,
+          hasOrigin: true,
         });
       })
       .catch((err) => {
@@ -28,6 +43,7 @@ class SideMenu extends Component {
       .then((response) => {
         this.setState({
           category: response.data.data,
+          hasCategory: true,
         });
       })
       .catch((err) => {
@@ -42,26 +58,35 @@ class SideMenu extends Component {
     this.props.updateCategory(id);
   };
   render() {
+    const { hasCategory, hasOrigin } = this.state;
     return (
       <Fragment>
-        <Icon name="filter" /> All Cuisines <Link className="pull-right">Reset</Link>
+        <Icon name="filter" /> All Cuisines{" "}
+        <Link className="pull-right">Reset</Link>
         <Menu fluid vertical>
-          {this.state.menu.map((menu) => {
-            return (
-              <Menu.Item
-                key={menu.id}
-                name="inbox"
-                onClick={() => this.onChange(menu.id)}
-              >
-                <Label color="green">{menu.products.length}</Label>
-                {menu.name}
-              </Menu.Item>
-            );
-          })}
+          {hasOrigin ? (
+            this.state.menu.map((menu) => {
+              return (
+                <Menu.Item
+                  key={menu.id}
+                  name="inbox"
+                  onClick={() => this.onChange(menu.id)}
+                >
+                  <Label color="green">{menu.products.length}</Label>
+                  {menu.name}
+                </Menu.Item>
+              );
+            })
+          ) : (
+            <LoaderTemp />
+          )}
         </Menu>
-        <Icon name="filter" /> Cuisine Categories <Link className="pull-right">Reset</Link>
+        <Icon name="filter" /> Cuisine Categories{" "}
+        <Link className="pull-right">Reset</Link>
         <Menu fluid vertical>
-          {this.state.category.map((category) => {
+          
+
+          {hasCategory? this.state.category.map((category) => {
             return (
               <Menu.Item
                 key={category.id}
@@ -72,7 +97,7 @@ class SideMenu extends Component {
                 {category.name}
               </Menu.Item>
             );
-          })}
+          }):<LoaderTemp />}
         </Menu>
       </Fragment>
     );

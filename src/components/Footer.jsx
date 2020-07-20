@@ -12,10 +12,11 @@ import {
 } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import {
- 
   REGISTER_URL,
   LOGIN_URL,
-  SHOP_SIGNUP
+  SHOP_SIGNUP,
+  TERMS_AND_CONDITION,
+  PRIVACY_URL,
 } from "../utility/global";
 
 const Footer = () => {
@@ -31,10 +32,18 @@ const Footer = () => {
             <Header inverted as="h4" content="Customer service" />
             <List link inverted>
               <List.Item as="a">Contact us</List.Item>
-              <List.Item as="a"><Link to={LOGIN_URL}>Log in</Link></List.Item>
-              <List.Item as="a"><Link to={REGISTER_URL}>Sign up</Link></List.Item>
-              <List.Item as="a"><Link to={REGISTER_URL}>My account</Link></List.Item>
-              <List.Item as="a"><Link to={SHOP_SIGNUP}>Vendor sign up</Link></List.Item>
+              <List.Item as="a">
+                <Link to={LOGIN_URL}>Log in</Link>
+              </List.Item>
+              <List.Item as="a">
+                <Link to={REGISTER_URL}>Sign up</Link>
+              </List.Item>
+              <List.Item as="a">
+                <Link to={REGISTER_URL}>My account</Link>
+              </List.Item>
+              <List.Item as="a">
+                <Link to={SHOP_SIGNUP}>Vendor sign up</Link>
+              </List.Item>
             </List>
           </Grid.Column>
           <Grid.Column width={3}>
@@ -58,7 +67,9 @@ const Footer = () => {
           <Grid.Column width={7}>
             <Header inverted as="h4" content="Get Hold of Us" />
             <p>
-              Contact us should need more enquiries regarding our service, we are on 24/7 to answer all your possible queries regarding all our services.
+              Contact us should need more enquiries regarding our service, we
+              are on 24/7 to answer all your possible queries regarding all our
+              services.
             </p>
           </Grid.Column>
         </Grid>
@@ -72,11 +83,11 @@ const Footer = () => {
           <List.Item as="a" href="#">
             Contact Us
           </List.Item>
-          <List.Item as="a" href="#">
-            Terms and Conditions
+          <List.Item>
+            <Link to={TERMS_AND_CONDITION}>Terms and Conditions</Link>
           </List.Item>
-          <List.Item as="a" href="#">
-            Privacy Policy
+          <List.Item>
+            <Link to={PRIVACY_URL}> Privacy Policy</Link>
           </List.Item>
         </List>
       </Container>

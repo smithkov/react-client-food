@@ -13,6 +13,7 @@ export const REGISTER_URL = "/register";
 export const LISTING_URL = "/listing";
 export const MY_ACCOUNT = "/myAccount";
 export const DASHBOARD_URL = "/dashboard";
+export const TERMS_AND_CONDITION = "/terms_and_conditions";
 export const SHOP_SETTING_URL = "/shop/settings";
 export const PRIVACY_URL = "/user-seller/privacy";
 export const SHOP_SOCIAL_URL = "/shop/social";

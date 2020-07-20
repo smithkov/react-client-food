@@ -52,11 +52,19 @@ class NavBar extends Component {
     if (nextProps) {
     }
   }
-  logout = async (e) => {
-   
+  handlerLogout = async (e) => {
     e.preventDefault();
     const response = await clientService.logout();
     this.props.history.push(LOGIN_URL);
+  };
+  handlerOrder = async (e) => {
+    e.preventDefault();
+    this.props.history.push(USER_ORDER_URL);
+  };
+
+  handlerAccount = async (e) => {
+    e.preventDefault();
+    this.props.history.push(MY_ACCOUNT);
   };
   render() {
     const { firstName, avatar } = this.state;
@@ -101,39 +109,48 @@ class NavBar extends Component {
       <div>
         {" "}
         <Menu color="red" fixed="top" inverted>
-          <Container>
-            <Menu.Item as="a" header>
-              <Link to={"/"}>
-                <img
-                  style={{
-                    marginRight: "1.5em",
-                    height: "35px",
-                    width: "100px",
-                  }}
-                  src="/images/foodengo_logo.png"
-                />{" "}
-              </Link>
-            </Menu.Item>
-            <Menu.Item as="a">
-              <Link to={LISTING_URL}>Home</Link>
-            </Menu.Item>
-            {firstName ? (
-              <Menu.Menu position="right">
-                <Menu.Item>
-                  <Dropdown
-                    trigger={trigger}
-                    options={options}
-                    pointing="top left"
-                    icon={null}
+          <Menu.Item>
+            <img
+              style={{
+                marginRight: "1.5em",
+                height: "35px",
+                width: "100px",
+              }}
+              src="/images/foodengo_logo.png"
+            />
+          </Menu.Item>
+          <Menu.Item as="a">
+            <Link to={LISTING_URL}>Home</Link>
+          </Menu.Item>
+          {firstName ? (
+            <Menu.Menu position="right">
+              <Dropdown item text={firstName}>
+                <Dropdown.Menu>
+                  <Dropdown.Item
+                    onClick={this.handlerAccount}
+                    icon="user"
+                    text="Your Account"
                   />
-                </Menu.Item>
-              </Menu.Menu>
-            ) : (
-              <Menu.Item position="right" as="a">
-                <Link to={LOGIN_URL}>Log in</Link>
-              </Menu.Item>
-            )}
-          </Container>
+
+                  <Dropdown.Item
+                    onClick={this.handlerOrder}
+                    icon="shopping bag"
+                    text="Your orders"
+                  />
+
+                  <Dropdown.Item
+                    onClick={this.handlerLogout}
+                    icon="sign out alternate"
+                    text="Logout"
+                  />
+                </Dropdown.Menu>
+              </Dropdown>
+            </Menu.Menu>
+          ) : (
+            <Menu.Item position="right" as="a">
+              <Link to={LOGIN_URL}>Log In</Link>
+            </Menu.Item>
+          )}
         </Menu>
       </div>
     );

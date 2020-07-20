@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import React, { Component, useState, useEffect } from "react";
 import clientService from "../services/clientService";
 import Footer from "./Footer";
+import BigLoader from "./bigLoader";
 import {
   Button,
   Container,
@@ -30,7 +31,7 @@ import {
   LOGIN_URL,
 } from "../utility/global";
 import { Link, withRouter } from "react-router-dom";
-import HomepageHeading from '../components/homePageHeading'
+import HomepageHeading from "../components/homePageHeading";
 // Heads up!
 // We using React Static to prerender our docs with server side rendering, this is a quite simple solution.
 // For more advanced usage please check Responsive docs under the "Usage" section.
@@ -44,7 +45,7 @@ const getWidth = () => {
 /* Heads up! HomepageHeading uses inline styling, however it's not the best practice. Use CSS or styled components for
  * such things.
  */
- 
+
 /* Heads up!
  * Neither Semantic UI nor Semantic UI React offer a responsive navbar, however, it can be implemented easily.
  * It can be more complicated, but you can create really flexible markup.
@@ -140,6 +141,17 @@ class MobileContainer extends Component {
           <Menu.Item as="a" active>
             Home
           </Menu.Item>
+          <Link to={LISTING_URL}>
+            <Menu.Item as="a" active>
+              Find Food
+            </Menu.Item>
+          </Link>
+          <Link to={LOGIN_URL}>
+            <Menu.Item as="a" active>
+              Log In
+            </Menu.Item>
+          </Link>
+
           {/* <Menu.Item as="a">Work</Menu.Item>
           <Menu.Item as="a">Company</Menu.Item>
           <Menu.Item as="a">Careers</Menu.Item>
@@ -150,7 +162,11 @@ class MobileContainer extends Component {
           <Segment
             inverted
             textAlign="center"
-            style={{ minHeight: 350, padding: "1em 0em" }}
+            style={{
+              backgroundImage: `url("./images/bg.jpg")`,
+              minHeight: 350,
+              padding: "1em 0em",
+            }}
             vertical
           >
             <Container>
@@ -160,7 +176,7 @@ class MobileContainer extends Component {
                 </Menu.Item>
                 <Menu.Item position="right">
                   <Button as="a" inverted>
-                    Log in
+                    Log In
                   </Button>
                   {/* <Button as='a' inverted style={{ marginLeft: '0.5em' }}>
                     Sign Up
@@ -210,45 +226,49 @@ class Landing extends Component {
       objectFit: "cover",
       objectPosition: "center center",
     };
-
+    const { topMeals } = this.state;
     return (
       <ResponsiveContainer>
         <Segment style={{ paddingTop: "5em" }}>
           <h1>Food delivery in Edinburgh</h1>
-          <Grid padded stackable>
-            <Grid.Row style={{ margin: "auto" }} columns={5}>
-              {this.state.topMeals.map((meal) => {
-                const { VirtualShop, price, photo, name } = meal;
-                return (
-                  <Grid.Column>
-                    <Link to={`/${VirtualShop.shopUrl}`}>
-                      <Card fluid>
-                        <Image
-                          style={styles}
-                          src={`${IMAGE_URL}${photo}`}
-                          ui={false}
-                        />
-                        <Card.Content>
-                          <Header as="h4">{name}</Header>
-                          <Header color="red" as="h4">
-                            {formatPrice(price)}
-                          </Header>
-                          {VirtualShop.deliveryPrice
-                            ? `${formatPrice(
-                                VirtualShop.deliveryPrice
-                              )} delivery fee`
-                            : "Free delivery"}
-                        </Card.Content>
-                        <Card.Content extra>
-                          <Header as="h4">{VirtualShop.shopName}</Header>
-                        </Card.Content>
-                      </Card>
-                    </Link>
-                  </Grid.Column>
-                );
-              })}
-            </Grid.Row>
-          </Grid>
+          {topMeals.length > 0 ? (
+            <Grid padded stackable>
+              <Grid.Row style={{ margin: "auto" }} columns={5}>
+                {topMeals.map((meal) => {
+                  const { VirtualShop, price, photo, name } = meal;
+                  return (
+                    <Grid.Column>
+                      <Link to={`/${VirtualShop.shopUrl}`}>
+                        <Card fluid>
+                          <Image
+                            style={styles}
+                            src={`${IMAGE_URL}${photo}`}
+                            ui={false}
+                          />
+                          <Card.Content>
+                            <Header as="h4">{name}</Header>
+                            <Header color="red" as="h4">
+                              {formatPrice(price)}
+                            </Header>
+                            {VirtualShop.deliveryPrice
+                              ? `${formatPrice(
+                                  VirtualShop.deliveryPrice
+                                )} delivery fee`
+                              : "Free delivery"}
+                          </Card.Content>
+                          <Card.Content extra>
+                            <Header as="h4">{VirtualShop.shopName}</Header>
+                          </Card.Content>
+                        </Card>
+                      </Link>
+                    </Grid.Column>
+                  );
+                })}
+              </Grid.Row>
+            </Grid>
+          ) : (
+            <BigLoader />
+          )}
         </Segment>
         <Footer />
       </ResponsiveContainer>

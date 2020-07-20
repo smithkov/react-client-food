@@ -1,0 +1,23 @@
+ol.a {
+  margin-left: 0;
+  padding-left: 26px;
+}
+ul li, ol li {
+    line-height:160%; /*or whatever height you like*/
+}
+p {
+  display: block;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  font-weight: 300;
+  font-family: Hind Vadodara, Helvetica Neue, Helvetica, sans-serif;
+}
+.b{font-weight: bold;}
+body {
+  font-size: 1rem;
+  line-height: 1.45;
+  color: #333;
+  font-family: Hind Vadodara, Helvetica Neue, Helvetica, sans-serif;
+}
