@@ -8,8 +8,8 @@ import {
 } from "./types";
 import ClientService from "../services/clientService";
 
-export const fetchProducts = () => (dispatch) => {
-  ClientService.products()
+export const fetchProducts = (search) => (dispatch) => {
+  ClientService.products({search})
     .then((products) => {
       dispatch({
         type: FETCH_PRODUCTS,

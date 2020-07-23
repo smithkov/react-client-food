@@ -33,6 +33,9 @@
       color: transparent;
       opacity: 0;
     }
+    .green {
+      color: "green";
+    }
     .files-preview-container {
       display: flex;
       width: 100%;
@@ -116,7 +119,7 @@
   }
 }
 body {
-  font-family: "Hind Vadodara","Helvetica Neue",Helvetica,sans-serif;
+  font-family: "Hind Vadodara", "Helvetica Neue", Helvetica, sans-serif;
   color: #535353;
 }
 .red {
@@ -133,7 +136,7 @@ body {
   text-align: center;
 }
 .google:hover {
-  background:#db3236;
+  background: #db3236;
   opacity: 0.6;
 }
 .facebookBtn {
@@ -152,50 +155,55 @@ body {
   background: #3b5998;
   opacity: 0.6;
 }
-.padding{
+.padding {
   padding: 10px;
 }
-.alertBox{
-  background-color: #F1DFC9   ;
+.alertBox {
+  background-color: #f1dfc9;
   padding: 5px;
   border-radius: 5px;
 }
-.capitalize{
+.capitalize {
   text-transform: capitalize;
 }
 
-
-h5,h4,h1,h3,h4, h2,p {
+h5,
+h4,
+h1,
+h3,
+h4,
+h2,
+p {
   margin: 0;
-  font-family: Ubuntu,Arial,sans-serif;
+  font-family: Ubuntu, Arial, sans-serif;
   font-weight: 300;
   color: #535353;
 }
-.desc{
-  font-size: .875rem;
+
+.desc {
+  font-size: 0.875rem;
   margin: 0;
-  font-family: Hind Vadodara,Helvetica Neue,Helvetica,sans-serif;
+  font-family: Hind Vadodara, Helvetica Neue, Helvetica, sans-serif;
   font-weight: 300;
   color: #333;
-  
 }
-@media only screen and (min-width: 992px){
+@media only screen and (min-width: 992px) {
   .ui.tiny.modal {
-      position: fixed;
-      top: 20%;
+    position: fixed;
+    top: 20%;
   }
 }
 
-@media only screen and (min-width: 768px){
+@media only screen and (min-width: 768px) {
   .ui.tiny.modal {
-      position: fixed;
-      top: 20%;
+    position: fixed;
+    top: 20%;
   }
 }
 
-@media only screen and (max-width: 767px){
+@media only screen and (max-width: 767px) {
   .ui.tiny.modal {
-      position: fixed;
-      top: 5%;
+    position: fixed;
+    top: 5%;
   }
 }

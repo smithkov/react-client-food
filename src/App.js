@@ -27,6 +27,7 @@ import OrderDetail from "./adminComponents/orderDetail";
 import StoreReview from "./adminComponents/storeReview";
 import AvailableTime from "./adminComponents/availableTime";
 import Privacy from "./documents/privacy";
+import Disclaimer from "./documents/disclaimer";
 import TermsAndCondition from "./documents/termsAndCondition";
 import { Provider } from "react-redux";
 import store from "./store";
@@ -57,7 +58,8 @@ import {
   VENDOR_APPLY_SUCCESS,
   ORDER_DETAIL_URL,
   PRIVACY_URL, 
-  TERMS_AND_CONDITION
+  TERMS_AND_CONDITION,
+  DISCLAIMER
 } from "./utility/global";
 
 class App extends React.Component {
@@ -74,6 +76,7 @@ class App extends React.Component {
             <Route exact path={SHOP_CREATE} component={ShopForm} />
             <Route exact path={PRIVACY_URL} component={Privacy} />
             <Route exact path={TERMS_AND_CONDITION} component={TermsAndCondition} />
+            <Route exact path={DISCLAIMER} component={Disclaimer} />
             <Route exact path={PRODUCT_DETAIL_URL} component={ProductDetail} />
             <Route
               exact

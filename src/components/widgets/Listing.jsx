@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import SideMenu from "./SideMenu";
+import moment from "moment";
 import { Container, Row, Col } from "reactstrap";
 import {
   IMAGE_URL,
@@ -7,6 +8,8 @@ import {
   displayRating,
   formatPrice,
   LISTING_URL,
+  isShopOpen,
+  DAYS,
 } from "../../utility/global";
 import { Link } from "react-router-dom";
 import "./listing.css";
@@ -30,6 +33,7 @@ import {
   Card,
   Segment,
 } from "semantic-ui-react";
+import clientService from "../../services/clientService";
 
 const options = [
   { key: "all", text: "All", value: "all" },
@@ -44,17 +48,30 @@ class Listing extends Component {
   state = {
     hasListing: false,
     products: [],
+    search: "",
   };
   componentDidMount() {
-    this.props.fetchProducts();
+    this.props.fetchProducts("");
+  }
+
+  onChange = (e) => {
     
+    this.setState({
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  onSearch =async()=>{
+    this.props.fetchProducts(this.state.search);
+   
+   
   }
   componentWillReceiveProps(nextProps) {
-    console.log("will receive props", nextProps);
+    //console.log("will receive props", nextProps);
     const propProduct = nextProps.products;
     this.setState({
       products: propProduct,
-      hasListing:true
+      hasListing: true,
     });
     const newProducts = nextProps.newProduct;
     if (newProducts.length > 0) {
@@ -70,6 +87,7 @@ class Listing extends Component {
       objectPosition: "center center",
     };
     const { products } = this.state;
+
     return (
       <Grid style={{ paddingTop: 80 }} stackable>
         <Grid.Row>
@@ -79,9 +97,9 @@ class Listing extends Component {
           <Grid.Column style={{ padding: 20 }} width={10}>
             <React.Fragment>
               <Input fluid type="text" placeholder="Search..." action>
-                <input />
+                <input onChange={this.onChange} name="search" />
 
-                <Button color="blue" type="submit">
+                <Button  basic onClick={this.onSearch} color="blue" type="submit">
                   Search
                 </Button>
               </Input>
@@ -92,7 +110,62 @@ class Listing extends Component {
               {this.state.hasListing ? (
                 products.length > 0 ? (
                   products.map((seller) => {
-                    // const rating = { id: 2, value: seller.rating}
+                    const shopTimes = seller.VirtualShop.openingTimes
+                      .filter((time) => time.checked == true)
+                      .sort((a, b) => a.dayNum - b.dayNum);
+
+                    const currentDayNum = new Date().getDay();
+                    //const currentDayWord = DAYS[currentDayNum];
+
+                    let isOpen = false;
+                    let shopTime;
+                    let hasSetTimeForShop = shopTimes.length > 0;
+                    let nextOpeningTime;
+                    let arrayIndex;
+
+                    if (hasSetTimeForShop) {
+                      shopTime = shopTimes.find((time) => {
+                        return time.dayNum === currentDayNum;
+                      });
+
+                      if (shopTime) isOpen = isShopOpen(shopTime);
+                      else {
+                        //console.log("Next opening",shopTimes[0])
+                      }
+                      arrayIndex = shopTimes.indexOf(shopTime);
+                    }
+                    // nextOpeningTime = `Today ${shopTime.oTime}`;
+                    // if (!isOpen && hasSetTimeForShop) {
+                    //   const convertedTime = moment(new Date()).format("HH:mm");
+
+                    //   if ((shopTime && shopTime.oTime) > convertedTime) {
+                    //     nextOpeningTime = `Today ${shopTime.oTime}`;
+                    //   } else if (!shopTime && ){}else if ((shopTime && arrayIndex) < shopTimes.length - 1) {
+                    //     const nextOpeningObject = shopTimes[arrayIndex + 1];
+                    //     const { day, oTime } = nextOpeningObject;
+                    //     nextOpeningTime = `${day} ${oTime}`;
+                    //   } else {
+                    //     const nextOpeningObject = shopTimes[0];
+                    //     const { day, oTime } = nextOpeningObject;
+                    //     nextOpeningTime = `${day} ${oTime}`;
+                    //   }
+                    //  console.log("opening day", nextOpeningTime)
+                    //   // shopTime = shopTimes.find((time) => {
+                    //   //   return time.day === currentDayWord;
+                    //   // });
+                    //   // if(convertedTime< "23:59:59"){
+                    //   //   currentDayNum = DAYS[currentDayNum+1]
+                    //   //   shopTime = shopTimes.find((time) => {
+                    //   //     return time.day === currentDayWord;
+                    //   //   });
+                    //   // }
+                    //   // else {
+                    //   //   shopTime = shopTimes.find((time) => {
+                    //   //     return time.day === currentDayWord;
+                    //   //   });
+                    //   // }
+                    // }
+
                     return (
                       <React.Fragment>
                         <Grid
@@ -109,9 +182,15 @@ class Listing extends Component {
                                 />
                               </Card>
                               <Link to={`/${seller.VirtualShop.shopUrl}`}>
-                                <Button basic color="red" fluid>
-                                  Order from vendor
-                                </Button>
+                                {isOpen ? (
+                                  <Button basic color="green" fluid>
+                                    Order from seller
+                                  </Button>
+                                ) : (
+                                  <Button basic color="red" fluid>
+                                    Pre-order from seller
+                                  </Button>
+                                )}
                               </Link>
                             </Grid.Column>
                             <Grid.Column width={11}>
@@ -133,12 +212,23 @@ class Listing extends Component {
                                       size="small"
                                     />{" "}
                                     | {totalRating(seller.productRatings)}
-                                    <h5>{seller.VirtualShop.shopName}</h5>
+                                    <h5>
+                                      {" "}
+                                      <Link
+                                        to={`/${seller.VirtualShop.shopUrl}`}
+                                      >
+                                        {seller.VirtualShop.shopName}
+                                      </Link>
+                                    </h5>
                                   </Grid.Column>
                                   <Grid.Column className="desc" width={8}>
                                     {seller.VirtualShop.maxTime ? (
-                                      <p>
-                                        <Icon name="time" />
+                                      <p style={{color:"green"}}>
+                                        <Icon
+                                          color="green"
+                                          size="large"
+                                          name="time"
+                                        />
                                         {` ${seller.VirtualShop.minTime} - ${seller.VirtualShop.maxTime} mins`}
                                       </p>
                                     ) : (
@@ -146,7 +236,11 @@ class Listing extends Component {
                                     )}
                                     {seller.VirtualShop.percentageDiscount ? (
                                       <p style={{ color: "red" }}>
-                                        <Icon color="red" name="fire" />
+                                        <Icon
+                                          color="red"
+                                          size="large"
+                                          name="fire"
+                                        />
                                         {`${seller.VirtualShop.percentageDiscount} % off when you spend £${seller.VirtualShop.discountAmount}`}
                                       </p>
                                     ) : (
@@ -154,7 +248,7 @@ class Listing extends Component {
                                     )}
                                     {seller.VirtualShop.minOrder ? (
                                       <p>
-                                        <Icon name="money" />
+                                        <Icon size="large" name="money" />
                                         {` Minimum spend £${seller.VirtualShop.minOrder}`}
                                       </p>
                                     ) : (
@@ -163,15 +257,21 @@ class Listing extends Component {
 
                                     {seller.VirtualShop.deliveryPrice ? (
                                       <p>
-                                        <Icon name="truck" />
+                                        <Icon size="large" name="truck" />
                                         {` Delivery £${seller.VirtualShop.deliveryPrice}`}
                                       </p>
                                     ) : (
                                       ""
                                     )}
-                                    {/* <Link to={`/${seller.VirtualShop.shopUrl}`}>
-                                  <Button fluid color="red">Order from vendor</Button>
-                                </Link> */}
+
+                                    {!isOpen ? (
+                                      <p>
+                                        <Icon size="large" name="lock" />
+                                        {` Shop Closed`}
+                                      </p>
+                                    ) : (
+                                      ""
+                                    )}
                                   </Grid.Column>
                                 </Grid.Row>
                               </Grid>

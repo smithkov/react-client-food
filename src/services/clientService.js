@@ -1,8 +1,8 @@
 import http from "../http-common";
 
 class ClientService {
-  products() {
-    return http.get("/products");
+  products(data) {
+    return http.post("/products", data);
   }
 
   productUpdate(id, data) {

@@ -1,5 +1,16 @@
 import clientService from "../services/clientService";
 import { toast } from "react-toastify";
+import moment from "moment";
+const daysOfWeek = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
+export const DAYS = daysOfWeek;
 export const SERVER_URL = "http://localhost:8000/api";
 export const IMAGE_URL = "http://localhost:8000/uploads/category/";
 // export const SERVER_URL = "https://api.foodengo.co.uk/api";
@@ -16,6 +27,7 @@ export const DASHBOARD_URL = "/dashboard";
 export const TERMS_AND_CONDITION = "/terms_and_conditions";
 export const SHOP_SETTING_URL = "/shop/settings";
 export const PRIVACY_URL = "/user-seller/privacy";
+export const DISCLAIMER = "/user/disclaimer";
 export const SHOP_SOCIAL_URL = "/shop/social";
 export const AVAILABILITY_URL = "/shop/opening-hours";
 export const USER_ORDER_URL = "/user/order";
@@ -29,7 +41,8 @@ export const SHOP_PAGE_URL = "/:shopUrl";
 export const ORDER_DETAIL_URL = "/user/order/:id";
 export const VENDOR_APPLY_SUCCESS = "/food_vendor/application-success/:id";
 
-export const SERVER_ERROR = "Your request can't be completed at the moment. Please try again later."
+export const SERVER_ERROR =
+  "Your request can't be completed at the moment. Please try again later.";
 
 export const DEFAULT_LOGO =
   "https://react.semantic-ui.com/images/wireframe/image.png";
@@ -79,11 +92,20 @@ export const displayRating = (productRatings) => {
 export const formatPrice = (price) => {
   return `£${parseFloat(price).toFixed(2)}`;
 };
-export const toastOptions =(hasError=false)=> {
-  return  {autoClose: 5000,
-  position: toast.POSITION.TOP_CENTER,
-  type: hasError?toast.TYPE.ERROR: toast.TYPE.INFO,
-  hideProgressBar: false,}
+export const toastOptions = (hasError = false) => {
+  return {
+    autoClose: 5000,
+    position: toast.POSITION.TOP_CENTER,
+    type: hasError ? toast.TYPE.ERROR : toast.TYPE.INFO,
+    hideProgressBar: false,
+  };
 };
 
+export const isShopOpen = (shopTime) => {
+  
 
+  const convertedTime = moment(new Date()).format("HH:mm");
+  if (convertedTime > shopTime.oTime && convertedTime < shopTime.cTime) {
+    return true;
+  } else return false;
+};

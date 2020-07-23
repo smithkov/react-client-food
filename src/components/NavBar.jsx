@@ -34,22 +34,22 @@ class NavBar extends Component {
   state = {
     firstName: "",
     avatar: DEFAULT_USER,
+    role:""
   };
 
   componentDidMount = async () => {
     this.props.addUser();
-    try {
-      const result = await clientService.hasAuth();
-
-      const { firstName, photo } = result.data.data;
-      this.setState({
-        firstName: firstName ? firstName : "",
-        avatar: photo ? `${IMAGE_URL}${photo}` : DEFAULT_USER,
-      });
-    } catch (err) {}
+   
   };
   componentWillReceiveProps(nextProps) {
-    if (nextProps) {
+    if (nextProps.user) {
+     
+      const {firstName, photo, role} =nextProps.user;
+      this.setState({
+        firstName: firstName,
+        role: role,
+        avatar: photo ? `${IMAGE_URL}${photo}` : DEFAULT_USER,
+      });
     }
   }
   handlerLogout = async (e) => {

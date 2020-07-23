@@ -17,6 +17,8 @@ import {
   SHOP_SIGNUP,
   TERMS_AND_CONDITION,
   PRIVACY_URL,
+  DISCLAIMER,
+  LISTING_URL
 } from "../utility/global";
 
 const Footer = () => {
@@ -49,19 +51,19 @@ const Footer = () => {
           <Grid.Column width={3}>
             <Header inverted as="h4" content="Top cuisines" />
             <List link inverted>
-              <List.Item as="a">Nigerian</List.Item>
-              <List.Item as="a">Ghanian</List.Item>
-              <List.Item as="a">South-African</List.Item>
-              <List.Item as="a">Zimbabwean</List.Item>
+              <List.Item as="a"><Link to={LISTING_URL}>Nigerian</Link></List.Item>
+              <List.Item as="a"><Link to={LISTING_URL}>Ghanian</Link></List.Item>
+              <List.Item as="a"><Link to={LISTING_URL}>South-African</Link></List.Item>
+              <List.Item as="a"><Link to={LISTING_URL}>Zimbabwean</Link></List.Item>
             </List>
           </Grid.Column>
           <Grid.Column width={3}>
             <Header inverted as="h4" content="Meal Categories" />
             <List link inverted>
-              <List.Item as="a">Soup</List.Item>
-              <List.Item as="a">Snacks</List.Item>
-              <List.Item as="a">African Salad</List.Item>
-              <List.Item as="a">Jollof Rice</List.Item>
+              <List.Item as="a"><Link to={LISTING_URL}>Soup</Link></List.Item>
+              <List.Item as="a"><Link to={LISTING_URL}>Snacks</Link></List.Item>
+              <List.Item as="a"><Link to={LISTING_URL}>African Salad</Link></List.Item>
+              <List.Item as="a"><Link to={LISTING_URL}>Jollof Rice</Link></List.Item>
             </List>
           </Grid.Column>
           <Grid.Column width={7}>
@@ -78,7 +80,7 @@ const Footer = () => {
         <Image centered size="small" src="/images/foodengo_logo.png" />
         <List horizontal inverted divided link size="small">
           <List.Item as="a" href="#">
-            Site Map
+          <Link to={DISCLAIMER}>Disclaimer</Link>
           </List.Item>
           <List.Item as="a" href="#">
             Contact Us
