@@ -95,12 +95,11 @@ class AvailableTime extends Component {
       const thursday = result.find((t) => t.day === "Thursday");
       const friday = result.find((t) => t.day === "Friday");
       const saturday = result.find((t) => t.day === "Saturday");
-      console.log("opening by shop", sunday);
+      
       if (sunday) {
         const sunMinDate = sunday.opening;
         const sunMaxDate = sunday.closing;
-        console.log("sunday min", sunMinDate);
-        console.log("sunday max", sunMaxDate);
+        
         this.setState({
           sunId: sunday.id,
           selectedSunMin: sunMinDate,

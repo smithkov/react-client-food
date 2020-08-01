@@ -6,7 +6,7 @@ class Carousel extends Component {
       <div>
         <div class="view">
           <img
-            src="./images/header.jpg"
+            src="/images/header.jpg"
             class="img-fluid"
             alt="Image of ballons flying over canyons with mask pattern one."
           />

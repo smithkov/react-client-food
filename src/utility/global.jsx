@@ -1,6 +1,7 @@
 import clientService from "../services/clientService";
 import { toast } from "react-toastify";
 import moment from "moment";
+import React from "react";
 const daysOfWeek = [
   "Sunday",
   "Monday",
@@ -10,6 +11,11 @@ const daysOfWeek = [
   "Friday",
   "Saturday",
 ];
+
+export const LATER_TODAY = "later_today";
+export const OPEN = "open";
+export const NOT_OPEN = "not_open";
+
 export const DAYS = daysOfWeek;
 export const SERVER_URL = "http://localhost:8000/api";
 export const IMAGE_URL = "http://localhost:8000/uploads/category/";
@@ -20,6 +26,7 @@ export const MEAL_LIST = "/meal/food_list";
 export const MEAL_UPDATE = "/meal/update/:id";
 export const SHOP_CREATE = "/seller_reg";
 export const LOGIN_URL = "/login";
+export const ACCOUNT_VERIFICATION = "/account_verification/:code";
 export const REGISTER_URL = "/register";
 export const LISTING_URL = "/listing";
 export const MY_ACCOUNT = "/myAccount";
@@ -28,6 +35,7 @@ export const TERMS_AND_CONDITION = "/terms_and_conditions";
 export const SHOP_SETTING_URL = "/shop/settings";
 export const PRIVACY_URL = "/user-seller/privacy";
 export const DISCLAIMER = "/user/disclaimer";
+export const CONTACT_US = "/contact_us";
 export const SHOP_SOCIAL_URL = "/shop/social";
 export const AVAILABILITY_URL = "/shop/opening-hours";
 export const USER_ORDER_URL = "/user/order";
@@ -36,11 +44,56 @@ export const SHOP_REVIEW = "/mystore-review";
 export const DELIVERY_DETAIL_URL = "/delivery/detail/:by/:sel";
 export const PAYMENT_URL = "/payment/:by/:sel";
 export const PRODUCT_DETAIL_URL = "/item_meal/:id";
-export const PAY_STATUS_URL = "/payment/status";
+export const PAYMENT_SUCCESS_URL = "/payment/success/:by/:sel";
+export const PAYMENT_ERROR_URL = "/payment/error/:by/:sel";
 export const SHOP_PAGE_URL = "/:shopUrl";
 export const ORDER_DETAIL_URL = "/user/order/:id";
 export const VENDOR_APPLY_SUCCESS = "/food_vendor/application-success/:id";
+export const days = {
+  Monday: "Monday",
+  Tuesday: "Tuesday",
+  Wednesday: "Wednesday",
+  Thursday: "Thursday",
+  Friday: "Friday",
+  Saturday: "Saturday",
+  Sunday: "Sunday",
+};
 
+export const formatCurrentDay = (day) => {
+  const currentDay = daysOfWeek[new Date().getDay()];
+  if (currentDay == day) {
+    return <strong>{day}</strong>;
+  } else {
+    return day;
+  }
+};
+
+export const formatClose = (day) => {
+  const closed = "Closed";
+  const currentDay = daysOfWeek[new Date().getDay()];
+  if (currentDay == day) {
+    return <strong>{closed}</strong>;
+  } else {
+    return closed;
+  }
+};
+export const formatCurrentTime = (day, oTime, cTime) => {
+  const currentDay = daysOfWeek[new Date().getDay()];
+
+  if (currentDay == day) {
+    const getcurTime = moment(new Date()).format("HH:mm");
+    const getClosingTime = moment(cTime).format("HH:mm");
+    const getOpeningTime = moment(oTime).format("HH:mm");
+
+    if (getcurTime > getClosingTime) {
+      return <strong style={{ color: "red" }}>Closed</strong>;
+    } else if (getOpeningTime > getcurTime && getClosingTime > getcurTime) {
+      return <strong>{`Opens ${moment(oTime).format("LT")}`}</strong>;
+    } else return <strong>{`Closes ${moment(cTime).format("LT")}`}</strong>;
+  } else {
+    return `${moment(oTime).format("LT")} - ${moment(cTime).format("LT")}`;
+  }
+};
 export const SERVER_ERROR =
   "Your request can't be completed at the moment. Please try again later.";
 
@@ -102,10 +155,25 @@ export const toastOptions = (hasError = false) => {
 };
 
 export const isShopOpen = (shopTime) => {
-  
-
   const convertedTime = moment(new Date()).format("HH:mm");
   if (convertedTime > shopTime.oTime && convertedTime < shopTime.cTime) {
-    return true;
-  } else return false;
+    return OPEN;
+  } else if (shopTime.oTime > convertedTime && shopTime.cTime > convertedTime) {
+    return LATER_TODAY;
+  } else return NOT_OPEN;
+};
+
+export const nextOpening = (shopTime, shopTimes) => {
+  
+    const arrayLength = shopTimes.length;
+    let currentIndex = shopTimes.indexOf(shopTime);
+    let nextIndex;
+    if (currentIndex + 1 === arrayLength) {
+      nextIndex = 0;
+    } else {
+      nextIndex = ++currentIndex;
+    }
+    
+
+  return shopTimes[nextIndex];
 };

@@ -21,6 +21,7 @@ import {
   List,
   Button,
   Table,
+  Header,
   Ref,
 } from "semantic-ui-react";
 import ItemCard from "./widgets/ItemCard";
@@ -36,6 +37,10 @@ import {
   formatPrice,
   getTempId,
   toastOptions,
+  formatCurrentDay,
+  formatCurrentTime,
+  formatClose,
+  days,
 } from "../utility/global";
 import clientService from "../services/clientService";
 import { Link } from "react-router-dom";
@@ -44,6 +49,7 @@ import { toast } from "react-toastify";
 import { fetchUser } from "../actions/productActions";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+const moment = require("moment");
 
 class ShopPage extends Component {
   constructor(props) {
@@ -78,7 +84,28 @@ class ShopPage extends Component {
     deliveryPrice: 0,
     redirect: false,
     posterName: "",
-    replyResult:""
+    replyResult: "",
+    sunMinDate: "",
+    sunMaxDate: "",
+    monMinDate: "",
+    monMaxDate: "",
+    tueMinDate: "",
+    tueMaxDate: "",
+    wedMinDate: "",
+    wedMaxDate: "",
+    thurMinDate: "",
+    thurMaxDate: "",
+    friMinDate: "",
+    friMaxDate: "",
+    satMinDate: "",
+    satMaxDate: "",
+    hasSun: false,
+    hasMon: false,
+    hasTue: false,
+    hasWed: false,
+    hasThur: false,
+    hasFri: false,
+    hasSat: false,
   };
   contextRef = createRef();
   componentWillUpdate(nextProps, nextState) {
@@ -178,6 +205,67 @@ class ShopPage extends Component {
         },
         (error) => {}
       );
+      const openingTime = data.openingTimes;
+      console.log("-----------------------", openingTime);
+      if (openingTime.length > 0) {
+        const sunday = openingTime.find((t) => t.day === "Sunday");
+        const monday = openingTime.find((t) => t.day === "Monday");
+        const tuesday = openingTime.find((t) => t.day === "Tuesday");
+        const wednesday = openingTime.find((t) => t.day === "Wednesday");
+        const thursday = openingTime.find((t) => t.day === "Thursday");
+        const friday = openingTime.find((t) => t.day === "Friday");
+        const saturday = openingTime.find((t) => t.day === "Saturday");
+
+        if (sunday) {
+          this.setState({
+            hasSun: true,
+            sunMinDate: moment(sunday.opening),
+            sunMaxDate: moment(sunday.closing),
+          });
+        }
+        if (monday) {
+          this.setState({
+            hasMon: true,
+            monMinDate: moment(monday.opening),
+            monMaxDate: moment(monday.closing),
+          });
+        }
+        if (tuesday) {
+          this.setState({
+            hasTue: true,
+            tueMinDate: moment(tuesday.opening),
+            tueMaxDate: moment(tuesday.closing),
+          });
+        }
+        if (wednesday) {
+          this.setState({
+            hasWed: true,
+            wedMinDate: moment(wednesday.opening),
+            wedMaxDate: moment(wednesday.closing),
+          });
+        }
+        if (thursday) {
+          this.setState({
+            hasThur: true,
+            thurMinDate: moment(thursday.opening),
+            thurMaxDate: moment(thursday.closing),
+          });
+        }
+        if (friday) {
+          this.setState({
+            hasFri: true,
+            friMinDate: moment(friday.opening),
+            friMaxDate: moment(friday.closing),
+          });
+        }
+        if (saturday) {
+          this.setState({
+            hasSat: true,
+            satMinDate: moment(saturday.opening),
+            satMaxDate: moment(saturday.closing),
+          });
+        }
+      }
     } catch (err) {
       this.setState({
         redirect: true,
@@ -187,7 +275,6 @@ class ShopPage extends Component {
       shopId: this.state.shopId,
       tempId: getTempId(),
     });
-    console.log("getCart", getCart.data);
 
     const data = getCart.data.data;
 
@@ -343,6 +430,29 @@ class ShopPage extends Component {
       };
       const { socials } = this.state;
       let socialRender;
+      const {
+        hasSun,
+        hasMon,
+        hasTue,
+        hasWed,
+        hasThur,
+        hasFri,
+        hasSat,
+        sunMinDate,
+        sunMaxDate,
+        monMinDate,
+        monMaxDate,
+        tueMinDate,
+        tueMaxDate,
+        wedMinDate,
+        wedMaxDate,
+        thurMinDate,
+        thurMaxDate,
+        friMinDate,
+        friMaxDate,
+        satMinDate,
+        satMaxDate,
+      } = this.state;
 
       if (socials.length > 0) {
         let social = socials[0];
@@ -399,36 +509,137 @@ class ShopPage extends Component {
           ),
         },
         {
-          menuItem: "Contact Us",
+          menuItem: "Info",
           render: () => (
             <Tab.Pane>
-              <div>
-                <Grid style={{ height: 220, padding: 20 }} columns={2} padded>
-                  <Grid.Column>
-                    <Card
-                      header={this.state.firstAddress}
-                      meta={this.state.city}
-                      description={this.state.postCode}
+              <Grid style={{ height: 220, padding: 20 }} columns={2} padded>
+                <Grid.Column>
+                  <Card
+                    header={this.state.firstAddress}
+                    meta={this.state.city}
+                    description={this.state.postCode}
+                  />
+                  {socialRender}
+                </Grid.Column>
+                <Grid.Column>
+                  <Map
+                    google={this.props.google}
+                    zoom={15}
+                    style={mapStyles}
+                    initialCenter={{
+                      lat: this.state.lat,
+                      lng: this.state.lng,
+                    }}
+                  >
+                    <Marker
+                      position={{ lat: this.state.lat, lng: this.state.lng }}
                     />
-                    {socialRender}
+                  </Map>
+                </Grid.Column>
+              </Grid>
+              <hr></hr>
+              <Header as="h4">Opening hours</Header>
+              <Grid padded>
+                <Grid.Row>
+                  <Grid.Column width={8}>
+                    <Table basic="very">
+                      <Table.Body>
+                        <Table.Row>
+                          <Table.Cell>{formatCurrentDay("Sunday")}</Table.Cell>
+                          <Table.Cell>
+                            {hasSun
+                              ? formatCurrentTime(
+                                  "Sunday",
+                                  sunMinDate,
+                                  sunMaxDate
+                                )
+                              : formatClose(days.Sunday)}
+                          </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                          <Table.Cell>{formatCurrentDay("Monday")}</Table.Cell>
+                          <Table.Cell>
+                            {hasMon
+                              ? formatCurrentTime(
+                                  "Monday",
+                                  monMinDate,
+                                  monMaxDate
+                                )
+                              : formatClose(days.Monday)}
+                          </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                          <Table.Cell>{formatCurrentDay("Tuesday")}</Table.Cell>
+                          <Table.Cell>
+                            {hasTue
+                              ? formatCurrentTime(
+                                  "Tuesday",
+                                  tueMinDate,
+                                  tueMaxDate
+                                )
+                              : formatClose(days.Tuesday)}
+                          </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                          <Table.Cell>
+                            {formatCurrentDay("Wednesday")}
+                          </Table.Cell>
+                          <Table.Cell>
+                            {hasWed
+                              ? formatCurrentTime(
+                                  "Wednesday",
+                                  wedMinDate,
+                                  wedMaxDate
+                                )
+                              : formatClose(days.Wednesday)}
+                          </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                          <Table.Cell>
+                            {formatCurrentDay("Thursday")}
+                          </Table.Cell>
+                          <Table.Cell>
+                            {hasThur
+                              ? formatCurrentTime(
+                                  "Thursday",
+                                  thurMinDate,
+                                  thurMaxDate
+                                )
+                              : formatClose(days.Thursday)}
+                          </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                          <Table.Cell>{formatCurrentDay("Friday")}</Table.Cell>
+                          <Table.Cell>
+                            {hasFri
+                              ? formatCurrentTime(
+                                  "Friday",
+                                  friMinDate,
+                                  friMaxDate
+                                )
+                              : formatClose(days.Friday)}
+                          </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                          <Table.Cell>
+                            {formatCurrentDay("Saturday")}
+                          </Table.Cell>
+                          <Table.Cell>
+                            {hasSat
+                              ? formatCurrentTime(
+                                  "Saturday",
+                                  satMinDate,
+                                  satMaxDate
+                                )
+                              : formatClose(days.Saturday)}
+                          </Table.Cell>
+                        </Table.Row>
+                      </Table.Body>
+                    </Table>
                   </Grid.Column>
-                  <Grid.Column>
-                    <Map
-                      google={this.props.google}
-                      zoom={15}
-                      style={mapStyles}
-                      initialCenter={{
-                        lat: this.state.lat,
-                        lng: this.state.lng,
-                      }}
-                    >
-                      <Marker
-                        position={{ lat: this.state.lat, lng: this.state.lng }}
-                      />
-                    </Map>
-                  </Grid.Column>
-                </Grid>
-              </div>
+                  <Grid.Column width={8}></Grid.Column>
+                </Grid.Row>
+              </Grid>
             </Tab.Pane>
           ),
         },
@@ -516,6 +727,10 @@ class ShopPage extends Component {
               </Grid.Row>
               <Grid.Row>
                 <Grid.Column width={4}>
+                  <Message floating>
+                    <Message.Header>{this.state.shopName}</Message.Header>
+                  </Message>
+
                   <Message floating>
                     <List>
                       {percentageDiscount ? (
@@ -636,7 +851,8 @@ const mapStateToProps = (state) => ({
   user: state.products.user,
 });
 
-export default connect(mapStateToProps, { fetchUser })(ShopPage);
-// export GoogleApiWrapper({
-//   apiKey: "AIzaSyDSYuGeHrv1KmGmB-mU1PdtvBNozgoYctU",
-// })(ShopPage);
+export default connect(mapStateToProps, { fetchUser })(
+  GoogleApiWrapper({
+    apiKey: "AIzaSyDSYuGeHrv1KmGmB-mU1PdtvBNozgoYctU",
+  })(ShopPage)
+);

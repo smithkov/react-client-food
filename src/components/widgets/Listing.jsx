@@ -10,6 +10,10 @@ import {
   LISTING_URL,
   isShopOpen,
   DAYS,
+  LATER_TODAY,
+  OPEN,
+  NOT_OPEN,
+  nextOpening,
 } from "../../utility/global";
 import { Link } from "react-router-dom";
 import "./listing.css";
@@ -55,17 +59,14 @@ class Listing extends Component {
   }
 
   onChange = (e) => {
-    
     this.setState({
       [e.target.name]: e.target.value,
     });
   };
 
-  onSearch =async()=>{
+  onSearch = async () => {
     this.props.fetchProducts(this.state.search);
-   
-   
-  }
+  };
   componentWillReceiveProps(nextProps) {
     //console.log("will receive props", nextProps);
     const propProduct = nextProps.products;
@@ -99,7 +100,12 @@ class Listing extends Component {
               <Input fluid type="text" placeholder="Search..." action>
                 <input onChange={this.onChange} name="search" />
 
-                <Button  basic onClick={this.onSearch} color="blue" type="submit">
+                <Button
+                  basic
+                  onClick={this.onSearch}
+                  color="blue"
+                  type="submit"
+                >
                   Search
                 </Button>
               </Input>
@@ -110,60 +116,35 @@ class Listing extends Component {
               {this.state.hasListing ? (
                 products.length > 0 ? (
                   products.map((seller) => {
-                    const shopTimes = seller.VirtualShop.openingTimes
-                      .filter((time) => time.checked == true)
-                      .sort((a, b) => a.dayNum - b.dayNum);
+                    // const shopTimes = seller.VirtualShop.openingTimes
+                    //   .filter((time) => time.checked == true)
+                    //   .sort((a, b) => a.dayNum - b.dayNum);
 
-                    const currentDayNum = new Date().getDay();
-                    //const currentDayWord = DAYS[currentDayNum];
+                    // const currentDayNum = new Date().getDay();
+                    // //const currentDayWord = DAYS[currentDayNum];
 
-                    let isOpen = false;
-                    let shopTime;
-                    let hasSetTimeForShop = shopTimes.length > 0;
-                    let nextOpeningTime;
-                    let arrayIndex;
+                    // let openStatus;
+                    // let shopTime;
+                    // let hasSetTimeForShop = shopTimes.length > 0;
+                    // let nextOpeningTime;
 
-                    if (hasSetTimeForShop) {
-                      shopTime = shopTimes.find((time) => {
-                        return time.dayNum === currentDayNum;
-                      });
+                    // if (hasSetTimeForShop) {
+                    //   shopTime = shopTimes.find((time) => {
+                    //     return time.dayNum === currentDayNum;
+                    //   });
+                    //   var getMe = shopTime;
+                    //   if (shopTime) {
+                    //     openStatus = isShopOpen(shopTime);
 
-                      if (shopTime) isOpen = isShopOpen(shopTime);
-                      else {
-                        //console.log("Next opening",shopTimes[0])
-                      }
-                      arrayIndex = shopTimes.indexOf(shopTime);
-                    }
-                    // nextOpeningTime = `Today ${shopTime.oTime}`;
-                    // if (!isOpen && hasSetTimeForShop) {
-                    //   const convertedTime = moment(new Date()).format("HH:mm");
+                    //     if (openStatus == NOT_OPEN) {
+                    //       const nextday = nextOpening(shopTime, shopTimes);
 
-                    //   if ((shopTime && shopTime.oTime) > convertedTime) {
-                    //     nextOpeningTime = `Today ${shopTime.oTime}`;
-                    //   } else if (!shopTime && ){}else if ((shopTime && arrayIndex) < shopTimes.length - 1) {
-                    //     const nextOpeningObject = shopTimes[arrayIndex + 1];
-                    //     const { day, oTime } = nextOpeningObject;
-                    //     nextOpeningTime = `${day} ${oTime}`;
-                    //   } else {
-                    //     const nextOpeningObject = shopTimes[0];
-                    //     const { day, oTime } = nextOpeningObject;
-                    //     nextOpeningTime = `${day} ${oTime}`;
+                    //       nextOpeningTime = `${nextday.day} ${nextday.oTime}`;
+                    //     } else if (openStatus == LATER_TODAY.toString()) {
+                    //       const nextday = nextOpening(shopTime, shopTimes);
+                    //       nextOpeningTime = `Opens ${nextday.oTime}`;
+                    //     }
                     //   }
-                    //  console.log("opening day", nextOpeningTime)
-                    //   // shopTime = shopTimes.find((time) => {
-                    //   //   return time.day === currentDayWord;
-                    //   // });
-                    //   // if(convertedTime< "23:59:59"){
-                    //   //   currentDayNum = DAYS[currentDayNum+1]
-                    //   //   shopTime = shopTimes.find((time) => {
-                    //   //     return time.day === currentDayWord;
-                    //   //   });
-                    //   // }
-                    //   // else {
-                    //   //   shopTime = shopTimes.find((time) => {
-                    //   //     return time.day === currentDayWord;
-                    //   //   });
-                    //   // }
                     // }
 
                     return (
@@ -182,15 +163,9 @@ class Listing extends Component {
                                 />
                               </Card>
                               <Link to={`/${seller.VirtualShop.shopUrl}`}>
-                                {isOpen ? (
-                                  <Button basic color="green" fluid>
-                                    Order from seller
-                                  </Button>
-                                ) : (
-                                  <Button basic color="red" fluid>
-                                    Pre-order from seller
-                                  </Button>
-                                )}
+                                <Button basic color="green" fluid>
+                                  Order from seller
+                                </Button>
                               </Link>
                             </Grid.Column>
                             <Grid.Column width={11}>
@@ -223,7 +198,7 @@ class Listing extends Component {
                                   </Grid.Column>
                                   <Grid.Column className="desc" width={8}>
                                     {seller.VirtualShop.maxTime ? (
-                                      <p style={{color:"green"}}>
+                                      <p style={{ color: "green" }}>
                                         <Icon
                                           color="green"
                                           size="large"
@@ -264,14 +239,22 @@ class Listing extends Component {
                                       ""
                                     )}
 
-                                    {!isOpen ? (
+                                    {/* {openStatus == LATER_TODAY ? (
                                       <p>
                                         <Icon size="large" name="lock" />
-                                        {` Shop Closed`}
+                                        {nextOpeningTime}
                                       </p>
                                     ) : (
                                       ""
                                     )}
+                                    {openStatus == NOT_OPEN ? (
+                                      <p>
+                                        <Icon size="large" name="lock" />
+                                        {nextOpeningTime}
+                                      </p>
+                                    ) : (
+                                      ""
+                                    )} */}
                                   </Grid.Column>
                                 </Grid.Row>
                               </Grid>

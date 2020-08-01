@@ -71,13 +71,15 @@ class DesktopContainer extends Component {
             inverted
             textAlign="center"
             style={{
-              backgroundImage: `url("./images/bg.jpg")`,
+              backgroundImage: `url("/images/bg.jpg")`,
               minHeight: 700,
+              repeat:"none",
               padding: "1em 0em",
             }}
             vertical
           >
             <Menu
+              color="grey"
               fixed={fixed ? "top" : null}
               inverted={!fixed}
               pointing={!fixed}
@@ -85,7 +87,7 @@ class DesktopContainer extends Component {
               size="large"
             >
               <Container>
-                <Menu.Item as="a">Home</Menu.Item>
+                {/* <Menu.Item as="a">Home</Menu.Item> */}
 
                 <Menu.Item position="right">
                   <Link to={LOGIN_URL}>
@@ -138,16 +140,14 @@ class MobileContainer extends Component {
           vertical
           visible={sidebarOpened}
         >
-          <Menu.Item as="a" active>
-            Home
-          </Menu.Item>
+          
           <Link to={LISTING_URL}>
             <Menu.Item as="a" active>
               Find Food
             </Menu.Item>
           </Link>
           <Link to={LOGIN_URL}>
-            <Menu.Item as="a" active>
+            <Menu.Item as="a">
               Log In
             </Menu.Item>
           </Link>
@@ -163,21 +163,23 @@ class MobileContainer extends Component {
             inverted
             textAlign="center"
             style={{
-              backgroundImage: `url("./images/bg.jpg")`,
+              backgroundImage: `url("/images/bg.jpg")`,
               minHeight: 350,
               padding: "1em 0em",
             }}
             vertical
           >
             <Container>
-              <Menu inverted pointing secondary size="large">
+              <Menu  color="grey" inverted pointing secondary size="large">
                 <Menu.Item onClick={this.handleToggle}>
                   <Icon name="sidebar" />
                 </Menu.Item>
                 <Menu.Item position="right">
+                <Link to={LOGIN_URL}>
                   <Button as="a" inverted>
                     Log In
                   </Button>
+                  </Link>
                   {/* <Button as='a' inverted style={{ marginLeft: '0.5em' }}>
                     Sign Up
                   </Button> */}

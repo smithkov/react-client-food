@@ -3,7 +3,7 @@ import ErrorPage from "./errorPage";
 import NavBar from "./NavBar";
 import { Grid, Image, Message, Container } from "semantic-ui-react";
 import { Link } from "react-router-dom";
-import {LISTING_URL} from '../utility/global'
+import { LISTING_URL } from "../utility/global";
 
 export default class PaymentSuccess extends Component {
   constructor(props) {
@@ -16,7 +16,6 @@ export default class PaymentSuccess extends Component {
   render() {
     return (
       <React.Fragment>
-        
         <Container>
           <Grid style={{ marginTop: 70 }} columns="equal">
             <Grid.Column></Grid.Column>
@@ -37,13 +36,15 @@ export default class PaymentSuccess extends Component {
             <Grid.Column></Grid.Column>
             <Grid.Column width={12}>
               <Message info style={{ textAlign: "center" }}>
-                <Message.Header>Your Payment is Successful</Message.Header>
+                <Message.Header>Your payment was successful.</Message.Header>
                 <Message.Content>
                   Thank you for your payment, an automated payment receipt will
                   be sent to your email.
                 </Message.Content>
                 <p>
-                  <Link style={{color:"red"}} to={`${LISTING_URL}`}>Back to Listing </Link>
+                  <Link style={{ color: "red" }} to={`${LISTING_URL}`}>
+                    Back to Listing{" "}
+                  </Link>
                 </p>
               </Message>
             </Grid.Column>

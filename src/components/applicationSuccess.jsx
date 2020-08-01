@@ -1,17 +1,32 @@
 import React, { Component } from "react";
 import NavBar from "./NavBar";
 import ErrorPage from "./errorPage";
-import { Grid, Image, Message, Container, Button } from "semantic-ui-react";
-import { Link } from "react-router-dom";
+import {
+  Grid,
+  Image,
+  Message,
+  Container,
+  Button,
+  Form,
+} from "semantic-ui-react";
+import { Link, withRouter } from "react-router-dom";
 import { LOGIN_URL } from "../utility/global";
 import clientService from "../services/clientService";
-export default class ApplicationSuccess extends Component {
+import { Input } from "@material-ui/core";
+class ApplicationSuccess extends Component {
   constructor(props) {
     super(props);
   }
 
   state = {
     redirect: false,
+    code: "",
+  };
+
+  onChange = (e) => {
+    this.setState({
+      [e.target.name]: e.target.value,
+    });
   };
   componentDidMount = async () => {
     const id = this.props.match.params.id;
@@ -29,9 +44,11 @@ export default class ApplicationSuccess extends Component {
       });
     }
   };
-
+  verify=()=> {
+    this.props.history.push(`/account_verification/${this.state.code}`);
+  }
   render() {
-    const { redirect } = this.state;
+    const { redirect, code } = this.state;
     if (redirect) {
       return <ErrorPage />;
     } else {
@@ -60,12 +77,44 @@ export default class ApplicationSuccess extends Component {
                 <Message info style={{ textAlign: "center" }}>
                   <Message.Header>Successful Submission.</Message.Header>
                   <Message.Content>
-                    Your application was submitted successfully, we will get
-                    back to you in 24 hours.<hr/>
+                    Your application was submitted successfully, we have
+                    forwarded acknowledgement and verification emails to the
+                    email entered.{" "}
+                    <strong>
+                      Alternatively, to activate your account, enter a
+                      verification code sent to your email in the input box
+                      below.{" "}
+                    </strong>
                   </Message.Content>
                 </Message>
               </Grid.Column>
               <Grid.Column></Grid.Column>
+            </Grid>
+            <Grid columns={3} divided>
+              <Grid.Row>
+                <Grid.Column></Grid.Column>
+                <Grid.Column>
+                  <Form>
+                    <Form.Input
+                      name="code"
+                      onChange={this.onChange}
+                      label="Activation Code"
+                      placeholder="Enter a 6-digit activation code"
+                    />
+                  </Form>
+                  <hr></hr>
+
+                  <Button
+                    onClick={this.verify}
+                    disabled={!(code.length == 6)}
+                    fluid
+                    color="red"
+                  >
+                    Activate
+                  </Button>
+                </Grid.Column>
+                <Grid.Column></Grid.Column>
+              </Grid.Row>
             </Grid>
           </Container>
         </React.Fragment>
@@ -73,3 +122,4 @@ export default class ApplicationSuccess extends Component {
     }
   }
 }
+export default withRouter(ApplicationSuccess);

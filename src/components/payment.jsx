@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import ErrorPage from "./errorPage";
 import NavBar from "./NavBar";
+import PaypalBtn from "react-paypal-checkout";
+import StripeCheckout from "react-stripe-checkout";
 import {
   Grid,
   Image,
@@ -17,7 +19,6 @@ import {
 } from "semantic-ui-react";
 import Review from "./widgets/Review";
 import ReviewList from "./widgets/reviewList";
-import { PayPalButton } from "react-paypal-button-v2";
 
 import {
   DEFAULT_USER,
@@ -26,7 +27,7 @@ import {
   DEFAULT_LOGO,
   totalRating,
   displayRating,
-  PAY_STATUS_URL,
+  PAYMENT_SUCCESS_URL,
   formatPrice,
   getTempId,
 } from "../utility/global";
@@ -34,6 +35,7 @@ import clientService from "../services/clientService";
 import { Link, Redirect } from "react-router-dom";
 import Footer from "./Footer";
 
+const ENV = process.env.NODE_ENV === "production" ? "production" : "sandbox";
 export default class Payment extends Component {
   constructor(props) {
     super(props);
@@ -53,55 +55,33 @@ export default class Payment extends Component {
     month: [],
     selectedYear: "",
     selectedMonth: "",
+    shopName: "",
   };
   componentDidMount = async () => {
     try {
-      const yearArray = [];
-      let currentYear = new Date().getFullYear() - 2000;
-      for (let i = 0; i < 10; i++) {
-        yearArray.push({
-          key: currentYear,
-          value: currentYear,
-          text: currentYear,
-        });
-        currentYear++;
-      }
-      this.setState({
-        year: yearArray,
-      });
-
-      const months = [
-        "01",
-        "02",
-        "03",
-        "04",
-        "05",
-        "06",
-        "07",
-        "08",
-        "09",
-        "10",
-        "11",
-        "12",
-      ];
-      const monthArray = months.map((month) => {
-        return { key: month, value: month, text: month };
-      });
-
-      this.setState({
-        month: monthArray,
-      });
-
       const shopId = this.props.match.params.sel;
       const tempId = this.props.match.params.by;
+
+      this.setState({
+        shopId,
+        tempId,
+      });
 
       const getCart = await clientService.getCartByTempId({
         shopId: shopId,
         tempId: getTempId(),
       });
+
+      // Retrieve shop name for to include in payment description
+      const result = await clientService.findShopById(shopId);
+      const shopObject = result.data.data;
+      this.setState({
+        shopName: shopObject ? shopObject.shopName : "",
+      });
+      
       const data = getCart.data.data;
 
-      if (!data) {
+      if (!shopId || !tempId || data.orders.length < 1) {
         this.setState({
           redirect: true,
         });
@@ -124,6 +104,18 @@ export default class Payment extends Component {
       });
     }
   };
+  stripeToken = async (token) => {
+    const { total, tempId, shopName } = this.state;
+    const desc = `refId: ${tempId}  store name: ${shopName}`;
+    const product = { amount: total, desc};
+    const body = {
+      token,
+      product,
+    };
+    const { status } = await clientService.stripePay({ token, product });
+
+    console.log(status);
+  };
   onChangeDropdown = (e, data) => {
     this.setState({
       [data.name]: data.value,
@@ -135,7 +127,8 @@ export default class Payment extends Component {
       tempId: getTempId(),
       shopId: shopId,
     });
-    this.props.history.push(`${PAY_STATUS_URL}`)
+    //this.props.history.push(`/payment/${getTempId()}/${shopId}`);
+    this.props.history.push(`${PAYMENT_SUCCESS_URL}`);
   };
   handleClick = (e, titleProps) => {
     const { index } = titleProps;
@@ -155,10 +148,57 @@ export default class Payment extends Component {
       deliveryPrice,
       year,
       month,
+      tempId,
+      shopId,
     } = this.state;
     if (redirect) {
       return <ErrorPage />;
     } else {
+      const onSuccess = async (payment) => {
+        // Congratulation, it came here means everything's fine!
+        //console.log("The payment was succeeded!", payment);
+        const { shopId } = this.state;
+        const { paymentID, email } = payment;
+        const transac = await clientService.transaction({
+          tempId: getTempId(),
+          shopId: shopId,
+          paymentId: paymentID,
+          paymentEmail: email,
+        });
+
+        this.props.history.push(`/payment/success/${tempId}/${shopId}`);
+      };
+
+      const onCancel = (data) => {
+        // User pressed "cancel" or close Paypal's popup!
+        console.log("The payment was cancelled!", data);
+      };
+
+      const onError = (err) => {
+        // The main Paypal's script cannot be loaded or somethings block the loading of that script!
+        //console.log("Error!", err);
+        this.props.history.push(`/payment/error/${tempId}/${shopId}`);
+      };
+
+      let env = "production"; // you can set here to 'production' for production
+      let currency = "GBP"; // or you can set this value from your props or state
+
+      let locale = "en_GB";
+      // For Customize Style: https://developer.paypal.com/docs/checkout/how-to/customize-button/
+      let style = {
+        label: "pay",
+        tagline: false,
+        size: "medium",
+        shape: "pill",
+        color: "gold",
+      };
+
+      const client = {
+        sandbox:
+          "AbXd8olHlByPObAylLiLc9KoI99qub1YLnHglMT0vHUmNWvPOKHsC0JLs0oDdQA_iJXmjaN11jFY5X3N",
+        production: process.env.REACT_APP_PAYPALKEY,
+      };
+
       return (
         <React.Fragment>
           <NavBar />
@@ -179,8 +219,17 @@ export default class Payment extends Component {
                           Pay with debit or credit card
                         </Accordion.Title>
                         <Accordion.Content active={activeIndex === 0}>
-                          <Form unstackable>
-                            <Form.Field>
+                          <StripeCheckout
+                            stripeKey={process.env.REACT_APP_STRIPEKEY}
+                            token={this.stripeToken}
+                            amount={total * 100}
+                          >
+                            <Button fluid primary>
+                              Pay with card
+                            </Button>
+                          </StripeCheckout>
+                          {/* <Form unstackable> */}
+                          {/* <Form.Field>
                               <Image
                                 src={`${IMAGE_URL}card_types.png`}
                                 size="tiny"
@@ -239,7 +288,7 @@ export default class Payment extends Component {
                             <Button onClick={this.onSubmit} fluid primary>
                               Place my order
                             </Button>
-                          </Form>
+                          </Form> */}
                         </Accordion.Content>
 
                         <Accordion.Title
@@ -251,23 +300,16 @@ export default class Payment extends Component {
                           Pay with PayPal
                         </Accordion.Title>
                         <Accordion.Content active={activeIndex === 1}>
-                          <PayPalButton
-                            amount="0.01"
-                            // shippingPreference="NO_SHIPPING" // default is "GET_FROM_FILE"
-                            onSuccess={(details, data) => {
-                              alert(
-                                "Transaction completed by " +
-                                  details.payer.name.given_name
-                              );
-
-                              // OPTIONAL: Call your server to save the transaction
-                              return fetch("/paypal-transaction-complete", {
-                                method: "post",
-                                body: JSON.stringify({
-                                  orderID: data.orderID,
-                                }),
-                              });
-                            }}
+                          <PaypalBtn
+                            env={env}
+                            client={client}
+                            currency={currency}
+                            total={total}
+                            locale={locale}
+                            style={style}
+                            onError={onError}
+                            onSuccess={onSuccess}
+                            onCancel={onCancel}
                           />
                         </Accordion.Content>
 
@@ -280,12 +322,8 @@ export default class Payment extends Component {
                           Pay with cash
                         </Accordion.Title>
                         <Accordion.Content active={activeIndex === 2}>
-                          <p>
-                           
-                          </p>
-                          <p>
-                           
-                          </p>
+                          <p></p>
+                          <p></p>
                         </Accordion.Content>
                       </Accordion>
                     </Grid.Column>
@@ -351,7 +389,7 @@ export default class Payment extends Component {
               <Grid.Column width={2}></Grid.Column>
             </Grid>
           </Container>
-          <Footer/>
+          <Footer />
         </React.Fragment>
       );
     }

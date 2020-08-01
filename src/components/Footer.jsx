@@ -18,7 +18,8 @@ import {
   TERMS_AND_CONDITION,
   PRIVACY_URL,
   DISCLAIMER,
-  LISTING_URL
+  LISTING_URL,
+  CONTACT_US,
 } from "../utility/global";
 
 const Footer = () => {
@@ -51,19 +52,35 @@ const Footer = () => {
           <Grid.Column width={3}>
             <Header inverted as="h4" content="Top cuisines" />
             <List link inverted>
-              <List.Item as="a"><Link to={LISTING_URL}>Nigerian</Link></List.Item>
-              <List.Item as="a"><Link to={LISTING_URL}>Ghanian</Link></List.Item>
-              <List.Item as="a"><Link to={LISTING_URL}>South-African</Link></List.Item>
-              <List.Item as="a"><Link to={LISTING_URL}>Zimbabwean</Link></List.Item>
+              <List.Item as="a">
+                <Link to={LISTING_URL}>Nigerian</Link>
+              </List.Item>
+              <List.Item as="a">
+                <Link to={LISTING_URL}>Ghanian</Link>
+              </List.Item>
+              <List.Item as="a">
+                <Link to={LISTING_URL}>South-African</Link>
+              </List.Item>
+              <List.Item as="a">
+                <Link to={LISTING_URL}>Zimbabwean</Link>
+              </List.Item>
             </List>
           </Grid.Column>
           <Grid.Column width={3}>
             <Header inverted as="h4" content="Meal Categories" />
             <List link inverted>
-              <List.Item as="a"><Link to={LISTING_URL}>Soup</Link></List.Item>
-              <List.Item as="a"><Link to={LISTING_URL}>Snacks</Link></List.Item>
-              <List.Item as="a"><Link to={LISTING_URL}>African Salad</Link></List.Item>
-              <List.Item as="a"><Link to={LISTING_URL}>Jollof Rice</Link></List.Item>
+              <List.Item as="a">
+                <Link to={LISTING_URL}>Soup</Link>
+              </List.Item>
+              <List.Item as="a">
+                <Link to={LISTING_URL}>Snacks</Link>
+              </List.Item>
+              <List.Item as="a">
+                <Link to={LISTING_URL}>African Salad</Link>
+              </List.Item>
+              <List.Item as="a">
+                <Link to={LISTING_URL}>Jollof Rice</Link>
+              </List.Item>
             </List>
           </Grid.Column>
           <Grid.Column width={7}>
@@ -80,16 +97,16 @@ const Footer = () => {
         <Image centered size="small" src="/images/foodengo_logo.png" />
         <List horizontal inverted divided link size="small">
           <List.Item as="a" href="#">
-          <Link to={DISCLAIMER}>Disclaimer</Link>
+            <a href={DISCLAIMER}>Disclaimer</a>
           </List.Item>
           <List.Item as="a" href="#">
-            Contact Us
+            <a href={CONTACT_US}>Contact Us</a>
           </List.Item>
           <List.Item>
-            <Link to={TERMS_AND_CONDITION}>Terms and Conditions</Link>
+            <a href={TERMS_AND_CONDITION}>Terms and Conditions</a>
           </List.Item>
           <List.Item>
-            <Link to={PRIVACY_URL}> Privacy Policy</Link>
+            <a href={PRIVACY_URL}> Privacy Policy</a>
           </List.Item>
         </List>
       </Container>

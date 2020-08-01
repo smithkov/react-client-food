@@ -7,6 +7,7 @@ import Login from "./components/login";
 import Register from "./components/register";
 import ShopPage from "./components/ShopPage";
 import ErrorPage from "./components/errorPage";
+import ContactUs from "./components/contactUs";
 import Payment from "./components/payment";
 import FoodListing from "./components/FoodListing";
 import Dashboard from "./adminComponents/dashboard";
@@ -19,9 +20,11 @@ import ShopSocial from "./adminComponents/social";
 import Account from "./adminComponents/account";
 import ProductDetail from "./components/productDetail";
 import PaymentSuccess from "./components/paymentSuccess";
+import PaymentError from "./components/paymentError";
 import ApplicationSuccess from "./components/applicationSuccess";
 import DeliveryDetail from "./components/deliveryDetail";
 import ShopCreate from "./components/shopCreate";
+import AccountVerificationStatus from "./components/accountVerificationStatus";
 import UserOrder from "../src/adminComponents/userOrder";
 import OrderDetail from "./adminComponents/orderDetail";
 import StoreReview from "./adminComponents/storeReview";
@@ -46,7 +49,7 @@ import {
   MY_ACCOUNT,
   DASHBOARD_URL,
   PAYMENT_URL,
-  PAY_STATUS_URL,
+  PAYMENT_SUCCESS_URL,
   DELIVERY_DETAIL_URL,
   USER_ORDER_URL,
   LISTING_URL,
@@ -57,9 +60,12 @@ import {
   SHOP_SIGNUP,
   VENDOR_APPLY_SUCCESS,
   ORDER_DETAIL_URL,
-  PRIVACY_URL, 
+  PRIVACY_URL,
   TERMS_AND_CONDITION,
-  DISCLAIMER
+  DISCLAIMER,
+  ACCOUNT_VERIFICATION,
+  CONTACT_US,
+  PAYMENT_ERROR_URL,
 } from "./utility/global";
 
 class App extends React.Component {
@@ -68,16 +74,41 @@ class App extends React.Component {
       <Provider store={store}>
         <Router>
           <Switch>
+           
             <Route exact path="/" component={Landing} />
+            <Route
+              exact
+              path={PAYMENT_SUCCESS_URL}
+              component={ProtectedRoute(PaymentSuccess)}
+            />
+            <Route
+              exact
+              path={PAYMENT_ERROR_URL}
+              component={ProtectedRoute(PaymentError)}
+            />
             <Route exact path={LISTING_URL} component={FoodListing} />
             <Route exact path={LOGIN_URL} component={Login} />
             <Route exact path={REGISTER_URL} component={Register} />
             <Route exact path={SHOP_SIGNUP} component={ShopCreate} />
-            <Route exact path={SHOP_CREATE} component={ShopForm} />
+            <Route
+              exact
+              path={SHOP_CREATE}
+              component={ProtectedRoute(ShopForm)}
+            />
             <Route exact path={PRIVACY_URL} component={Privacy} />
-            <Route exact path={TERMS_AND_CONDITION} component={TermsAndCondition} />
+            <Route
+              exact
+              path={ACCOUNT_VERIFICATION}
+              component={AccountVerificationStatus}
+            />
+            <Route
+              exact
+              path={TERMS_AND_CONDITION}
+              component={TermsAndCondition}
+            />
             <Route exact path={DISCLAIMER} component={Disclaimer} />
             <Route exact path={PRODUCT_DETAIL_URL} component={ProductDetail} />
+            <Route exact path={CONTACT_US} component={ContactUs} />
             <Route
               exact
               path={VENDOR_APPLY_SUCCESS}
@@ -88,7 +119,7 @@ class App extends React.Component {
               path={MEAL_CREATE}
               component={ProtectedRoute(ProductForm)}
             />
-             <Route
+            <Route
               exact
               path={ORDER_DETAIL_URL}
               component={ProtectedRoute(OrderDetail)}
@@ -141,9 +172,6 @@ class App extends React.Component {
               path={PAYMENT_URL}
               component={ProtectedRoute(Payment)}
             />
-            <Route component={ErrorPage} />
-            
-            <Route exact path={PAY_STATUS_URL} component={PaymentSuccess} />
           </Switch>
         </Router>
         <ToastContainer />

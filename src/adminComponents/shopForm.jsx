@@ -108,7 +108,7 @@ export default class ShopForm extends Component {
             postCode,
             City,
           } = data;
-
+         
           this.setState({
             shopName,
             bannerPreviewUrl:
@@ -342,6 +342,7 @@ export default class ShopForm extends Component {
               <Form.Field>
                 <Input
                   name="shopUrl"
+                  value={shopUrl}
                   onBlur={this.onBlur}
                   onChange={this.onChange}
                   label="https://cookneat/"

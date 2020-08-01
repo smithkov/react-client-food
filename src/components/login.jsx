@@ -118,7 +118,7 @@ class Login extends Component {
         >
           <Grid.Column style={{ maxWidth: 450 }}>
             <Header as="h2" color="black" textAlign="center">
-              <Image circular size="mini" src="./images/onelogo.jpg" /> Log-in to your
+              <Image circular size="mini" src="/images/onelogo.jpg" /> Log-in to your
               account
             </Header>
 

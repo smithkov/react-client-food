@@ -53,7 +53,7 @@ export default class ErrorPage extends Component {
             <Image
               centered
               size="large"
-              src="./images/foodengo-error.jpg"
+              src="/images/foodengo-error.jpg"
             />
             <hr></hr>
             <Link to={`/listing`}><Button fluid color="red">Go to listing</Button></Link>

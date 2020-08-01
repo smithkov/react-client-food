@@ -5,12 +5,19 @@ class ClientService {
     return http.post("/products", data);
   }
 
+  contactUs(data) {
+    return http.post("/contactUs", data);
+  }
   productUpdate(id, data) {
-    return http.patch(`/product/${id}`,data);
+    return http.patch(`/product/${id}`, data);
   }
 
   productsByOrigin(id) {
     return http.get("/product/origin/" + id);
+  }
+
+  storeVerification(code) {
+    return http.get(`/shop/activateByLink/` + code);
   }
 
   productById(id) {
@@ -20,7 +27,7 @@ class ClientService {
   frontPageMeals() {
     return http.get("/front-page-meals");
   }
-  
+
   productsByShopId(id) {
     return http.get("/products/byShopId/" + id);
   }
@@ -64,7 +71,7 @@ class ClientService {
   createShop(data) {
     return http.post("/create-shop", data);
   }
-  
+
   updateShop(data) {
     return http.post("/shop", data);
   }
@@ -104,6 +111,10 @@ class ClientService {
     return http.post(`/shop/transaction`, data);
   }
 
+  stripePay(data) {
+    return http.post(`/stripePay`, data);
+  }
+
   transactionById(id) {
     return http.get(`/shop/transaction/${id}`);
   }
@@ -129,7 +140,7 @@ class ClientService {
   createHomeAddress(data) {
     return http.post("/homeAddress", data);
   }
-  
+
   createReviewResponse(data) {
     return http.post("/productRatingResponse", data);
   }
@@ -140,7 +151,7 @@ class ClientService {
   createReview(data) {
     return http.post("/rating", data);
   }
-  
+
   findOpeningDaysByShop(data) {
     return http.post("/openingDaysByShop", data);
   }
@@ -177,10 +188,10 @@ class ClientService {
   findReviewByProduct(data) {
     return http.post(`/productRating/product`, data);
   }
-  createProductRatingResponse(data){
-    return http.post(`/productRatingResponse`, data)
+  createProductRatingResponse(data) {
+    return http.post(`/productRatingResponse`, data);
   }
-  
+
   findProductReviewByShop(data) {
     return http.post(`/productRating/shop`, data);
   }
