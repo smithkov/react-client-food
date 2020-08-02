@@ -35,16 +35,16 @@ const Footer = () => {
             <Header inverted as="h4" content="Customer service" />
             <List link inverted>
               <List.Item as="a">Contact us</List.Item>
-              <List.Item as="a">
+              <List.Item>
                 <Link to={LOGIN_URL}>Log in</Link>
               </List.Item>
-              <List.Item as="a">
+              <List.Item>
                 <Link to={REGISTER_URL}>Sign up</Link>
               </List.Item>
-              <List.Item as="a">
+              <List.Item>
                 <Link to={REGISTER_URL}>My account</Link>
               </List.Item>
-              <List.Item as="a">
+              <List.Item>
                 <Link to={SHOP_SIGNUP}>Vendor sign up</Link>
               </List.Item>
             </List>
@@ -52,16 +52,16 @@ const Footer = () => {
           <Grid.Column width={3}>
             <Header inverted as="h4" content="Top cuisines" />
             <List link inverted>
-              <List.Item as="a">
+              <List.Item>
                 <Link to={LISTING_URL}>Nigerian</Link>
               </List.Item>
-              <List.Item as="a">
+              <List.Item>
                 <Link to={LISTING_URL}>Ghanian</Link>
               </List.Item>
-              <List.Item as="a">
+              <List.Item>
                 <Link to={LISTING_URL}>South-African</Link>
               </List.Item>
-              <List.Item as="a">
+              <List.Item>
                 <Link to={LISTING_URL}>Zimbabwean</Link>
               </List.Item>
             </List>
@@ -69,16 +69,16 @@ const Footer = () => {
           <Grid.Column width={3}>
             <Header inverted as="h4" content="Meal Categories" />
             <List link inverted>
-              <List.Item as="a">
+              <List.Item>
                 <Link to={LISTING_URL}>Soup</Link>
               </List.Item>
-              <List.Item as="a">
+              <List.Item>
                 <Link to={LISTING_URL}>Snacks</Link>
               </List.Item>
-              <List.Item as="a">
+              <List.Item>
                 <Link to={LISTING_URL}>African Salad</Link>
               </List.Item>
-              <List.Item as="a">
+              <List.Item>
                 <Link to={LISTING_URL}>Jollof Rice</Link>
               </List.Item>
             </List>
@@ -96,17 +96,17 @@ const Footer = () => {
         <Divider inverted section />
         <Image centered size="small" src="/images/foodengo_logo.png" />
         <List horizontal inverted divided link size="small">
-          <List.Item as="a" href="#">
-            <a href={DISCLAIMER}>Disclaimer</a>
+          <List.Item as="a" href={DISCLAIMER}>
+            Disclaimer
           </List.Item>
-          <List.Item as="a" href="#">
-            <a href={CONTACT_US}>Contact Us</a>
+          <List.Item as="a" href={CONTACT_US}>
+            Contact Us
           </List.Item>
-          <List.Item>
-            <a href={TERMS_AND_CONDITION}>Terms and Conditions</a>
+          <List.Item as="a" href={TERMS_AND_CONDITION}>
+            Terms and Conditions
           </List.Item>
-          <List.Item>
-            <a href={PRIVACY_URL}> Privacy Policy</a>
+          <List.Item as="a" href={PRIVACY_URL}>
+            Privacy Policy
           </List.Item>
         </List>
       </Container>

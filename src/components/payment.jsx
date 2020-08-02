@@ -78,7 +78,7 @@ export default class Payment extends Component {
       this.setState({
         shopName: shopObject ? shopObject.shopName : "",
       });
-      
+
       const data = getCart.data.data;
 
       if (!shopId || !tempId || data.orders.length < 1) {
@@ -105,16 +105,24 @@ export default class Payment extends Component {
     }
   };
   stripeToken = async (token) => {
-    const { total, tempId, shopName } = this.state;
+    const { total, tempId, shopName, shopId } = this.state;
     const desc = `refId: ${tempId}  store name: ${shopName}`;
-    const product = { amount: total, desc};
+    const product = { amount: total, desc };
     const body = {
       token,
       product,
     };
-    const { status } = await clientService.stripePay({ token, product });
+    const result = await clientService.stripePay({ token, product });
 
-    console.log(status);
+    if (result.data.error) {
+      this.props.history.push(`/payment/error/${tempId}/${shopId}`);
+    } else {
+      const transac = await clientService.transaction({
+        tempId: getTempId(),
+        shopId: shopId,
+      });
+      this.props.history.push(`/payment/success/${tempId}/${shopId}`);
+    }
   };
   onChangeDropdown = (e, data) => {
     this.setState({
@@ -127,8 +135,7 @@ export default class Payment extends Component {
       tempId: getTempId(),
       shopId: shopId,
     });
-    //this.props.history.push(`/payment/${getTempId()}/${shopId}`);
-    this.props.history.push(`${PAYMENT_SUCCESS_URL}`);
+    this.props.history.push(`/payment/${getTempId()}/${shopId}`);
   };
   handleClick = (e, titleProps) => {
     const { index } = titleProps;

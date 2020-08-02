@@ -156,24 +156,20 @@ export const toastOptions = (hasError = false) => {
 
 export const isShopOpen = (shopTime) => {
   const convertedTime = moment(new Date()).format("HH:mm");
-  if (convertedTime > shopTime.oTime && convertedTime < shopTime.cTime) {
-    return OPEN;
-  } else if (shopTime.oTime > convertedTime && shopTime.cTime > convertedTime) {
+  if (shopTime.oTime > convertedTime && shopTime.cTime > convertedTime) {
     return LATER_TODAY;
   } else return NOT_OPEN;
 };
 
 export const nextOpening = (shopTime, shopTimes) => {
-  
-    const arrayLength = shopTimes.length;
-    let currentIndex = shopTimes.indexOf(shopTime);
-    let nextIndex;
-    if (currentIndex + 1 === arrayLength) {
-      nextIndex = 0;
-    } else {
-      nextIndex = ++currentIndex;
-    }
-    
+  const arrayLength = shopTimes.length;
+  let currentIndex = shopTimes.indexOf(shopTime);
+  let nextIndex;
+  if (currentIndex + 1 === arrayLength) {
+    nextIndex = 0;
+  } else {
+    nextIndex = ++currentIndex;
+  }
 
   return shopTimes[nextIndex];
 };

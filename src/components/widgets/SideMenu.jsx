@@ -62,7 +62,7 @@ class SideMenu extends Component {
     return (
       <Fragment>
         <Icon name="filter" /> All Cuisines{" "}
-        <Link className="pull-right">Reset</Link>
+        <a  className="pull-right">Reset</a>
         <Menu fluid vertical>
           {hasOrigin ? (
             this.state.menu.map((menu) => {
@@ -82,7 +82,7 @@ class SideMenu extends Component {
           )}
         </Menu>
         <Icon name="filter" /> Cuisine Categories{" "}
-        <Link className="pull-right">Reset</Link>
+        <a className="pull-right">Reset</a>
         <Menu fluid vertical>
           
 

@@ -119,7 +119,7 @@ class NavBar extends Component {
               src="/images/foodengo_logo.png"
             />
           </Menu.Item>
-          <Menu.Item as="a">
+          <Menu.Item>
             <Link to={LISTING_URL}>Home</Link>
           </Menu.Item>
           {firstName ? (
@@ -147,7 +147,7 @@ class NavBar extends Component {
               </Dropdown>
             </Menu.Menu>
           ) : (
-            <Menu.Item position="right" as="a">
+            <Menu.Item position="right">
               <Link to={LOGIN_URL}>Log In</Link>
             </Menu.Item>
           )}
