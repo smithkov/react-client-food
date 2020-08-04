@@ -259,13 +259,15 @@ class Listing extends Component {
                       const findIndexOf = shopTimes.indexOf(shopTime);
                       if (findIndexOf != -1) {
                         const nextday = nextOpening(shopTime, shopTimes);
-                        nextOpeningTime = `Today at ${nextday.oTime}`;
+                        nextOpeningTime = `Today at ${moment(nextday.opening).format("LT")}`;
+                        
                       } else {
                         const nextday = nextOpening(shopTime, shopTimes);
-                        nextOpeningTime = `Opens ${nextday.day} ${nextday.oTime}`;
+                        nextOpeningTime = `Opens ${nextday.day} ${moment(nextday.opening).format("LT")}`;
+                        //console.log(moment(nextday.opening).format("LT"))
                       }
                     }
-                    console.log(nextOpeningTime)
+                    
                     return (
                       <React.Fragment>
                         <Grid

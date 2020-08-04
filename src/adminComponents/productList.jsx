@@ -30,7 +30,7 @@ class ShopForm extends Component {
           .then((response) => {
             //const data = response.data;
             const data = response.data.data;
-            console.log(data);
+
             this.setState({
               products: data,
               hasData: data.length > 0 ? true : false,
@@ -77,7 +77,7 @@ class ShopForm extends Component {
                   {this.state.products.map((product) => {
                     // const rating = { id: 2, value: seller.rating}
                     return (
-                      <Table.Row>
+                      <Table.Row key={product.id}>
                         <Table.Cell>{product.name}</Table.Cell>
                         <Table.Cell>
                           {product.Category ? product.Category.name : ""}

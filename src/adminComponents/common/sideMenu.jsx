@@ -113,8 +113,8 @@ class SideMenu extends Component {
               </Link>
               <Link to={SHOP_SETTING_URL}>
                 <Menu.Item
-                  name="Seller-settings"
-                  active={this.state.activeItem === "Seller-settings"}
+                  name="Store-settings"
+                  active={this.state.activeItem === "Store-settings"}
                   onClick={this.handleItemClick}
                 />
               </Link>

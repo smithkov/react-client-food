@@ -49,8 +49,9 @@ export const fetchCatgeories = () => (dispatch) => {
     .then((category) => {
       dispatch({
         type: FETCH_CATEGORY,
-        payload: category.data.data,
+        payload: category.data.open,
       });
+      
     })
     .catch((err) => {
       console.log(err);
@@ -81,7 +82,11 @@ export const updateProduct = (id) => (dispatch) => {
     .then((products) => {
       dispatch({
         type: FETCH_PRODUCT_BY_ORIGIN,
-        payload: products.data.data,
+        payload: products.data.open,
+      });
+      dispatch({
+        type: FETCH_PRODUCT_CLOSE_BY_ORIGIN,
+        payload: products.data.close,
       });
     })
     .catch((err) => {
@@ -95,7 +100,11 @@ export const updateCategory = (id) => (dispatch) => {
     .then((products) => {
       dispatch({
         type: FETCH_PRODUCT_BY_CATEGORY,
-        payload: products.data.data,
+        payload: products.data.open,
+      });
+      dispatch({
+        type: FETCH_PRODUCT_CLOSE_BY_CATEGORY,
+        payload: products.data.close,
       });
     })
     .catch((err) => {

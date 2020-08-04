@@ -206,7 +206,7 @@ class ShopPage extends Component {
         (error) => {}
       );
       const openingTime = data.openingTimes;
-      console.log("-----------------------", openingTime);
+      
       if (openingTime.length > 0) {
         const sunday = openingTime.find((t) => t.day === "Sunday");
         const monday = openingTime.find((t) => t.day === "Monday");

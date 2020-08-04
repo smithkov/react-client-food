@@ -160,7 +160,16 @@ export const isShopOpen = (shopTime) => {
     return LATER_TODAY;
   } else return NOT_OPEN;
 };
+export const titleCase=(str) =>{
+  str = str.toLowerCase();
+  str = str.split(" ");
 
+  for (var i = 0; i < str.length; i++) {
+    str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1);
+  }
+
+  return str.join(" ");
+}
 export const nextOpening = (shopTime, shopTimes) => {
   const arrayLength = shopTimes.length;
   let currentIndex = shopTimes.indexOf(shopTime);

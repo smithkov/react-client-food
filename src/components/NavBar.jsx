@@ -119,9 +119,9 @@ class NavBar extends Component {
               src="/images/foodengo_logo.png"
             />
           </Menu.Item>
-          <Menu.Item>
+          {/* <Menu.Item>
             <Link to={LISTING_URL}>Home</Link>
-          </Menu.Item>
+          </Menu.Item> */}
           {firstName ? (
             <Menu.Menu position="right">
               <Dropdown item text={firstName}>

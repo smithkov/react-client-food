@@ -1,10 +1,9 @@
-import React from "react";
+import React, { Fragment } from "react";
 
 import { AnchorButton, Intent, ProgressBar } from "@blueprintjs/core";
 import AfterNav from "./common/afterNav";
 
 import _ from "lodash";
-
 
 import { remove } from "react-icons-kit/fa/remove";
 import Nav from "./common/nav";
@@ -12,6 +11,7 @@ import SideMenu from "./common/sideMenu";
 import SaveSuccess from "./common/saveSuccess";
 import ClientService from "../services/clientService";
 import { Col, Container, Row } from "reactstrap";
+import { Link } from "react-router-dom";
 import clientService from "../services/clientService";
 import {
   MISSING_USER_MSG,
@@ -22,12 +22,23 @@ import {
   MEAL_LIST,
   SAVE_SUCCESS,
   IMAGE_URL,
+  titleCase,
 } from "../utility/global";
-import { Button, Message, Form , Icon} from "semantic-ui-react";
+import {
+  Button,
+  Message,
+  Form,
+  Icon,
+  Grid,
+  Table,
+  Input,
+  Segment,
+} from "semantic-ui-react";
 import { fetchUser } from "../actions/productActions";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { toast } from "react-toastify";
+let count = 0;
 
 class ProductForm extends React.Component {
   constructor(props) {
@@ -40,10 +51,13 @@ class ProductForm extends React.Component {
       weight: "",
       price: "",
       origin: [],
+      ingredients: [],
+      ingredient: "",
       selectedPhoto: null,
       selectedOrigin: "",
       discountPrice: "",
       unitType: [],
+      unitText:"",
       category: [],
       selectedUnitType: "",
       selectedCategory: "",
@@ -56,10 +70,9 @@ class ProductForm extends React.Component {
       photoPreviewUrl: null,
       categoryText: "",
       originText: "",
-      unitText: "",
       oldPhoto: "",
       productId: "",
-      userId:""
+      userId: "",
     };
   }
   componentDidMount = async () => {
@@ -72,14 +85,24 @@ class ProductForm extends React.Component {
         desc,
         price,
         discountPrice,
+        ingredients,
         Category,
         weight,
         Origin,
         Unit,
         photo,
         id,
-        userId
+        userId,
       } = getMealById.data.data;
+      
+
+      
+      if(ingredients){
+        count = ingredients.length;
+        this.setState({
+          ingredients: ingredients
+        })
+      }
       
       this.setState({
         name,
@@ -87,14 +110,14 @@ class ProductForm extends React.Component {
         weight,
         price,
         userId,
+        unitText: Unit?Unit.name:"Unit",
         categoryText: Category ? Category.name : "",
         originText: Origin ? Origin.name : "",
-        unitText: Unit ? Unit.name : "",
         discountPrice,
         origin: [],
-        selectedPhoto: "",
+        selectedPhoto: photo,
         selectedOrigin: Origin ? Origin.id : "",
-        selectedUnitType:Unit ? Unit.id : "",
+        selectedUnitType: Unit ? Unit.id : "",
         oldPhoto: photo,
         productId: id,
         selectedCategory: Category ? Category.id : "",
@@ -181,14 +204,15 @@ class ProductForm extends React.Component {
         selectedPhoto,
         weight,
         price,
+        ingredients,
         name,
         desc,
         oldPhoto,
         productId,
         userId,
-        shopId
+        shopId,
       } = this.state;
-      if (selectedPhoto ) {
+      if (selectedPhoto) {
         if (selectedCategory || selectedOrigin) {
           let formData = new FormData();
 
@@ -198,14 +222,15 @@ class ProductForm extends React.Component {
           if (selectedUnitType) formData.append("unitId", selectedUnitType);
           if (weight) formData.append("weight", weight);
           formData.append("image", selectedPhoto);
+          formData.append("ingredients", JSON.stringify(ingredients));
           formData.append("name", name);
           formData.append("originId", selectedOrigin);
           formData.append("desc", desc);
           formData.append("photo", oldPhoto);
           formData.append("userId", userId);
-          
+
           clientService
-            .productUpdate(productId,formData)
+            .productUpdate(productId, formData)
             .then((response) => {
               if (!response.data.error) {
                 this.props.history.push(`${MEAL_LIST}`);
@@ -233,7 +258,30 @@ class ProductForm extends React.Component {
       [e.target.name]: e.target.value,
     });
   };
+  removeIngredient = (id) => {
+    this.setState({
+      ingredients: [...this.state.ingredients.filter((item) => item.id !== id)],
+    });
+  };
+  addIngredient = () => {
+    count++;
+    const ingredient = titleCase(this.state.ingredient);
+    const ingredients = this.state.ingredients;
+    const hasDuplicate = ingredients.find((item) => item.name === ingredient);
+    if (!hasDuplicate) {
+      if (ingredient != "") {
+        ingredients.push({
+          id: count,
+          name: ingredient,
+        });
 
+        this.setState({
+          ingredients: [...ingredients],
+          ingredient: "",
+        });
+      }
+    }
+  };
   render() {
     const {
       name,
@@ -251,7 +299,9 @@ class ProductForm extends React.Component {
       photoPreviewUrl,
       categoryText,
       originText,
-      unitText,
+      ingredient,
+      ingredients,
+      unitText
     } = this.state;
 
     const alert = this.state.showAlert ? (
@@ -272,7 +322,7 @@ class ProductForm extends React.Component {
             <SideMenu />
           </Col>
           <Col lg="1"></Col>
-          <Col className="dashboard-panel" lg="8">
+          <Col className="dashboard-panel" lg="6">
             {redirect ? (
               <SaveSuccess
                 data={{
@@ -284,136 +334,207 @@ class ProductForm extends React.Component {
                 }}
               />
             ) : (
-              <div
-                className="inner-container"
-                style={{
-                  padding: 10,
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <Form
-                  style={{ width: "80%" }}
-                  onSubmit={this.onUpload.bind(this)}
-                >
-                  {alert}
-                  <Form.Group widths="equal">
-                    <Form.Field>
-                      <label>Photo</label>
-                      <input
-                        type="file"
-                        onChange={this.fileChangedHandlerForPhoto}
+              <Fragment>
+                <Message attached header="Update food" />
+               
+                  <Form className='attached fluid segment'
+                    
+                    onSubmit={this.onUpload.bind(this)}
+                  >
+                    {alert}
+                    <Form.Group widths="equal">
+                      <Form.Field>
+                        <label>Photo</label>
+                        <input
+                          type="file"
+                          onChange={this.fileChangedHandlerForPhoto}
+                        />
+                      </Form.Field>
+                      <Form.Field>
+                        <img
+                          style={{
+                            objectFit: "cover",
+                            objectPosition: "center center",
+                            height: 100,
+                            width: "100",
+                          }}
+                          src={photoPreviewUrl}
+                        />
+                      </Form.Field>
+                    </Form.Group>
+                    <Form.Field required>
+                      <label>Category</label>
+                      <Form.Select
+                        required
+                        fluid
+                        onChange={this.onChangeDropdown}
+                        name="selectedCategory"
+                        options={category}
+                        placeholder={categoryText}
                       />
                     </Form.Field>
-                    <Form.Field>
-                      <img
-                        style={{
-                          objectFit: "cover",
-                          objectPosition: "center center",
-                          height: 100,
-                          width: "100",
-                        }}
-                        src={photoPreviewUrl}
+                    <Form.Field required>
+                      <label>Food origin</label>
+                      <Form.Select
+                        required
+                        fluid
+                        onChange={this.onChangeDropdown}
+                        name="selectedOrigin"
+                        options={origin}
+                        placeholder={originText}
                       />
                     </Form.Field>
-                  </Form.Group>
-                  <Form.Field required>
-                    <label>Category</label>
-                    <Form.Select
-                      required
-                      fluid
-                      onChange={this.onChangeDropdown}
-                      name="selectedCategory"
-                      options={category}
-                      placeholder={categoryText}
-                    />
-                  </Form.Field>
-                  <Form.Field required>
-                    <label>Food origin</label>
-                    <Form.Select
-                      required
-                      fluid
-                      onChange={this.onChangeDropdown}
-                      name="selectedOrigin"
-                      options={origin}
-                      placeholder={originText}
-                    />
-                  </Form.Field>
 
-                  <Form.Field required>
-                    <label>Food name</label>
-                    <input
-                      value={name}
-                      type="text"
-                      required
-                      maxlength="40"
-                      name="name"
-                      onChange={this.onChange}
-                      placeholder="Food name"
-                    />
-                  </Form.Field>
-                  <Form.Field required>
-                    <label>Price</label>
-                    <input
-                      value={price}
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      required
-                      name="price"
-                      onChange={this.onChange}
-                      placeholder="Price"
-                    />
-                  </Form.Field>
-                  <Form.Field>
-                    <label>Discount price</label>
-                    <input
-                      value={discountPrice}
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      name="discountPrice"
-                      onChange={this.onChange}
-                      placeholder="Discount price"
-                    />
-                  </Form.Field>
-                  <Form.Group widths="equal">
-                    <Form.Select
-                      fluid
-                      label="Unit"
-                      name="selectedUnitType"
-                      options={unitType}
-                      onChange={this.onChangeDropdown}
-                      placeholder="Unit"
-                    />
-                    <Form.Input
-                      fluid
-                      label="Weight"
-                      value={weight}
-                      onChange={this.onChange}
-                    />
-                  </Form.Group>
-                  <Form.Field required>
-                    <label>Food description</label>
-                    <Form.TextArea
-                      value={desc}
-                      required
-                      name="desc"
-                      onChange={this.onChange}
-                      placeholder="Food description"
-                    />
-                  </Form.Field>
-                  <Button color="red" ref={this.buttonRef} type="submit">
-                    Submit <Icon name="save" />
-                  </Button>
-                </Form>{" "}
-                {/* <AnchorButton
+                    <Form.Field required>
+                      <label>Food name</label>
+                      <input
+                        value={name}
+                        type="text"
+                        required
+                        maxlength="40"
+                        name="name"
+                        onChange={this.onChange}
+                        placeholder="Food name"
+                      />
+                    </Form.Field>
+                    <Form.Field required>
+                      <label>Price</label>
+                      <input
+                        value={price}
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        required
+                        name="price"
+                        onChange={this.onChange}
+                        placeholder="Price"
+                      />
+                    </Form.Field>
+                    <Form.Field>
+                      <label>Discount price</label>
+                      <input
+                        value={discountPrice}
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        name="discountPrice"
+                        onChange={this.onChange}
+                        placeholder="Discount price"
+                      />
+                    </Form.Field>
+                    <Form.Group widths="equal">
+                      <Form.Select
+                        fluid
+                        label="Unit"
+                        name="selectedUnitType"
+                        options={unitType}
+                        onChange={this.onChangeDropdown}
+                        placeholder={unitText}
+                      />
+                      <Form.Input
+                        fluid
+                        label="Weight"
+                        value={weight}
+                        onChange={this.onChange}
+                      />
+                    </Form.Group>
+                    <Form.Field required>
+                      <label>Food description</label>
+                      <Form.TextArea
+                        value={desc}
+                        required
+                        name="desc"
+                        onChange={this.onChange}
+                        placeholder="Food description"
+                      />
+                    </Form.Field>
+                    <Grid fluid stackable columns={2} padded>
+                      <Grid.Row>
+                        <Grid.Column>
+                          <Input
+                            fluid
+                            type="text"
+                            name="ingredient"
+                            value={ingredient}
+                            onChange={this.onChange}
+                            placeholder="Enter ingredients"
+                            action
+                          >
+                            <input />
+                            <Button
+                              onClick={this.addIngredient}
+                              color="green"
+                              disabled={!ingredient}
+                              type="button"
+                            >
+                              Add
+                            </Button>
+                          </Input>
+                        </Grid.Column>
+                        <Grid.Column></Grid.Column>
+                      </Grid.Row>
+
+                      <Grid.Row>
+                        <Grid.Column>
+                          {ingredients.length > 0 ? (
+                            <Table fluid color="green">
+                              <Table.Header>
+                                <Table.Row>
+                                  <Table.HeaderCell>
+                                    Ingredient
+                                  </Table.HeaderCell>
+                                  <Table.HeaderCell></Table.HeaderCell>
+                                </Table.Row>
+                              </Table.Header>
+
+                              <Table.Body>
+                                {ingredients.map((item) => {
+                                  return (
+                                    <Table.Row key={item.id}>
+                                      <Table.Cell>
+                                        {" "}
+                                        <h4>{item.name}</h4>
+                                      </Table.Cell>
+                                      <Table.Cell textAlign="right">
+                                        <Link
+                                          title={`Remove ${item.name}`}
+                                          onClick={() =>
+                                            this.removeIngredient(item.id)
+                                          }
+                                        >
+                                          <Icon
+                                            color="red"
+                                            size="large"
+                                            name="minus circle"
+                                          />
+                                        </Link>{" "}
+                                      </Table.Cell>
+                                    </Table.Row>
+                                  );
+                                })}
+                              </Table.Body>
+                            </Table>
+                          ) : (
+                            ""
+                          )}
+                        </Grid.Column>
+
+                        <Grid.Column></Grid.Column>
+                      </Grid.Row>
+                    </Grid>
+                    <hr></hr>
+                    <Button color="red" ref={this.buttonRef} type="submit">
+                      Submit <Icon name="save" />
+                    </Button>
+                  </Form>{" "}
+                  {/* <AnchorButton
                 text="Upload"
                 intent={Intent.SUCCESS}
                 onClick={this.onUpload.bind(this)}
               /> */}
-                <p></p>
-              </div>
+                  <p></p>
+               
+              </Fragment>
             )}
           </Col>
         </Row>
