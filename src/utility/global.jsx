@@ -19,8 +19,8 @@ export const NOT_OPEN = "not_open";
 export const DAYS = daysOfWeek;
 export const SERVER_URL = "http://localhost:8000/api";
 export const IMAGE_URL = "http://localhost:8000/uploads/category/";
-// export const SERVER_URL = "https://api.foodengo.co.uk/api";
-// export const IMAGE_URL = "https://api.foodengo.co.uk/uploads/category/";
+// export const SERVER_URL = "https://foodengo.herokuapp.com/api";
+// export const IMAGE_URL = "https://foodengo.herokuapp.com/uploads/category/";
 export const MEAL_CREATE = "/meal/food_reg";
 export const MEAL_LIST = "/meal/food_list";
 export const MEAL_UPDATE = "/meal/update/:id";
@@ -30,7 +30,8 @@ export const ACCOUNT_VERIFICATION = "/account_verification/:code";
 export const REGISTER_URL = "/register";
 export const LISTING_URL = "/listing";
 export const MY_ACCOUNT = "/myAccount";
-export const DASHBOARD_URL = "/dashboard";
+export const DASHBOARD_URL = "/dashboard_admin";
+export const DASHBOARD_USER_URL = "/dashboard_user";
 export const TERMS_AND_CONDITION = "/terms_and_conditions";
 export const SHOP_SETTING_URL = "/shop/settings";
 export const PRIVACY_URL = "/user-seller/privacy";
@@ -48,6 +49,8 @@ export const PAYMENT_SUCCESS_URL = "/payment/success/:by/:sel";
 export const PAYMENT_ERROR_URL = "/payment/error/:by/:sel";
 export const SHOP_PAGE_URL = "/:shopUrl";
 export const ORDER_DETAIL_URL = "/user/order/:id";
+export const BANK_DETAIL_URL = "/seller/bank_details";
+export const POST_CODES_URL = "/delivery/post_codes";
 export const VENDOR_APPLY_SUCCESS = "/food_vendor/application-success/:id";
 export const days = {
   Monday: "Monday",
@@ -119,6 +122,27 @@ export const setUserProfile = function (value) {
   localStorage.setItem(CRED, JSON.stringify(value));
 };
 
+export const getUserToken = () => {
+  return localStorage.getItem("tk");
+};
+
+export const logout = () => {
+  return localStorage.removeItem("tk");
+};
+
+export const asyncLocalStorage = {
+  setItem: function (key, value) {
+    return Promise.resolve().then(function () {
+      localStorage.setItem(key, value);
+    });
+  },
+  getItem: function (key) {
+    return Promise.resolve().then(function () {
+      return localStorage.getItem(key);
+    });
+  },
+};
+
 export const getTempId = function () {
   const tempId = localStorage.getItem(TEMP_ID);
   if (tempId) return tempId;
@@ -127,6 +151,9 @@ export const getTempId = function () {
     localStorage.setItem(TEMP_ID, randNum);
     return randNum;
   }
+};
+export const purgeTemp = function () {
+  return localStorage.removeItem(TEMP_ID);
 };
 export const totalRating = (totalRating) => {
   let ratingLength = totalRating.length;
@@ -147,10 +174,10 @@ export const formatPrice = (price) => {
 };
 export const toastOptions = (hasError = false) => {
   return {
-    autoClose: 5000,
+    autoClose: 3000,
     position: toast.POSITION.TOP_CENTER,
     type: hasError ? toast.TYPE.ERROR : toast.TYPE.INFO,
-    hideProgressBar: false,
+    hideProgressBar: true,
   };
 };
 
@@ -160,7 +187,7 @@ export const isShopOpen = (shopTime) => {
     return LATER_TODAY;
   } else return NOT_OPEN;
 };
-export const titleCase=(str) =>{
+export const titleCase = (str) => {
   str = str.toLowerCase();
   str = str.split(" ");
 
@@ -169,7 +196,7 @@ export const titleCase=(str) =>{
   }
 
   return str.join(" ");
-}
+};
 export const nextOpening = (shopTime, shopTimes) => {
   const arrayLength = shopTimes.length;
   let currentIndex = shopTimes.indexOf(shopTime);

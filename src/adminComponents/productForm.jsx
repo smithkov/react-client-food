@@ -66,6 +66,9 @@ class ProductForm extends React.Component {
       hasImageLimit: false,
       redirect: false,
       photoPreviewUrl: null,
+      isLockButton: false,
+      isSubmitLoading: false,
+      shopId: "",
     };
   }
   componentDidMount = async () => {
@@ -74,7 +77,11 @@ class ProductForm extends React.Component {
   componentWillReceiveProps = async (nextProps) => {
     if (nextProps) {
       const user = nextProps.user;
+     
       if (user) {
+        this.setState({
+          shopId: user.shopId,
+        });
         const unitResponse = await ClientService.unitTypes();
         let unitTypes = unitResponse.data.data.map((unitType) => {
           return {
@@ -115,12 +122,6 @@ class ProductForm extends React.Component {
             categories
           ),
         });
-      } else {
-        this.buttonRef.current.disabled = true;
-        this.setState({
-          message: MISSING_USER_MSG,
-          showAlert: true,
-        });
       }
     }
   };
@@ -151,73 +152,67 @@ class ProductForm extends React.Component {
 
   onUpload = async (e) => {
     e.preventDefault();
-    const result = await clientService.hasAuth();
-    const user = result.data.data;
-    if (user) {
-      const {
-        discountPrice,
-        selectedOrigin,
-        selectedUnitType,
-        selectedCategory,
-        selectedPhoto,
-        weight,
-        price,
-        ingredients,
-        name,
-        desc,
-      } = this.state;
-      if (selectedPhoto) {
-        if (selectedCategory || selectedOrigin) {
-          let formData = new FormData();
 
-          if (discountPrice) formData.append("discountPrice", discountPrice);
-          formData.append("price", price);
-          formData.append("categoryId", selectedCategory);
-          if (selectedUnitType) formData.append("unitId", selectedUnitType);
-          if (weight) formData.append("weight", weight);
-          formData.append("photo", selectedPhoto);
-          formData.append("ingredients", JSON.stringify(ingredients));
-          formData.append("name", name);
-          formData.append("originId", selectedOrigin);
-          formData.append("desc", desc);
-          formData.append("userId", user.id);
+    const {
+      discountPrice,
+      selectedOrigin,
+      selectedUnitType,
+      selectedCategory,
+      selectedPhoto,
+      weight,
+      price,
+      ingredients,
+      name,
+      desc,
+      shopId,
+    } = this.state;
 
-          // //This shows progress bar on images
-          // const { loadedFiles } = this.state;
-          // loadedFiles.map((file, idx) => {
-          //   //Update file (Change it's state to uploading)
-          //   let newFile = this.updateLoadedFile(file, {
-          //     ...file,
-          //     isUploading: true,
-          //   });
-          // });
+    if (selectedPhoto) {
+      if (selectedCategory && selectedOrigin) {
+        //Lock submit button and show loading in the button
+        this.setState({
+          isLockButton: true,
+          isSubmitLoading: true,
+        });
 
-          clientService
-            .createProduct(formData)
-            .then((response) => {
-              if (!response.data.error) {
-                toast.success(response.data.message, toastOptions());
-                this.setState({
-                  redirect: true,
-                });
-              } else toast.success(response.data.message, toastOptions(true));
-            })
-            .catch((err) => {
-              toast.success(ERROR_MSG, toastOptions(true));
+        let formData = new FormData();
+        if (discountPrice) formData.append("discountPrice", discountPrice);
+        formData.append("price", price);
+        formData.append("categoryId", selectedCategory);
+        if (selectedUnitType) formData.append("unitId", selectedUnitType);
+        if (weight) formData.append("weight", weight);
+        formData.append("photo", selectedPhoto);
+        formData.append("ingredients", JSON.stringify(ingredients));
+        formData.append("name", name);
+        formData.append("originId", selectedOrigin);
+        formData.append("desc", desc);
+        formData.append("shopId", shopId);
+
+        try {
+          const response = await clientService.createProduct(formData);
+          if (!response.data.error) {
+            toast.success(response.data.message, toastOptions());
+            this.setState({
+              redirect: true,
             });
-        } else {
-          toast.success(
-            "Please required options must be selected such as category and origin.",
-            toastOptions(true)
-          );
+          } else toast.success(response.data.message, toastOptions(true));
+        } catch (err) {
+          toast.success(ERROR_MSG, toastOptions(true));
         }
+        this.setState({
+          isSubmitLoading: false,
+          isLockButton: false,
+        });
       } else {
         toast.success(
-          "At least one food photo is required.",
+          "Please required options must be selected such as category and origin.",
           toastOptions(true)
         );
       }
+    } else {
+      toast.success("At least one food photo is required.", toastOptions(true));
     }
+    //Release button and hide loading
   };
   removeIngredient = (id) => {
     this.setState({
@@ -261,6 +256,8 @@ class ProductForm extends React.Component {
       hasImageLimit,
       redirect,
       photoPreviewUrl,
+      isLockButton,
+      isSubmitLoading,
     } = this.state;
 
     const alert = this.state.showAlert ? (
@@ -393,6 +390,7 @@ class ProductForm extends React.Component {
                     <Form.TextArea
                       required
                       name="desc"
+                      maxlength="120"
                       onChange={this.onChange}
                       placeholder="Food description"
                     />
@@ -472,7 +470,12 @@ class ProductForm extends React.Component {
                   </Grid>
 
                   <hr />
-                  <Button color="red" ref={this.buttonRef} type="submit">
+                  <Button
+                    color="red"
+                    loading={isSubmitLoading}
+                    disabled={isLockButton}
+                    type="submit"
+                  >
                     Save <Icon name="save" />
                   </Button>
                 </Form>{" "}

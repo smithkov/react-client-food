@@ -120,7 +120,7 @@ class Register extends Component {
               >
                 <Grid.Column style={{ maxWidth: 450 }}>
                   <Header as="h2" color="black" textAlign="center">
-                    <Image circular size="mini" src="/images/onelogo.jpg" /> Sign-up to
+                    <Image circular size="mini" src="/images/onelogo.png" /> Sign-up to
                     order
                   </Header>
 

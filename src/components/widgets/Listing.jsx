@@ -194,7 +194,7 @@ class Listing extends Component {
                                           size="large"
                                           name="fire"
                                         />
-                                        {`${seller.VirtualShop.percentageDiscount} % off when you spend £${seller.VirtualShop.discountAmount}`}
+                                        {`${seller.VirtualShop.percentageDiscount}% off when you spend £${seller.VirtualShop.discountAmount}`}
                                       </p>
                                     ) : (
                                       ""
@@ -212,6 +212,14 @@ class Listing extends Component {
                                       <p>
                                         <Icon size="large" name="truck" />
                                         {` Delivery £${seller.VirtualShop.deliveryPrice}`}
+                                      </p>
+                                    ) : (
+                                      ""
+                                    )}
+                                     {seller.VirtualShop.prepareTime ? (
+                                      <p>
+                                        <Icon size="large" name="spinner" />
+                                        {`Preparation ${seller.VirtualShop.prepareTime.hour} hour(s) ${seller.VirtualShop.prepareTime.min} min(s)`}
                                       </p>
                                     ) : (
                                       ""
@@ -338,7 +346,7 @@ class Listing extends Component {
                                           size="large"
                                           name="fire"
                                         />
-                                        {`${seller.VirtualShop.percentageDiscount} % off when you spend £${seller.VirtualShop.discountAmount}`}
+                                        {`${seller.VirtualShop.percentageDiscount}% off when you spend £${seller.VirtualShop.discountAmount}`}
                                       </p>
                                     ) : (
                                       ""
@@ -366,6 +374,14 @@ class Listing extends Component {
                                       <p>
                                         <Icon size="large" name="clock outline" />
                                         {nextOpeningTime}
+                                      </p>
+                                    ) : (
+                                      ""
+                                    )}
+                                    {seller.VirtualShop.prepareTime ? (
+                                      <p>
+                                        <Icon size="large" name="spinner" />
+                                        {`Preparation ${seller.VirtualShop.prepareTime.hour} hour(s) ${seller.VirtualShop.prepareTime.min} min(s)`}
                                       </p>
                                     ) : (
                                       ""

@@ -1,225 +1,310 @@
-import http from "../http-common";
+import http from "axios";
 
-class ClientService {
-  products(data) {
-    return http.post("/products", data);
+import { SERVER_URL, asyncLocalStorage } from "../utility/global";
+const TOKEN = "tk";
+function header(token) {
+  if (token) {
+    return {
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ` + token,
+      },
+    };
+    // return {
+    //   "Content-type": "application/json",
+    //   Authorization: `Bearer ` + token,
+    // };
+  } else {
+    return {
+      headers: {
+        "Content-type": "application/json",
+      },
+    };
   }
+}
+class ClientService {
+  products = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/products`, data, header(token));
+  };
 
   contactUs(data) {
-    return http.post("/contactUs", data);
+    return http.post(`${SERVER_URL}/contactUs`, data);
   }
-  productUpdate(id, data) {
-    return http.patch(`/product/${id}`, data);
-  }
+  productUpdate = async (id, data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.patch(`${SERVER_URL}/product/${id}`, data, header(token));
+  };
 
   productsByOrigin(id) {
-    return http.get("/product/origin/" + id);
+    return http.get(`${SERVER_URL}/product/origin/` + id);
   }
 
   storeVerification(code) {
-    return http.get(`/shop/activateByLink/` + code);
+    return http.get(`${SERVER_URL}/shop/activateByLink/` + code);
   }
 
-  productById(id) {
-    return http.get("/product/" + id);
-  }
+  productById = async (id) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.get(`${SERVER_URL}/product/` + id, header(token));
+  };
 
   frontPageMeals() {
-    return http.get("/front-page-meals");
+    return http.get(`${SERVER_URL}/front-page-meals`);
   }
 
-  productsByShopId(id) {
-    return http.get("/products/byShopId/" + id);
-  }
+  productsByShopId = async (id) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.get(`${SERVER_URL}/products/byShopId/` + id, header(token));
+  };
 
   origins() {
-    return http.get(`/origins`);
+    return http.get(`${SERVER_URL}/origins`);
   }
 
   cities() {
-    return http.get(`/cities`);
+    return http.get(`${SERVER_URL}/cities`);
   }
 
   durations() {
-    return http.get(`/shop/duration`);
+    return http.get(`${SERVER_URL}/shop/duration`);
   }
 
   socialTypes() {
-    return http.get(`/socialTypes`);
+    return http.get(`${SERVER_URL}/socialTypes`);
   }
 
   social(data) {
-    return http.post(`/social`, data);
+    return http.post(`${SERVER_URL}/social`, data);
   }
 
   findSocialById(userId) {
-    return http.get(`/social/${userId}`);
+    return http.get(`${SERVER_URL}/social/${userId}`);
   }
 
   login(data) {
-    return http.post("/user/login", data);
+    return http.post(`${SERVER_URL}/user/login`, data, header());
   }
 
   register(data) {
-    return http.post("/user/register", data);
+    return http.post(`${SERVER_URL}/user/register`, data);
   }
 
-  socialAccess(data) {
-    return http.post("/user/socialRegister", data);
-  }
+  socialAccess = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/user/socialRegister`, data, header(token));
+  };
 
-  createShop(data) {
-    return http.post("/create-shop", data);
-  }
+  createShop = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/create-shop`, data, header(token));
+  };
 
-  updateShop(data) {
-    return http.post("/shop", data);
-  }
+  updateShop = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/shop`, data, header(token));
+  };
 
   hasExpiredLinkForSellerReg(id) {
-    return http.get(`/hasUserExpired/${id}`);
+    return http.get(`${SERVER_URL}/hasUserExpired/${id}`);
   }
 
   category() {
-    return http.get(`/categories`);
+    return http.get(`${SERVER_URL}/categories`);
   }
 
   logout() {
-    return http.post(`/logout`);
+    return http.post(`${SERVER_URL}/logout`);
   }
 
   getMealByCategoryId(id) {
-    return http.get(`/product/category/${id}`);
+    return http.get(`${SERVER_URL}/product/category/${id}`);
   }
 
-  hasAuth() {
-    return http.get(`/user/isLogin`);
-  }
+  hasAuth = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.get(`${SERVER_URL}/user/isLogin`, header(token));
+  };
 
   cart(data) {
-    return http.post(`/cart`, data);
+    return http.post(`${SERVER_URL}/cart`, data);
   }
-  transaction(data) {
-    return http.post(`/transaction`, data);
-  }
+  transaction = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/transaction`, data, header(token));
+  };
 
-  transactionByUser(data) {
-    return http.post(`/user/transaction`, data);
-  }
+  transactionByUser = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/user/transaction`, data, header(token));
+  };
 
-  transactionByShop(data) {
-    return http.post(`/shop/transaction`, data);
-  }
+  transactionByShop = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/shop/transaction`, data, header(token));
+  };
 
-  stripePay(data) {
-    return http.post(`/stripePay`, data);
-  }
+  stripePay = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/stripePay`, data, header(token));
+  };
 
-  transactionById(id) {
-    return http.get(`/shop/transaction/${id}`);
-  }
+  transactionById = async (id) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.get(`${SERVER_URL}/shop/transaction/${id}`, header(token));
+  };
 
   /* This route updates order message if there is one, and takes a user to payment. 
    If there is no order associated with tempId and ShopId, it returns 404  */
-  orderMessage(data) {
-    return http.post(`/order/messageUpdate`, data);
-  }
+  orderMessage = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/order/messageUpdate`, data, header(token));
+  };
 
   getCartByTempId(data) {
-    return http.post(`/retriveCartByTempId`, data);
+    return http.post(`${SERVER_URL}/retriveCartByTempId`, data);
   }
 
-  getCartByShopId(shopId) {
-    return http.get(`/retriveCartByShopId/${shopId}`);
-  }
+  getCartByShopId = async (shopId) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.get(`${SERVER_URL}/retriveCartByShopId/${shopId}`, header(token));
+  };
 
-  createProduct(data) {
-    return http.post("/product", data);
-  }
+  createProduct = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/product`, data, header(token));
+  };
 
-  createHomeAddress(data) {
-    return http.post("/homeAddress", data);
-  }
+  createHomeAddress = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/homeAddress`, data, header(token));
+  };
 
-  createReviewResponse(data) {
-    return http.post("/productRatingResponse", data);
-  }
+  createReviewResponse = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/productRatingResponse`, data, header(token));
+  };
 
-  createShopReviewResponse(data) {
-    return http.post("/ratingResponse", data);
-  }
-  createReview(data) {
-    return http.post("/rating", data);
-  }
+  createShopReviewResponse = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/ratingResponse`, data, header(token));
+  };
+  createReview = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/rating`, data, header(token));
+  };
 
-  findOpeningDaysByShop(data) {
-    return http.post("/openingDaysByShop", data);
-  }
-  createOpeningDay(data) {
-    return http.post("/openingDay", data);
-  }
+  findOpeningDaysByShop = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/openingDaysByShop`, data, header(token));
+  };
+  createOpeningDay = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/openingDay`, data, header(token));
+  };
 
-  createProductReview(data) {
-    return http.post("/productRating", data);
-  }
+  createProductReview = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/productRating`, data, header(token));
+  };
 
-  shopTypes() {
-    return http.get(`/shopTypes`);
-  }
-  unitTypes() {
-    return http.get(`/units`);
-  }
-  userUpdate(id, data) {
-    return http.patch(`/user/${id}`, data);
-  }
+  shopTypes = async () => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.get(`${SERVER_URL}/shopTypes`, header(token));
+  };
+  unitTypes = async () => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.get(`${SERVER_URL}/units`, header(token));
+  };
+  userUpdate = async (id, data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.patch(`${SERVER_URL}/user/${id}`, data, header(token));
+  };
 
-  settings(id, data) {
-    return http.patch(`/settings/${id}`, data);
-  }
+  settings = async (id, data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.patch(`${SERVER_URL}/settings/${id}`, data, header(token));
+  };
 
-  findShopByUser(id) {
-    return http.get(`/shops/byUser/${id}`);
-  }
+  bankDetail = async (id, data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.patch(`${SERVER_URL}/bankDetail/${id}`, data, header(token));
+  };
 
-  findReviewByShop(data) {
-    return http.post(`/rating/shop`, data);
-  }
+  findShopByUser = async (id) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.get(`${SERVER_URL}/shops/byUser/${id}`, header(token));
+  };
 
-  findReviewByProduct(data) {
-    return http.post(`/productRating/product`, data);
-  }
-  createProductRatingResponse(data) {
-    return http.post(`/productRatingResponse`, data);
-  }
+  findReviewByShop = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/rating/shop`, data, header(token));
+  };
 
-  findProductReviewByShop(data) {
-    return http.post(`/productRating/shop`, data);
-  }
-  findShopByName(data) {
-    return http.post(`/shopByName`, data);
-  }
+  findReviewByProduct = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/productRating/product`, data, header(token));
+  };
+  createProductRatingResponse = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/productRatingResponse`, data, header(token));
+  };
+  findPostCodesByShop = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/postCodesByShop`, data, header(token));
+  };
 
-  findShopByUrl(data) {
-    return http.post(`/shopByUrl`, data);
-  }
+  createPostCode = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/postCode`, data, header(token));
+  };
 
-  findEmail(data) {
-    return http.post(`/findEmail`, data);
-  }
+  deletePostCode = async (id) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.delete(`${SERVER_URL}/postCode/${id}`, header(token));
+  };
 
-  findShopById(id) {
-    return http.get(`/shop/${id}`);
-  }
-  productsByUser(data) {
-    return http.post(`/product/byUser`, data);
-  }
+  resendVerifyEmail = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/resendEmailVerification`, data, header(token));
+  };
 
-  updateUserAddress(data) {
-    return http.post(`/userAddress/update`, data);
-  }
-  findUserById(id) {
-    return http.get(`/user/${id}`);
-  }
+  findProductReviewByShop = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/productRating/shop`, data, header(token));
+  };
+  findShopByName = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/shopByName`, data, header(token));
+  };
+
+  findShopByUrl = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/shopByUrl`, data, header(token));
+  };
+
+  findEmail = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/findEmail`, data, header(token));
+  };
+
+  findShopById = async (id) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.get(`${SERVER_URL}/shop/${id}`, header(token));
+  };
+  productsByUser = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/product/byUser`, data, header(token));
+  };
+
+  updateUserAddress = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/userAddress/update`, data, header(token));
+  };
+  findUserById = async (id) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.get(`${SERVER_URL}/user/${id}`, header(token));
+  };
 }
 
 export default new ClientService();

@@ -13,6 +13,7 @@ import {
   SHOP_SETTING_URL,
   SHOP_SOCIAL_URL,
   AVAILABILITY_URL,
+  BANK_DETAIL_URL
 } from "../../utility/global";
 import Icon from "react-icons-kit";
 
@@ -164,6 +165,25 @@ class SideMenu extends Component {
               </Link>
             </Menu.Menu>
           </Menu.Item>
+          <Menu.Item>
+            <Menu.Header>Bank Account Details</Menu.Header>
+
+            <Menu.Menu>
+              
+         
+
+              <Link to={BANK_DETAIL_URL}>
+                <Menu.Item
+                  name="availability"
+                  active={this.state.activeItem === "availability"}
+                  onClick={this.handleItemClick}
+                >
+                  Bank Details
+                </Menu.Item>
+              </Link>
+            </Menu.Menu>
+          </Menu.Item>
+        
         </Menu>
       );
     }

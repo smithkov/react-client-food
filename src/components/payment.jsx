@@ -30,6 +30,7 @@ import {
   PAYMENT_SUCCESS_URL,
   formatPrice,
   getTempId,
+  TEMP_ID,
 } from "../utility/global";
 import clientService from "../services/clientService";
 import { Link, Redirect } from "react-router-dom";
@@ -121,7 +122,13 @@ export default class Payment extends Component {
         tempId: getTempId(),
         shopId: shopId,
       });
-      this.props.history.push(`/payment/success/${tempId}/${shopId}`);
+      if (transac.data.error)
+        this.props.history.push(`/payment/error/${tempId}/${shopId}`);
+      else {
+        
+        this.props.history.push(`/payment/success/${tempId}/${shopId}`);
+        
+      }
     }
   };
   onChangeDropdown = (e, data) => {
@@ -129,14 +136,7 @@ export default class Payment extends Component {
       [data.name]: data.value,
     });
   };
-  onSubmit = async () => {
-    const { shopId } = this.state;
-    const transac = await clientService.transaction({
-      tempId: getTempId(),
-      shopId: shopId,
-    });
-    this.props.history.push(`/payment/${getTempId()}/${shopId}`);
-  };
+
   handleClick = (e, titleProps) => {
     const { index } = titleProps;
     const { activeIndex } = this.state;

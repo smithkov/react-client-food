@@ -59,6 +59,7 @@ class ShopPage extends Component {
   state = {
     isAllowUpdate: false,
     shopName: "",
+    about: "",
     notice: "",
     minTime: "",
     maxTime: "",
@@ -150,6 +151,7 @@ class ShopPage extends Component {
       const {
         id,
         shopName,
+        about,
         logo,
         shopBanners,
         products,
@@ -174,6 +176,7 @@ class ShopPage extends Component {
         socials,
         minTime,
         maxTime,
+        about,
         minOrder,
         orders: [],
         deliveryPrice: deliveryPrice ? deliveryPrice : 0,
@@ -206,7 +209,7 @@ class ShopPage extends Component {
         (error) => {}
       );
       const openingTime = data.openingTimes;
-      
+
       if (openingTime.length > 0) {
         const sunday = openingTime.find((t) => t.day === "Sunday");
         const monday = openingTime.find((t) => t.day === "Monday");
@@ -452,6 +455,7 @@ class ShopPage extends Component {
         friMaxDate,
         satMinDate,
         satMaxDate,
+        about,
       } = this.state;
 
       if (socials.length > 0) {
@@ -538,10 +542,12 @@ class ShopPage extends Component {
                 </Grid.Column>
               </Grid>
               <hr></hr>
-              <Header as="h4">Opening hours</Header>
+
               <Grid padded>
                 <Grid.Row>
                   <Grid.Column width={8}>
+                    <Header as="h4">Opening hours</Header>
+                    <hr />
                     <Table basic="very">
                       <Table.Body>
                         <Table.Row>
@@ -637,7 +643,11 @@ class ShopPage extends Component {
                       </Table.Body>
                     </Table>
                   </Grid.Column>
-                  <Grid.Column width={8}></Grid.Column>
+                  <Grid.Column width={8}>
+                    <Header as="h4">About us</Header>
+                    <hr />
+                    {about}
+                  </Grid.Column>
                 </Grid.Row>
               </Grid>
             </Tab.Pane>

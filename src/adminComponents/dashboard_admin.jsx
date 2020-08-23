@@ -1,9 +1,18 @@
 import React, { Component } from "react";
 import Nav from "./common/nav";
 import SideMenu from "./common/sideMenu";
-import { Card, Button, Icon, Image, Grid } from "semantic-ui-react";
+import {
+  Card,
+  Button,
+  Icon,
+  Image,
+  Grid,
+  Message,
+  Loader,
+} from "semantic-ui-react";
 import { Col, Container, Row } from "reactstrap";
 import AfterNav from "./common/afterNav";
+import clientService from "../services/clientService";
 import {
   SHOP_SETTING_URL,
   MEAL_LIST,
@@ -11,12 +20,63 @@ import {
   SHOP_CREATE,
   MY_ACCOUNT,
   AVAILABILITY_URL,
-  SHOP_REVIEW
+  SHOP_REVIEW,
+  POST_CODES_URL,
+  toastOptions,
 } from "../utility/global";
 import { Link } from "react-router-dom";
+import { fetchUser } from "../actions/productActions";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { toast } from "react-toastify";
 
-export default class Dashboard extends Component {
+class Dashboard extends Component {
+  constructor(props) {
+    super(props);
+    //window.location.reload(false)
+  }
+
+  state = {
+    role: "",
+    shopId: "",
+    hasEmailVerified: false,
+    showTemp: false,
+    isSeller: false,
+  };
+
+  componentDidMount = async () => {
+    this.props.fetchUser();
+    //window.location.reload(false);
+  };
+  componentWillReceiveProps = async (nextProps) => {
+    if (nextProps) {
+      const user = nextProps.user;
+
+      if (user.role === "Seller") {
+        const response = await clientService.findShopById(user.shopId);
+        const shop = response.data.data;
+
+        this.setState({
+          hasEmailVerified: shop.hasEmailVerified,
+          shopId: shop.id,
+          isSeller: true,
+        });
+      }
+      this.setState({
+        role: user.role,
+      });
+    }
+  };
+
   render() {
+    const { isSeller, showTemp, hasEmailVerified } = this.state;
+    let mailTempt;
+    setTimeout(()=> {
+      this.setState({
+        showTemp:true
+      })
+    }, 5000);
+
     return (
       <Container fluid={true}>
         <Nav />
@@ -29,7 +89,25 @@ export default class Dashboard extends Component {
           </Col>
           <Col lg="10">
             <Grid padded stackable>
-              {" "}
+              {showTemp? hasEmailVerified ? (
+                ""
+              ) : (
+                <Grid.Row>
+                  <Grid.Column width={16}>
+                    <Message warning icon>
+                      <Icon name="warning circle" />
+                      <Message.Content>
+                        <Message.Header>
+                          Verify Your Email Address
+                        </Message.Header>
+                        Before proceeding, please check your email address for a
+                        verification link. If you did not receive the email.
+                      </Message.Content>
+                    </Message>
+                  </Grid.Column>
+                </Grid.Row>
+              ):""}
+
               <Grid.Row columns={4}>
                 <Grid.Column>
                   <Link to={USER_ORDER_URL}>
@@ -142,62 +220,33 @@ export default class Dashboard extends Component {
                   </Link>
                 </Grid.Column>
                 <Grid.Column>
-                  <Card color="yellow" fluid>
-                    <Card.Content>
-                      <Image
-                        floated="right"
-                        size="tiny"
-                        src="/images/chart.png"
-                      />
-                      <Card.Header>Sales Chart</Card.Header>
-                      <Card.Meta>Manage your store information</Card.Meta>
-                    </Card.Content>
-                  </Card>
+                  <Link to={POST_CODES_URL}>
+                    <Card color="yellow" fluid>
+                      <Card.Content>
+                        <Image
+                          floated="right"
+                          size="tiny"
+                          src="/images/location.png"
+                        />
+                        <Card.Header>Post Codes</Card.Header>
+                        <Card.Meta>Target post codes for delivery</Card.Meta>
+                      </Card.Content>
+                    </Card>
+                  </Link>
                 </Grid.Column>
               </Grid.Row>
             </Grid>
-            {/* <Col lg="12">
-              <Card.Group itemsPerRow={4}>
-                <Card>
-                  <Image 
-                    src="/images/purchase.png"
-                    wrapped
-                    ui={false}
-                  />
-                 
-                  <Card.Content extra>
-                  <Card.Header>Fulfiled Orders</Card.Header>
-                  </Card.Content>
-                </Card>
-
-                <Card style={{backgroundColor:'white'}}>
-                  <Image
-                    src="/images/cart.png" style={{height:'auto', backgroundColor:'white'}}
-                  />
-                  
-                  <Card.Content extra>
-                  <Card.Header>Orders</Card.Header>
-                   
-                  </Card.Content>
-                </Card>
-
-                <Card>
-                  <Image
-                    src="/images/app.png" style={{height:'auto', backgroundColor:'white'}}
-                  />
-                  
-                  <Card.Content extra>
-                  <Card.Header>Products</Card.Header>
-                  </Card.Content>
-                </Card>
-
-                
-              </Card.Group>
-            </Col>
-          </Col> */}
           </Col>
         </Row>
       </Container>
     );
   }
 }
+Dashboard.propTypes = {
+  fetchUser: PropTypes.func.isRequired,
+};
+const mapStateToProps = (state) => ({
+  user: state.products.user,
+});
+
+export default connect(mapStateToProps, { fetchUser })(Dashboard);

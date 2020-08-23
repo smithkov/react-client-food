@@ -1,10 +1,13 @@
 import React, { Component } from "react";
 import clientService from "../services/clientService";
+import { setToken } from "../http-common";
 import {
   setUserProfile,
   DASHBOARD_URL,
+  DASHBOARD_USER_URL,
   REGISTER_URL,
   SERVER_ERROR,
+  asyncLocalStorage,
 } from "../utility/global";
 import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
@@ -26,7 +29,7 @@ class Login extends Component {
     email: "",
     password: "",
     hasError: false,
-    loading:false
+    loading: false,
   };
 
   onChange = (e) => {
@@ -36,27 +39,34 @@ class Login extends Component {
   };
 
   login = (e) => {
+    var dashType;
     e.preventDefault();
-    this.setState({loading:true})
+    this.setState({ loading: true });
 
     const data = {
       email: this.state.email,
       password: this.state.password,
     };
-    let { from } = this.props.location.state || {
-      from: { pathname: DASHBOARD_URL },
-    };
+
     clientService
       .login(data)
 
-      .then((response) => {
-        this.setState({loading:false})
-        const { data } = response.data;
+      .then(async (response) => {
+        this.setState({ loading: false });
+        const { data, token } = response.data;
+        dashType = data.role === "Seller" ? DASHBOARD_URL : DASHBOARD_USER_URL;
+
+        let { from } = this.props.location.state || {
+          from: { pathname: dashType },
+        };
+        //localStorage.setItem("tk", token);
+        const setStorage = await asyncLocalStorage.setItem("tk", token);
+        //sessionStorage.setItem("tk", token);
 
         this.props.history.replace(from);
       })
       .catch((err) => {
-        this.setState({loading:false})
+        this.setState({ loading: false });
         this.setState({
           hasError: true,
           message: SERVER_ERROR,
@@ -64,13 +74,9 @@ class Login extends Component {
       });
   };
 
-  responseGoogle = (response) => {
-    console.log(response);
-  };
+  responseGoogle = (response) => {};
   responseFacebook = (res) => {
-    let { from } = this.props.location.state || {
-      from: { pathname: DASHBOARD_URL },
-    };
+    var dashType;
 
     if (res) {
       const { email, name, graphDomain, id } = res;
@@ -84,9 +90,15 @@ class Login extends Component {
         .socialAccess({ email, firstName, lastName, source, password })
         .then((response) => {
           const { token, data } = response.data;
-          data.token = token;
-          //Cookies.set(CRED, data, { expires: 7, path: "" });
-          //localStorage.setItem(CRED, JSON.stringify(data));
+          localStorage.setItem("tk", token);
+          dashType =
+            data.role === "Seller" ? DASHBOARD_URL : DASHBOARD_USER_URL;
+          dashType =
+            data.role === "Seller" ? DASHBOARD_URL : DASHBOARD_USER_URL;
+
+          let { from } = this.props.location.state || {
+            from: { pathname: dashType },
+          };
           this.props.history.replace(from);
         })
         .catch((err) => {
@@ -98,7 +110,7 @@ class Login extends Component {
     }
   };
   render() {
-    const {loading} = this.state;
+    const { loading } = this.state;
     const alert = (
       <div className="ui info message">
         <div className="header">Login refusal</div>
@@ -118,8 +130,8 @@ class Login extends Component {
         >
           <Grid.Column style={{ maxWidth: 450 }}>
             <Header as="h2" color="black" textAlign="center">
-              <Image circular size="mini" src="/images/onelogo.jpg" /> Log-in to your
-              account
+              <Image circular size="mini" src="/images/onelogo.png" /> Log-in to
+              your account
             </Header>
 
             <Form size="large">
@@ -173,7 +185,13 @@ class Login extends Component {
                   type="password"
                 />
 
-                <Button loading={loading} type="submit" color="red" fluid size="large">
+                <Button
+                  loading={loading}
+                  type="submit"
+                  color="red"
+                  fluid
+                  size="large"
+                >
                   Login
                 </Button>
               </Segment>

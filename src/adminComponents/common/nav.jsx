@@ -4,9 +4,10 @@ import { Link, withRouter } from "react-router-dom";
 import { addUser } from "../../actions/productActions";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { DASHBOARD_URL, LOGIN_URL } from "../../utility/global";
+import { DASHBOARD_URL, LOGIN_URL, logout } from "../../utility/global";
 import clientService from "../../services/clientService";
 import { Icon, Image } from "semantic-ui-react";
+
 
 class Nav extends Component {
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
@@ -23,7 +24,8 @@ class Nav extends Component {
   }
   logout = async (e) => {
     e.preventDefault();
-    const response = await clientService.logout();
+    sessionStorage.removeItem("tk")
+    
     this.props.history.push(LOGIN_URL);
   };
   dashboard = async (e) => {
@@ -35,7 +37,7 @@ class Nav extends Component {
     return (
       <Menu fixed>
         <Menu.Item>
-          <Image size="mini" circular src="/images/onelogo.jpg" />
+          <Image size="mini" circular src="/images/onelogo.png" />
         </Menu.Item>
 
         <Menu.Item

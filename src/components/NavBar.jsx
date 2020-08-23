@@ -54,7 +54,7 @@ class NavBar extends Component {
   }
   handlerLogout = async (e) => {
     e.preventDefault();
-    const response = await clientService.logout();
+    sessionStorage.removeItem("tk");
     this.props.history.push(LOGIN_URL);
   };
   handlerOrder = async (e) => {

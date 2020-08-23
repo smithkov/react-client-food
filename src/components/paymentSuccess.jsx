@@ -3,7 +3,7 @@ import ErrorPage from "./errorPage";
 import NavBar from "./NavBar";
 import { Grid, Image, Message, Container } from "semantic-ui-react";
 import { Link } from "react-router-dom";
-import { LISTING_URL } from "../utility/global";
+import { LISTING_URL, TEMP_ID } from "../utility/global";
 
 export default class PaymentSuccess extends Component {
   constructor(props) {
@@ -11,7 +11,9 @@ export default class PaymentSuccess extends Component {
   }
 
   state = {};
-  componentDidMount = async () => {};
+  componentDidMount = async () => {
+    localStorage.removeItem(TEMP_ID);
+  };
 
   render() {
     return (

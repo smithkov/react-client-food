@@ -16,6 +16,7 @@ export default function ProtectedRoute(ComponentToProtect) {
 
     componentDidMount = async () => {
       try {
+        
         const result = await clientService.hasAuth();
         const error = result.data.error;
 

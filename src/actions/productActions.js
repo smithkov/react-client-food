@@ -7,14 +7,13 @@ import {
   FETCH_PRODUCT_BY_CATEGORY,
   FETCH_PRODUCTS_CLOSE,
   FETCH_PRODUCT_CLOSE_BY_CATEGORY,
-  FETCH_PRODUCT_CLOSE_BY_ORIGIN
+  FETCH_PRODUCT_CLOSE_BY_ORIGIN,
 } from "./types";
 import ClientService from "../services/clientService";
 
 export const fetchProducts = (search) => (dispatch) => {
-  ClientService.products({search})
+  ClientService.products({ search })
     .then((products) => {
-     
       dispatch({
         type: FETCH_PRODUCTS,
         payload: products.data.open,
@@ -33,7 +32,7 @@ export const fetchProducts = (search) => (dispatch) => {
 // export const fetchCloseProducts = (search) => (dispatch) => {
 //   ClientService.productsClose({search})
 //     .then((products) => {
-      
+
 //       dispatch({
 //         type: FETCH_PRODUCTS_CLOSE,
 //         payload: products.data.data,
@@ -51,7 +50,6 @@ export const fetchCatgeories = () => (dispatch) => {
         type: FETCH_CATEGORY,
         payload: category.data.open,
       });
-      
     })
     .catch((err) => {
       console.log(err);

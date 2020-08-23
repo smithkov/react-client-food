@@ -16,12 +16,22 @@ import {
   IMAGE_URL,
   DEFAULT_USER,
 } from "../utility/global";
-import { Button, Dropdown, Form, Image, Message, Icon } from "semantic-ui-react";
+import {
+  Button,
+  Dropdown,
+  Form,
+  Image,
+  Message,
+  Icon,
+} from "semantic-ui-react";
 import AfterNav from "./common/afterNav";
+import { fetchUser } from "../actions/productActions";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 //import "date-fns";
 //import MomentUtils from "@date-io/moment";
 
-export default class Account extends Component {
+class Account extends Component {
   constructor(props) {
     super(props);
   }
@@ -40,11 +50,50 @@ export default class Account extends Component {
     cityText: "",
     selectedPhoto: "",
     photoPreviewUrl: "",
+    userId: "",
 
     //selectedDateStart: new Date("2014-08-18T21:11:54").setHours(10, 0, 0),
     //selectedDateEnd: new Date("2014-08-18T21:11:54").setHours(20, 0, 0),
   };
-
+  componentWillReceiveProps = async (nextProps) => {
+    if (nextProps) {
+      const user = nextProps.user;
+      if (user) {
+        ClientService.findUserById(user.id)
+          .then((response) => {
+            const data = response.data.data;
+            const {
+              firstName,
+              lastName,
+              email,
+              firstAddress,
+              secondAddress,
+              postCode,
+              cityId,
+              City,
+              photo,
+            } = data;
+           
+            const myPhoto = photo ? `${IMAGE_URL}${photo}` : "";
+            this.setState({
+              photoPreviewUrl: myPhoto,
+              firstName,
+              lastName,
+              email,
+              firstAddress,
+              secondAddress,
+              postCode,
+              userId: user.id,
+              selectedCity: cityId,
+              cityText: City ? City.name : "City",
+            });
+          })
+          .catch((err) => {
+            //console.log(err);
+          });
+      }
+    }
+  };
   fileChangedHandler = (event) => {
     try {
       this.setState({
@@ -82,41 +131,6 @@ export default class Account extends Component {
       .catch((err) => {
         //console.log(err);
       });
-
-    const result = await ClientService.hasAuth();
-    const user = result.data.data;
-    if (user) {
-      ClientService.findUserById(user.id)
-        .then((response) => {
-          const data = response.data.data;
-          const {
-            firstName,
-            lastName,
-            email,
-            firstAddress,
-            secondAddress,
-            postCode,
-            cityId,
-            City,
-            photo,
-          } = data;
-          const myPhoto = photo ? `${IMAGE_URL}${photo}` : "";
-          this.setState({
-            photoPreviewUrl: myPhoto,
-            firstName,
-            lastName,
-            email,
-            firstAddress,
-            secondAddress,
-            postCode,
-            selectedCity: cityId,
-            cityText: City ? City.name : "City",
-          });
-        })
-        .catch((err) => {
-          //console.log(err);
-        });
-    }
   };
   onChange = (e) => {
     this.setState({
@@ -132,46 +146,44 @@ export default class Account extends Component {
 
   onSubmit = async (e) => {
     e.preventDefault();
-    const result = await ClientService.hasAuth();
-    const user = result.data.data;
-    if (user) {
-      const {
-        firstName,
-        lastName,
-        email,
-        firstAddress,
-        secondAddress,
-        postCode,
-        selectedCity,
-        selectedPhoto,
-      } = this.state;
-      const formData = new FormData();
-      formData.append("firstName", firstName);
-      formData.append("lastName", lastName);
-      formData.append("email", email);
-      formData.append("firstAddress", firstAddress);
-      formData.append("secondAddress", secondAddress);
-      formData.append("postCode", postCode);
-      formData.append("selectedCity", selectedCity);
-      formData.append("photo", selectedPhoto);
 
-      clientService
-        .userUpdate(user.id, formData)
-        .then((response) => {
-          console.log(response);
-          this.setState({
-            showAlert: true,
-            message: response.data.message,
-          });
-        })
-        .catch((err) => {
-          const message = err.response.data.message;
+    const {
+      firstName,
+      lastName,
+      email,
+      firstAddress,
+      secondAddress,
+      postCode,
+      selectedCity,
+      selectedPhoto,
+      userId
+    } = this.state;
+    
+    
+    const formData = new FormData();
+    formData.append("firstName", firstName);
+    formData.append("lastName", lastName);
+    formData.append("email", email);
+    formData.append("firstAddress", firstAddress);
+    formData.append("secondAddress", secondAddress);
+    formData.append("postCode", postCode);
+    formData.append("cityId", selectedCity);
+    formData.append("photo", selectedPhoto);
 
-          this.setState({ showAlert: true, message: message });
+    clientService
+      .userUpdate(userId, formData)
+      .then((response) => {
+        console.log(response);
+        this.setState({
+          showAlert: true,
+          message: response.data.message,
         });
-    } else {
-      this.setState({ showAlert: true, message: MISSING_USER_MSG });
-    }
+      })
+      .catch((err) => {
+        const message = err.response.data.message;
+
+        this.setState({ showAlert: true, message: message });
+      });
   };
   fileChangedHandler = (event) => {
     try {
@@ -340,11 +352,22 @@ export default class Account extends Component {
                 />
               </Form.Group>
 
-              <Button color="red" type="submit">Save  <Icon name="save" /></Button>
-            </Form><br/><br/>
+              <Button color="red" type="submit">
+                Save <Icon name="save" />
+              </Button>
+            </Form>
+            <br />
+            <br />
           </Col>
         </Row>
       </Container>
     );
   }
 }
+Account.propTypes = {
+  fetchUser: PropTypes.func.isRequired,
+};
+const mapStateToProps = (state) => ({
+  user: state.products.user,
+});
+export default connect(mapStateToProps, { fetchUser })(Account);

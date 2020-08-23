@@ -9,6 +9,7 @@ import {
   DEFAULT_BANNER,
   IMAGE_URL,
   DEFAULT_LOGO,
+  toastOptions,
 } from "../utility/global";
 import {
   Button,
@@ -17,19 +18,23 @@ import {
   Image,
   Message,
   Input,
-  Icon
+  Icon,
+  Popup,
+  Label,
 } from "semantic-ui-react";
 import AfterNav from "./common/afterNav";
-//import "date-fns";
-//import MomentUtils from "@date-io/moment";
-
-export default class ShopForm extends Component {
+import { toast } from "react-toastify";
+import { fetchUser } from "../actions/productActions";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+class ShopForm extends Component {
   constructor(props) {
     super(props);
   }
   state = {
     showAlert: false,
     shopName: "",
+    about: "",
     initialShopName: "",
     initialShopUrl: "",
     shopUrl: "",
@@ -53,7 +58,52 @@ export default class ShopForm extends Component {
     //selectedDateStart: new Date("2014-08-18T21:11:54").setHours(10, 0, 0),
     //selectedDateEnd: new Date("2014-08-18T21:11:54").setHours(20, 0, 0),
   };
+  componentWillReceiveProps = async (nextProps) => {
+    if (nextProps) {
+      const user = nextProps.user;
+      if (user) {
+        ClientService.findShopByUser(user.id)
+          .then((response) => {
+            const data = response.data.data;
 
+            const {
+              shopName,
+              shopUrl,
+              logo,
+              shopBanners,
+              cityId,
+              firstAddress,
+              secondAddress,
+              postCode,
+              about,
+              City,
+            } = data;
+
+            this.setState({
+              shopName,
+              bannerPreviewUrl:
+                shopBanners.length > 0
+                  ? `${IMAGE_URL}${shopBanners[0].bannerPath}`
+                  : DEFAULT_BANNER,
+              logoPreviewUrl: logo ? `${IMAGE_URL}${logo}` : DEFAULT_LOGO,
+              hasShop: data,
+              firstAddress,
+              shopUrl,
+              about,
+              initialShopName: shopName,
+              initialShopUrl: shopUrl,
+              secondAddress: secondAddress == null ? "" : secondAddress,
+              postCode,
+              cityText: City ? City.name : "City",
+              selectedCity: cityId,
+            });
+          })
+          .catch((err) => {
+            //console.log(err);
+          });
+      }
+    }
+  };
   fileChangedHandler = (event) => {
     try {
       this.setState({
@@ -90,63 +140,7 @@ export default class ShopForm extends Component {
     reader.readAsDataURL(event.target.files[0]);
   };
   componentDidMount = async () => {
-    const result = await ClientService.hasAuth();
-    const user = result.data.data;
-    if (user) {
-      ClientService.findShopByUser(user.id)
-        .then((response) => {
-          const data = response.data.data;
-          console.log(data);
-          const {
-            shopName,
-            shopUrl,
-            logo,
-            shopBanners,
-            cityId,
-            firstAddress,
-            secondAddress,
-            postCode,
-            City,
-          } = data;
-         
-          this.setState({
-            shopName,
-            bannerPreviewUrl:
-              shopBanners.length > 0
-                ? `${IMAGE_URL}${shopBanners[0].bannerPath}`
-                : DEFAULT_BANNER,
-            logoPreviewUrl: logo ? `${IMAGE_URL}${logo}` : DEFAULT_LOGO,
-            hasShop: data,
-            firstAddress,
-            shopUrl,
-            initialShopName: shopName,
-            initialShopUrl: shopUrl,
-            secondAddress: secondAddress == null ? "" : secondAddress,
-            postCode,
-            cityText: City ? City.name : "City",
-            selectedCity: cityId,
-          });
-        })
-        .catch((err) => {
-          //console.log(err);
-        });
-    }
-    ClientService.cities()
-      .then((response) => {
-        let cities = response.data.data.map((city) => {
-          return {
-            key: city.id,
-            value: city.id,
-            text: city.name,
-          };
-        });
-        this.setState({
-          city: [{ value: "", text: "--Select city--" }].concat(cities),
-        });
-      })
-      .catch((err) => {
-        //console.log(err);
-      });
+    this.props.fetchUser();
   };
   onChange = (e) => {
     this.setState({
@@ -174,6 +168,7 @@ export default class ShopForm extends Component {
         firstAddress,
         postCode,
         selectedCity,
+        about,
       } = this.state;
       let formData = new FormData();
       formData.append("firstAddress", firstAddress);
@@ -185,21 +180,17 @@ export default class ShopForm extends Component {
       formData.append("shopName", shopName);
       formData.append("shopUrl", shopUrl);
       formData.append("userId", user.id);
+      formData.append("about", about);
       clientService
         .updateShop(formData)
         .then((response) => {
-          this.setState({
-            showAlert: true,
-            message: response.data.message,
-          });
+          toast.success(response.data.message, toastOptions(false));
         })
         .catch((err) => {
-          const message = err.response.data.message;
-
-          this.setState({ showAlert: true, message: message });
+          toast.success(err.response.data.message, toastOptions(true));
         });
     } else {
-      this.setState({ showAlert: true, message: MISSING_USER_MSG });
+      toast.success(MISSING_USER_MSG, toastOptions(true));
     }
     //    clientService.createShop({
 
@@ -265,6 +256,7 @@ export default class ShopForm extends Component {
       disabled,
       isDuplicateName,
       isDuplicateUrl,
+      about,
     } = this.state;
     const nameAlert = isDuplicateName ? (
       <Message color="yellow">
@@ -292,14 +284,7 @@ export default class ShopForm extends Component {
         </div>
       );
     }
-    const alert = this.state.showAlert ? (
-      <div className="ui info message">
-        <p>{this.state.message}</p>
-      </div>
-    ) : (
-      ""
-    );
-
+ 
     return (
       <Container fluid={true}>
         <Nav />
@@ -311,7 +296,7 @@ export default class ShopForm extends Component {
           </Col>
           <Col lg="1"></Col>
           <Col className="dashboard-panel" lg="6">
-            <Message attached header="Shop details" />
+            <Message attached header="My Store" />
             <Form
               className="attached fluid segment"
               style={{
@@ -322,12 +307,11 @@ export default class ShopForm extends Component {
               }}
               onSubmit={this.onSubmit}
             >
-              <p class="h4 mb-4">Shop Details</p>
-              {alert}
+              <p class="h4 mb-4">Store Details</p>
 
               {nameAlert}
               <Form.Field required>
-                <label>Shop name</label>
+                <label>Store name</label>
                 <input
                   type="text"
                   required
@@ -335,7 +319,7 @@ export default class ShopForm extends Component {
                   onBlur={this.onBlur}
                   name="shopName"
                   onChange={this.onChange}
-                  placeholder="Shop name"
+                  placeholder="Store name"
                 />
               </Form.Field>
               {urlAlert}
@@ -345,8 +329,8 @@ export default class ShopForm extends Component {
                   value={shopUrl}
                   onBlur={this.onBlur}
                   onChange={this.onChange}
-                  label="https://cookneat/"
-                  placeholder="your-url.co.uk"
+                  label="https://foodengo.co.uk/"
+                  placeholder="your-store-url"
                 />
               </Form.Field>
               <Form.Group widths="equal">
@@ -393,6 +377,7 @@ export default class ShopForm extends Component {
               </Form.Field>
               <Form.Group widths="equal">
                 <Form.Field required>
+                  <label>Post code</label>
                   <input
                     type="text"
                     required
@@ -403,6 +388,7 @@ export default class ShopForm extends Component {
                   />
                 </Form.Field>
                 <Form.Field required>
+                  <label>City</label>
                   <Dropdown
                     required
                     fluid
@@ -417,14 +403,39 @@ export default class ShopForm extends Component {
                   />
                 </Form.Field>
               </Form.Group>
+              <Form.Field>
+                <Popup
+                  trigger={<label>About your store (recommended)</label>}
+                  content="Enter your cooking qualifications, years of cooking experience, etc."
+                  position="top left"
+                />
+
+                <Form.TextArea
+                  required
+                  name="about"
+                  value={about}
+                  maxlength="1000"
+                  onChange={this.onChange}
+                  placeholder="About your store"
+                />
+              </Form.Field>
 
               <Button color="red" disabled={disabled} type="submit">
                 Save store <Icon name="save" />
               </Button>
-            </Form><br/><br/>
+            </Form>
+            <br />
+            <br />
           </Col>
         </Row>
       </Container>
     );
   }
 }
+ShopForm.propTypes = {
+  fetchUser: PropTypes.func.isRequired,
+};
+const mapStateToProps = (state) => ({
+  user: state.products.user,
+});
+export default connect(mapStateToProps, { fetchUser })(ShopForm);

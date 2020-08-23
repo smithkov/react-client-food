@@ -120,7 +120,7 @@ class ShopForm extends Component {
             ) : (
               <Link to={MEAL_CREATE}>
                 <Button type="submit" color="red" fluid size="large">
-                  Save food <Icon name="save" />
+                  Create food <Icon name="save" />
                 </Button>
               </Link>
             )}

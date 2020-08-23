@@ -86,9 +86,8 @@ const Footer = () => {
           <Grid.Column width={7}>
             <Header inverted as="h4" content="Get Hold of Us" />
             <p>
-              Contact us should need more enquiries regarding our service, we
-              are on 24/7 to answer all your possible queries regarding all our
-              services.
+              Contact us at info@foodengo.co.uk should you need more enquiries regarding our services, we
+              are available 24/7 to answer all your possible queries.
             </p>
           </Grid.Column>
         </Grid>

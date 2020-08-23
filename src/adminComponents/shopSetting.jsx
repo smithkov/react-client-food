@@ -398,7 +398,7 @@ export default class ShopSetting extends Component {
               </Header>
               <Form onSubmit={this.onSubmit} size="tiny">
                 <Form.TextArea
-                  maxlength="300"
+                  maxlength="200"
                   name="notice"
                   onChange={this.onChange}
                   value={notice}

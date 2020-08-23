@@ -18,6 +18,7 @@ import { fetchUser } from "../actions/productActions";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Moment from "react-moment";
+import moment from "moment";
 
 class UserOrder extends Component {
   constructor(props) {
@@ -44,17 +45,19 @@ class UserOrder extends Component {
   componentWillReceiveProps = async (nextProps) => {
     if (nextProps) {
       const { user } = nextProps;
-      console.log(user);
+     
       if (user.role == "Customer") {
         const result = await clientService.transactionByUser({
           userId: user.id,
         });
         this.setState({ orders: result.data.data });
+        
       } else {
         const result = await clientService.transactionByShop({
           shopId: user.shopId,
         });
         this.setState({ orders: result.data.data, isSeller: true });
+        
       }
     }
   };
@@ -64,6 +67,7 @@ class UserOrder extends Component {
   render() {
     const { activeIndex, orders, isSeller } = this.state;
     let indexCounter = 0;
+    
     return (
       <Fragment>
         <Container fluid={true}>
@@ -78,7 +82,7 @@ class UserOrder extends Component {
             <Col lg="1"></Col>
 
             <Col className="dashboard-panel" lg="6">
-              {orders.length == 0 ? (
+              {orders == null || orders.length == 0 ? (
                 <Message style={{ textAlign: "center" }} floating>
                   <Message.Header>You currently have no orders.</Message.Header>
                 </Message>
@@ -99,7 +103,7 @@ class UserOrder extends Component {
                         <Table.Cell>{order.refNo}</Table.Cell>
                         <Table.Cell>
                           {" "}
-                          <Moment format="DD/MM/YYYY">{order.createdAt}</Moment>
+                          <Moment format="DD/MM/YYYY">{order.createdAt}</Moment> {moment(order.createdAt).format("LT")}
                         </Table.Cell>
                         <Table.Cell>{order.soldProducts.length}</Table.Cell>
                         <Table.Cell>{formatPrice(order.total)}</Table.Cell>

@@ -151,6 +151,16 @@ export default class ShopCreate extends Component {
       }
     }
   };
+  onHandleTelephoneChange = (e) => {
+    let phone = e.target.value;
+
+    if (!Number(phone) && phone !=="") {
+      return;
+    }
+    this.setState({
+      [e.target.name]: phone,
+    });
+  };
   onBlurEmail = (e) => {
     const { email } = this.state;
 
@@ -189,11 +199,11 @@ export default class ShopCreate extends Component {
       isDuplicateEmail,
       isDuplicateUrl,
       loading,
-      emailMessage
+      emailMessage,
     } = this.state;
     const nameAlert = isDuplicateName ? (
       <Message color="yellow">
-        The restaurant name is already taken. Please choose a different one.
+        The vendor's name is already taken. Please choose a different one.
       </Message>
     ) : (
       ""
@@ -203,6 +213,9 @@ export default class ShopCreate extends Component {
     ) : (
       ""
     );
+    const countryOptions = [
+      { key: "gb", value: "gb", flag: "gb", text: "+44" },
+    ];
 
     return (
       <Container fluid={true}>
@@ -217,11 +230,11 @@ export default class ShopCreate extends Component {
 
               <List>
                 <List.Item icon="check" content="Fill out the form." />
+                <List.Item icon="check" content="Verify your email address." />
                 <List.Item
                   icon="check"
-                  content="Submit proof of ownership eg. Passport or national identity."
+                  content="List your food menu and sample photos of foods on your menu."
                 />
-                <List.Item icon="check" content="Verification." />
               </List>
             </Container>
           </Col>
@@ -232,7 +245,7 @@ export default class ShopCreate extends Component {
             />
             <Message
               attached
-              header="Restaurant Registration Form"
+              header="Food Vendor's Registration Form"
               content="Fill out the form below to register as a vendor"
             />
             <Form
@@ -247,7 +260,7 @@ export default class ShopCreate extends Component {
             >
               {nameAlert}
               <Form.Field required>
-                <label>Restaurant name</label>
+                <label>Business name</label>
                 <input
                   className="capitalize"
                   type="text"
@@ -256,23 +269,31 @@ export default class ShopCreate extends Component {
                   onBlur={this.onBlur}
                   name="shopName"
                   onChange={this.onChange}
-                  placeholder="Restaurant name"
+                  placeholder="Business name"
                 />
               </Form.Field>
-              <Form.Field required>
-                <label>Contact number</label>
-                <input
-                  type="tel"
-                  required
-                  name="phone"
-                  onChange={this.onChange}
-                  placeholder="eg. 07857965032"
-                />
-              </Form.Field>
+              <Message floating content="Business Phone Number" />
+              <Form.Group>
+                <Form.Field width={2}>
+                  <label>Code</label>
+                  <Form.Input readonly value="+44" />
+                </Form.Field>
+                <Form.Field width={5} required>
+                  <label>Phone</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    maxLength="15"
+                    value={this.state.phone}
+                    onChange={this.onHandleTelephoneChange}
+                    placeholder="eg. 07857965032"
+                  />
+                </Form.Field>
+              </Form.Group>
 
-              <Message floating content="Restaurant address" />
+              <Message floating content="Business Address" />
               <Form.Field required>
-                <label>Your restaurant's street address</label>
+                <label>Street address</label>
                 <input
                   type="text"
                   required
@@ -285,7 +306,7 @@ export default class ShopCreate extends Component {
 
               <Form.Group widths="equal">
                 <Form.Field required>
-                  <label>Post code</label>
+                  <label>Post Code</label>
                   <input
                     type="text"
                     required
@@ -311,7 +332,7 @@ export default class ShopCreate extends Component {
                   />
                 </Form.Field>
               </Form.Group>
-              <Message floating content="Name of restaurant owner" />
+              <Message floating content="Your Name" />
 
               <Form.Group widths="equal">
                 <Form.Field required>
@@ -384,7 +405,7 @@ export default class ShopCreate extends Component {
               </Header>
               <p>
                 We will do the talking while you do the selling as we are
-                obliged to utilize all marketing medium to reach out to your
+                obliged to utilize all marketing media to reach out to your
                 potential customers.
               </p>
               <Header color="red" as="h4">
@@ -393,8 +414,7 @@ export default class ShopCreate extends Component {
               </Header>
               <p>
                 When you register with Foodengo, our photography team will take
-                super high quality of the meals to help to showcase what you
-                have got to sell our hungry customers.
+                high resolution photos of what you sell for good presentation.
               </p>
               <Header color="red" as="h4">
                 <Image circular src="/images/foodengo_approve.png" />

@@ -4,13 +4,15 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Landing from "./components/Landing";
 
 import Login from "./components/login";
+import BankDetail from "./adminComponents/bankDetail";
 import Register from "./components/register";
 import ShopPage from "./components/ShopPage";
 import ErrorPage from "./components/errorPage";
 import ContactUs from "./components/contactUs";
 import Payment from "./components/payment";
 import FoodListing from "./components/FoodListing";
-import Dashboard from "./adminComponents/dashboard";
+import Dashboard from "./adminComponents/dashboard_admin";
+import DashboardUser from "./adminComponents/dashboard_user";
 import ShopForm from "./adminComponents/shopForm";
 import ProductList from "./adminComponents/productList";
 import ProductForm from "./adminComponents/productForm";
@@ -29,6 +31,7 @@ import UserOrder from "../src/adminComponents/userOrder";
 import OrderDetail from "./adminComponents/orderDetail";
 import StoreReview from "./adminComponents/storeReview";
 import AvailableTime from "./adminComponents/availableTime";
+import PostCode from "./adminComponents/postCodes";
 import Privacy from "./documents/privacy";
 import Disclaimer from "./documents/disclaimer";
 import TermsAndCondition from "./documents/termsAndCondition";
@@ -66,6 +69,9 @@ import {
   ACCOUNT_VERIFICATION,
   CONTACT_US,
   PAYMENT_ERROR_URL,
+  BANK_DETAIL_URL,
+  DASHBOARD_USER_URL,
+  POST_CODES_URL
 } from "./utility/global";
 
 class App extends React.Component {
@@ -85,6 +91,11 @@ class App extends React.Component {
               exact
               path={PAYMENT_ERROR_URL}
               component={ProtectedRoute(PaymentError)}
+            />
+            <Route
+              exact
+              path={POST_CODES_URL}
+              component={ProtectedRoute(PostCode)}
             />
             <Route exact path={LISTING_URL} component={FoodListing} />
             <Route exact path={LOGIN_URL} component={Login} />
@@ -134,6 +145,11 @@ class App extends React.Component {
               path={SHOP_REVIEW}
               component={ProtectedRoute(StoreReview)}
             />
+             <Route
+              exact
+              path={BANK_DETAIL_URL}
+              component={ProtectedRoute(BankDetail)}
+            />
             <Route
               exact
               path={MEAL_LIST}
@@ -153,6 +169,11 @@ class App extends React.Component {
               exact
               path={DASHBOARD_URL}
               component={ProtectedRoute(Dashboard)}
+            />
+             <Route
+              exact
+              path={DASHBOARD_USER_URL}
+              component={ProtectedRoute(DashboardUser)}
             />
             <Route exact path={SHOP_PAGE_URL} component={ShopPage} />
             <Route exact path={SHOP_SETTING_URL} component={ShopSetting} />

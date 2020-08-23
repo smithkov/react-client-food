@@ -147,24 +147,49 @@ class OrderDetail extends Component {
                       <Table.Row>
                         <Table.HeaderCell>Quantity</Table.HeaderCell>
                         <Table.HeaderCell>Name</Table.HeaderCell>
-                        <Table.HeaderCell>Total</Table.HeaderCell>
                         <Table.HeaderCell>price</Table.HeaderCell>
+                        <Table.HeaderCell>Total</Table.HeaderCell>
                       </Table.Row>
                     </Table.Header>
-
                     <Table.Body>
                       {items.map((item) => {
                         return (
                           <Table.Row>
                             <Table.Cell>{item.quantity}</Table.Cell>
                             <Table.Cell>{item.name}</Table.Cell>
+                            <Table.Cell>{formatPrice(item.price)}</Table.Cell>
                             <Table.Cell>{formatPrice(item.total)}</Table.Cell>
-                            <Table.Cell>{item.price}</Table.Cell>
                           </Table.Row>
                         );
                       })}
                     </Table.Body>
                     <Table.Footer>
+                      <Table.Row>
+                        <Table.HeaderCell></Table.HeaderCell>
+                        <Table.HeaderCell></Table.HeaderCell>
+                        <Table.HeaderCell></Table.HeaderCell>
+                        <Table.HeaderCell></Table.HeaderCell>
+                      </Table.Row>
+                      <Table.Row>
+                        <Table.HeaderCell></Table.HeaderCell>
+                        <Table.HeaderCell></Table.HeaderCell>
+                        <Table.HeaderCell>
+                          <h4>Delivery: </h4>
+                        </Table.HeaderCell>
+                        <Table.HeaderCell>
+                          {formatPrice(order.deliveryPrice)}
+                        </Table.HeaderCell>
+                      </Table.Row>
+                      <Table.Row>
+                        <Table.HeaderCell></Table.HeaderCell>
+                        <Table.HeaderCell></Table.HeaderCell>
+                        <Table.HeaderCell>
+                          <h4>Discount: </h4>
+                        </Table.HeaderCell>
+                        <Table.HeaderCell>
+                          {formatPrice(order.offerDiscount)}
+                        </Table.HeaderCell>
+                      </Table.Row>
                       <Table.Row>
                         <Table.HeaderCell></Table.HeaderCell>
                         <Table.HeaderCell></Table.HeaderCell>
@@ -188,8 +213,8 @@ class OrderDetail extends Component {
                     </Table.Footer>
                   </Table>
                   <p style={{ textAlign: "center" }}>
-                    <strong>NOTE </strong>: This is computer generated receipt
-                    and does not require physical signature.
+                    <strong>NOTE </strong>: This is a computer generated receipt
+                    and does not require a physical signature.
                   </p>
                   <hr></hr>
                   <Button color="red" onClick={this.print}>
