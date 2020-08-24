@@ -8,7 +8,6 @@ import { DASHBOARD_URL, LOGIN_URL, logout } from "../../utility/global";
 import clientService from "../../services/clientService";
 import { Icon, Image } from "semantic-ui-react";
 
-
 class Nav extends Component {
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
   state = {
@@ -24,8 +23,8 @@ class Nav extends Component {
   }
   logout = async (e) => {
     e.preventDefault();
-    sessionStorage.removeItem("tk")
-    
+    logout();
+
     this.props.history.push(LOGIN_URL);
   };
   dashboard = async (e) => {

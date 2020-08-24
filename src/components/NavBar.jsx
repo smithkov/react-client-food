@@ -8,6 +8,7 @@ import {
   MY_ACCOUNT,
   LISTING_URL,
   LOGIN_URL,
+  logout
 } from "../utility/global";
 
 import { Link, withRouter } from "react-router-dom";
@@ -54,7 +55,7 @@ class NavBar extends Component {
   }
   handlerLogout = async (e) => {
     e.preventDefault();
-    sessionStorage.removeItem("tk");
+    logout();
     this.props.history.push(LOGIN_URL);
   };
   handlerOrder = async (e) => {

@@ -44,9 +44,9 @@ class ApplicationSuccess extends Component {
       });
     }
   };
-  verify=()=> {
+  verify = () => {
     this.props.history.push(`/account_verification/${this.state.code}`);
-  }
+  };
   render() {
     const { redirect, code } = this.state;
     if (redirect) {
@@ -112,6 +112,12 @@ class ApplicationSuccess extends Component {
                   >
                     Activate
                   </Button>
+                  <hr></hr>
+                  <a href="/login">
+                    <Button fluid>
+                      Activate Later
+                    </Button>
+                  </a>
                 </Grid.Column>
                 <Grid.Column></Grid.Column>
               </Grid.Row>

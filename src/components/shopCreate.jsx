@@ -11,6 +11,7 @@ import {
   IMAGE_URL,
   toastOptions,
   DEFAULT_LOGO,
+  scrollToTop,
 } from "../utility/global";
 import {
   Button,
@@ -53,25 +54,44 @@ export default class ShopCreate extends Component {
     isDuplicateName: false,
     emailMessage: "",
     isDuplicateEmail: false,
+    origin: [],
+    originText: "",
+    selectedOrigin: "",
+    isValidationError: false,
+    validationMsg: "",
+    loadingOrigin: true,
+    loadingCity: true,
   };
 
   componentDidMount = async () => {
-    ClientService.cities()
-      .then((response) => {
-        let cities = response.data.data.map((city) => {
-          return {
-            key: city.id,
-            value: city.id,
-            text: city.name,
-          };
-        });
-        this.setState({
-          city: [{ value: "", text: "--Select city--" }].concat(cities),
-        });
-      })
-      .catch((err) => {
-        //console.log(err);
-      });
+    const originResponse = await ClientService.origins();
+    this.setState({
+      loadingOrigin:false
+    })
+    let origins = originResponse.data.data.map((origin) => {
+      return {
+        key: origin.id,
+        value: origin.id,
+        text: origin.name,
+      };
+    });
+    this.setState({
+      origin: [{ key: "", text: "--Select food origin--" }].concat(origins),
+    });
+    const cityResponse = await ClientService.cities();
+    this.setState({
+      loadingCity:false
+    })
+    let cities = cityResponse.data.data.map((city) => {
+      return {
+        key: city.id,
+        value: city.id,
+        text: city.name,
+      };
+    });
+    this.setState({
+      city: [{ value: "", text: "--Select city--" }].concat(cities),
+    });
   };
 
   onChange = (e) => {
@@ -98,33 +118,44 @@ export default class ShopCreate extends Component {
       password,
       shopName,
       selectedCity,
+      selectedOrigin,
     } = this.state;
 
-    this.setState({
-      loading: true,
-    });
     try {
-      const response = await clientService.createShop({
-        firstAddress,
-        lastName,
-        email,
-        phone,
-        firstName,
-        postCode,
-        password,
-        shopName,
-        cityId: selectedCity,
-      });
-
-      if (response.data.error) {
-        toast.success(response.data.message, toastOptions(true));
+      if (selectedOrigin == "" || selectedCity == "") {
         this.setState({
-          loading: false,
+          validationMsg: "City and origin are required",
+          isValidationError: true,
         });
+        scrollToTop();
       } else {
-        this.props.history.push(
-          `/food_vendor/application-success/${response.data.id}`
-        );
+        this.setState({
+          loading: true,
+          disabled: true,
+        });
+        const response = await clientService.createShop({
+          firstAddress,
+          lastName,
+          email,
+          phone,
+          firstName,
+          postCode,
+          password,
+          shopName,
+          cityId: selectedCity,
+          originId: selectedOrigin,
+        });
+
+        if (response.data.error) {
+          toast.success(response.data.message, toastOptions(true));
+          this.setState({
+            loading: false,
+          });
+        } else {
+          this.props.history.push(
+            `/food_vendor/application-success/${response.data.id}`
+          );
+        }
       }
     } catch (err) {
       this.setState({
@@ -154,7 +185,7 @@ export default class ShopCreate extends Component {
   onHandleTelephoneChange = (e) => {
     let phone = e.target.value;
 
-    if (!Number(phone) && phone !=="") {
+    if (!Number(phone) && phone !== "") {
       return;
     }
     this.setState({
@@ -192,6 +223,7 @@ export default class ShopCreate extends Component {
       postCode,
       selectedCity,
       cityText,
+      originText,
       city,
       email,
       disabled,
@@ -200,11 +232,22 @@ export default class ShopCreate extends Component {
       isDuplicateUrl,
       loading,
       emailMessage,
+      selectedOrigin,
+      origin,
+      isValidationError,
+      validationMsg,
+      loadingCity,
+      loadingOrigin
     } = this.state;
     const nameAlert = isDuplicateName ? (
       <Message color="yellow">
         The vendor's name is already taken. Please choose a different one.
       </Message>
+    ) : (
+      ""
+    );
+    const validationAlert = isValidationError ? (
+      <Message color="yellow">{validationMsg}</Message>
     ) : (
       ""
     );
@@ -245,7 +288,7 @@ export default class ShopCreate extends Component {
             />
             <Message
               attached
-              header="Food Vendor's Registration Form"
+              header="Food Vendor Registration Form"
               content="Fill out the form below to register as a vendor"
             />
             <Form
@@ -258,6 +301,7 @@ export default class ShopCreate extends Component {
               }}
               onSubmit={this.onSubmit}
             >
+              {validationAlert}
               {nameAlert}
               <Form.Field required>
                 <label>Business name</label>
@@ -290,7 +334,25 @@ export default class ShopCreate extends Component {
                   />
                 </Form.Field>
               </Form.Group>
-
+              <Message floating content="Food Origin" />
+              <Form.Group widths="equal">
+                <Form.Field required>
+                  <label>Food Origin</label>
+                  <Dropdown
+                    required
+                    fluid
+                    selection
+                    search
+                    defaultValue={selectedOrigin}
+                    name="selectedOrigin"
+                    label="Food Origin"
+                    placeholder="Food origin"
+                    options={origin}
+                    onChange={this.onChangeDropdown}
+                    loading={loadingOrigin}
+                  />
+                </Form.Field>
+              </Form.Group>
               <Message floating content="Business Address" />
               <Form.Field required>
                 <label>Street address</label>
@@ -329,6 +391,7 @@ export default class ShopCreate extends Component {
                     placeholder={cityText}
                     options={city}
                     onChange={this.onChangeDropdown}
+                    loading={loadingCity}
                   />
                 </Form.Field>
               </Form.Group>

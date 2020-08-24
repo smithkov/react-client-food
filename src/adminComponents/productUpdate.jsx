@@ -50,7 +50,6 @@ class ProductForm extends React.Component {
       desc: "",
       weight: "",
       price: "",
-      origin: [],
       ingredients: [],
       ingredient: "",
       selectedPhoto: null,
@@ -69,7 +68,6 @@ class ProductForm extends React.Component {
       redirect: false,
       photoPreviewUrl: null,
       categoryText: "",
-      originText: "",
       oldPhoto: "",
       productId: "",
       userId: "",
@@ -110,9 +108,7 @@ class ProductForm extends React.Component {
         price,
         unitText: Unit ? Unit.name : "Unit",
         categoryText: Category ? Category.name : "",
-        originText: Origin ? Origin.name : "",
         discountPrice,
-        origin: [],
         selectedPhoto: photo,
         selectedOrigin: Origin ? Origin.id : "",
         selectedUnitType: Unit ? Unit.id : "",
@@ -133,18 +129,6 @@ class ProductForm extends React.Component {
     });
     this.setState({
       unitType: [{ key: "", text: "--Select unit type--" }].concat(unitTypes),
-    });
-
-    const originResponse = await ClientService.origins();
-    let origins = originResponse.data.data.map((origin) => {
-      return {
-        key: origin.id,
-        value: origin.id,
-        text: origin.name,
-      };
-    });
-    this.setState({
-      origin: [{ key: "", text: "--Select product origin--" }].concat(origins),
     });
 
     const categoryResponse = await ClientService.category();
@@ -224,7 +208,6 @@ class ProductForm extends React.Component {
         formData.append("image", selectedPhoto);
         formData.append("ingredients", JSON.stringify(ingredients));
         formData.append("name", name);
-        formData.append("originId", selectedOrigin);
         formData.append("desc", desc);
         formData.append("photo", oldPhoto);
 
@@ -248,7 +231,7 @@ class ProductForm extends React.Component {
         });
       } else {
         toast.success(
-          "Please required options must be selected such as category and origin.",
+          "Please required options must be selected such as category.",
           toastOptions(true)
         );
       }
@@ -303,14 +286,12 @@ class ProductForm extends React.Component {
       desc,
       category,
       unitType,
-      origin,
       loadedFiles,
       message,
       hasImageLimit,
       redirect,
       photoPreviewUrl,
       categoryText,
-      originText,
       ingredient,
       ingredients,
       unitText,
@@ -384,17 +365,6 @@ class ProductForm extends React.Component {
                       name="selectedCategory"
                       options={category}
                       placeholder={categoryText}
-                    />
-                  </Form.Field>
-                  <Form.Field required>
-                    <label>Food origin</label>
-                    <Form.Select
-                      required
-                      fluid
-                      onChange={this.onChangeDropdown}
-                      name="selectedOrigin"
-                      options={origin}
-                      placeholder={originText}
                     />
                   </Form.Field>
 

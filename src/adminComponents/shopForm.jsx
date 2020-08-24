@@ -21,6 +21,7 @@ import {
   Icon,
   Popup,
   Label,
+  Placeholder,
 } from "semantic-ui-react";
 import AfterNav from "./common/afterNav";
 import { toast } from "react-toastify";
@@ -54,18 +55,22 @@ class ShopForm extends Component {
     disabled: false,
     isDuplicateUrl: false,
     isDuplicateName: false,
-
-    //selectedDateStart: new Date("2014-08-18T21:11:54").setHours(10, 0, 0),
-    //selectedDateEnd: new Date("2014-08-18T21:11:54").setHours(20, 0, 0),
+    loading: false,
+    shopId: "",
+    selectedOrigin: "",
+    origin: [],
+    originText: "",
+    loadingOrigin: true,
+    loadingCity: true,
+    hasLoaded: false,
   };
   componentWillReceiveProps = async (nextProps) => {
     if (nextProps) {
       const user = nextProps.user;
       if (user) {
-        ClientService.findShopByUser(user.id)
+        ClientService.findShopById(user.shopId)
           .then((response) => {
             const data = response.data.data;
-
             const {
               shopName,
               shopUrl,
@@ -77,10 +82,14 @@ class ShopForm extends Component {
               postCode,
               about,
               City,
+              Origin,
+              id,
             } = data;
 
             this.setState({
+              hasLoaded: true,
               shopName,
+              shopId: id,
               bannerPreviewUrl:
                 shopBanners.length > 0
                   ? `${IMAGE_URL}${shopBanners[0].bannerPath}`
@@ -95,6 +104,7 @@ class ShopForm extends Component {
               secondAddress: secondAddress == null ? "" : secondAddress,
               postCode,
               cityText: City ? City.name : "City",
+              originText: Origin ? Origin.name : "Origin",
               selectedCity: cityId,
             });
           })
@@ -141,6 +151,35 @@ class ShopForm extends Component {
   };
   componentDidMount = async () => {
     this.props.fetchUser();
+    const originResponse = await ClientService.origins();
+    this.setState({
+      loadingOrigin: false,
+    });
+    let origins = originResponse.data.data.map((origin) => {
+      return {
+        key: origin.id,
+        value: origin.id,
+        text: origin.name,
+      };
+    });
+    this.setState({
+      origin: [{ key: "", text: "--Select food origin--" }].concat(origins),
+    });
+
+    const cityResponse = await ClientService.cities();
+    this.setState({
+      loadingCity: false,
+    });
+    let cities = cityResponse.data.data.map((city) => {
+      return {
+        key: city.id,
+        value: city.id,
+        text: city.name,
+      };
+    });
+    this.setState({
+      city: [{ value: "", text: "--Select city--" }].concat(cities),
+    });
   };
   onChange = (e) => {
     this.setState({
@@ -156,56 +195,53 @@ class ShopForm extends Component {
 
   onSubmit = async (e) => {
     e.preventDefault();
-    const result = await clientService.hasAuth();
-    const user = result.data.data;
-    if (user) {
-      const {
-        selectedLogo,
-        selectedBanner,
-        shopName,
-        shopUrl,
-        secondAddress,
-        firstAddress,
-        postCode,
-        selectedCity,
-        about,
-      } = this.state;
-      let formData = new FormData();
-      formData.append("firstAddress", firstAddress);
-      formData.append("secondAddress", secondAddress);
-      formData.append("cityId", selectedCity);
-      formData.append("postCode", postCode);
-      formData.append("logo", selectedLogo);
-      formData.append("banner", selectedBanner);
-      formData.append("shopName", shopName);
-      formData.append("shopUrl", shopUrl);
-      formData.append("userId", user.id);
-      formData.append("about", about);
-      clientService
-        .updateShop(formData)
-        .then((response) => {
-          toast.success(response.data.message, toastOptions(false));
-        })
-        .catch((err) => {
-          toast.success(err.response.data.message, toastOptions(true));
-        });
-    } else {
-      toast.success(MISSING_USER_MSG, toastOptions(true));
-    }
-    //    clientService.createShop({
 
-    //    })
+    const {
+      selectedLogo,
+      selectedBanner,
+      shopName,
+      shopUrl,
+      secondAddress,
+      firstAddress,
+      postCode,
+      selectedCity,
+      about,
+      loading,
+      disabled,
+      shopId,
+      selectedOrigin,
+    } = this.state;
+    let formData = new FormData();
+    formData.append("firstAddress", firstAddress);
+    formData.append("secondAddress", secondAddress);
+    formData.append("cityId", selectedCity);
+    formData.append("postCode", postCode);
+    formData.append("logo", selectedLogo);
+    formData.append("banner", selectedBanner);
+    formData.append("shopName", shopName);
+    formData.append("shopUrl", shopUrl);
+    formData.append("originId",selectedOrigin);
+    formData.append("shopId", shopId);
+    formData.append("about", about);
+
+    this.setState({
+      loading: true,
+      disabled: true,
+    });
+    try {
+      const updateResponse = await clientService.updateShop(formData);
+
+      toast.success(updateResponse.data.message, toastOptions(false));
+    } catch (err) {
+      toast.success(err.response.data.message, toastOptions(true));
+    } finally {
+      this.setState({
+        loading: false,
+        disabled: false,
+      });
+    }
   };
-  // handleDateChangeStart = (date) => {
-  //   this.setState({
-  //     selectedDateStart: date._d,
-  //   });
-  // };
-  // handleDateChangeEnd = (date) => {
-  //   this.setState({
-  //     selectedDateEnd: date._d,
-  //   });
-  // };
+
   onBlur = (e) => {
     const { shopName, initialShopName, initialShopUrl, shopUrl } = this.state;
     if (e.target.name == "shopName" && shopName !== initialShopName) {
@@ -254,9 +290,16 @@ class ShopForm extends Component {
       cityText,
       city,
       disabled,
+      loading,
       isDuplicateName,
       isDuplicateUrl,
       about,
+      selectedOrigin,
+      origin,
+      originText,
+      loadingOrigin,
+      loadingCity,
+      hasLoaded,
     } = this.state;
     const nameAlert = isDuplicateName ? (
       <Message color="yellow">
@@ -284,7 +327,7 @@ class ShopForm extends Component {
         </div>
       );
     }
- 
+
     return (
       <Container fluid={true}>
         <Nav />
@@ -298,6 +341,7 @@ class ShopForm extends Component {
           <Col className="dashboard-panel" lg="6">
             <Message attached header="My Store" />
             <Form
+              loading={!hasLoaded}
               className="attached fluid segment"
               style={{
                 width: "100%",
@@ -400,6 +444,26 @@ class ShopForm extends Component {
                     placeholder={cityText}
                     options={city}
                     onChange={this.onChangeDropdown}
+                    loading={loadingCity}
+                  />
+                </Form.Field>
+              </Form.Group>
+              <Message floating content="Food Origin" />
+              <Form.Group widths="equal">
+                <Form.Field required>
+                  <label>Food Origin</label>
+                  <Dropdown
+                    required
+                    fluid
+                    selection
+                    search
+                    defaultValue={selectedOrigin}
+                    name="selectedOrigin"
+                    label="Food Origin"
+                    placeholder={originText}
+                    options={origin}
+                    onChange={this.onChangeDropdown}
+                    loading={loadingOrigin}
                   />
                 </Form.Field>
               </Form.Group>
@@ -420,7 +484,12 @@ class ShopForm extends Component {
                 />
               </Form.Field>
 
-              <Button color="red" disabled={disabled} type="submit">
+              <Button
+                color="red"
+                loading={loading}
+                disabled={disabled}
+                type="submit"
+              >
                 Save store <Icon name="save" />
               </Button>
             </Form>

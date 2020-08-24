@@ -16,11 +16,15 @@ class AfterNav extends Component {
   };
   componentDidMount = async () => {
     this.props.fetchUser();
-    console.log("props", this.props.user);
+    
   };
   componentWillReceiveProps(nextProps) {
     if (nextProps) {
+      const user = nextProps.user;
       
+      this.setState({
+        firstName: user.firstName
+      })
     }
   }
   onClick = (e) => {
@@ -31,6 +35,7 @@ class AfterNav extends Component {
     });
   };
   render() {
+    const {firstName} = this.state;
     return (
       <div>
         <Grid>
@@ -39,7 +44,7 @@ class AfterNav extends Component {
           </Grid.Column>
           <Grid.Column floated="right" width={5}>
             <span className="float-right">
-              Logged In as {this.props.user.firstName}
+              Logged In as {firstName}
               <Link onClick={this.onClick}></Link>
             </span>
           </Grid.Column>

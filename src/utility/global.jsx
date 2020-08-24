@@ -125,7 +125,12 @@ export const setUserProfile = function (value) {
 export const getUserToken = () => {
   return localStorage.getItem("tk");
 };
-
+export const scrollToTop = () => {
+  return window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+};
 export const logout = () => {
   return localStorage.removeItem("tk");
 };

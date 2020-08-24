@@ -51,9 +51,7 @@ class ProductForm extends React.Component {
       price: "",
       ingredients: [],
       ingredient: "",
-      origin: [],
       selectedPhoto: null,
-      selectedOrigin: "",
       discountPrice: "",
       unitType: [],
       category: [],
@@ -94,18 +92,6 @@ class ProductForm extends React.Component {
           unitType: [{ key: "", text: "--Select unit type--" }].concat(
             unitTypes
           ),
-        });
-
-        const originResponse = await ClientService.origins();
-        let origins = originResponse.data.data.map((origin) => {
-          return {
-            key: origin.id,
-            value: origin.id,
-            text: origin.name,
-          };
-        });
-        this.setState({
-          origin: [{ key: "", text: "--Select food origin--" }].concat(origins),
         });
 
         const categoryResponse = await ClientService.category();
@@ -168,7 +154,7 @@ class ProductForm extends React.Component {
     } = this.state;
 
     if (selectedPhoto) {
-      if (selectedCategory && selectedOrigin) {
+      if (selectedCategory ) {
         //Lock submit button and show loading in the button
         this.setState({
           isLockButton: true,
@@ -184,7 +170,6 @@ class ProductForm extends React.Component {
         formData.append("photo", selectedPhoto);
         formData.append("ingredients", JSON.stringify(ingredients));
         formData.append("name", name);
-        formData.append("originId", selectedOrigin);
         formData.append("desc", desc);
         formData.append("shopId", shopId);
 
@@ -205,7 +190,7 @@ class ProductForm extends React.Component {
         });
       } else {
         toast.success(
-          "Please required options must be selected such as category and origin.",
+          "Please required options must be selected such as category ",
           toastOptions(true)
         );
       }
@@ -250,7 +235,6 @@ class ProductForm extends React.Component {
       ingredient,
       ingredients,
       unitType,
-      origin,
       loadedFiles,
       message,
       hasImageLimit,
@@ -326,17 +310,6 @@ class ProductForm extends React.Component {
                       name="selectedCategory"
                       options={category}
                       placeholder="Category"
-                    />
-                  </Form.Field>
-                  <Form.Field required>
-                    <label>Food origin</label>
-                    <Form.Select
-                      required
-                      fluid
-                      onChange={this.onChangeDropdown}
-                      name="selectedOrigin"
-                      options={origin}
-                      placeholder="Food origin"
                     />
                   </Form.Field>
 

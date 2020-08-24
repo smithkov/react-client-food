@@ -13,13 +13,14 @@ import {
   SHOP_SETTING_URL,
   SHOP_SOCIAL_URL,
   AVAILABILITY_URL,
-  BANK_DETAIL_URL
+  BANK_DETAIL_URL,
 } from "../../utility/global";
 import Icon from "react-icons-kit";
 
 class SideMenu extends Component {
   state = {
     activeItem: "",
+    role: "",
   };
 
   componentDidMount() {
@@ -29,11 +30,17 @@ class SideMenu extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps) {
+      const user = nextProps.user;
+      
+      this.setState({
+        role: user.role,
+      });
     }
   }
 
   render() {
-    if (this.props.user.role == "Customer") {
+    const { role } = this.state;
+    if (role == "Customer") {
       return (
         <Menu fluid vertical>
           <Menu.Item>
@@ -67,10 +74,9 @@ class SideMenu extends Component {
         <Menu fluid vertical>
           <Menu.Item>
             <Menu.Header>Food</Menu.Header>
-            
+
             <Menu.Menu>
               <Link to={MEAL_CREATE}>
-                
                 <Menu.Item
                   name="Create-food"
                   active={this.state.activeItem === "enterprise"}
@@ -169,9 +175,6 @@ class SideMenu extends Component {
             <Menu.Header>Bank Account Details</Menu.Header>
 
             <Menu.Menu>
-              
-         
-
               <Link to={BANK_DETAIL_URL}>
                 <Menu.Item
                   name="availability"
@@ -183,7 +186,6 @@ class SideMenu extends Component {
               </Link>
             </Menu.Menu>
           </Menu.Item>
-        
         </Menu>
       );
     }

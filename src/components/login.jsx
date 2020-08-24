@@ -8,6 +8,7 @@ import {
   REGISTER_URL,
   SERVER_ERROR,
   asyncLocalStorage,
+  
 } from "../utility/global";
 import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
@@ -52,15 +53,17 @@ class Login extends Component {
       .login(data)
 
       .then(async (response) => {
+        
         this.setState({ loading: false });
         const { data, token } = response.data;
+        const setStorage = await asyncLocalStorage.setItem("tk", token);
         dashType = data.role === "Seller" ? DASHBOARD_URL : DASHBOARD_USER_URL;
 
         let { from } = this.props.location.state || {
           from: { pathname: dashType },
         };
         //localStorage.setItem("tk", token);
-        const setStorage = await asyncLocalStorage.setItem("tk", token);
+        
         //sessionStorage.setItem("tk", token);
 
         this.props.history.replace(from);
