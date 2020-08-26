@@ -39,7 +39,8 @@ class AvailableTime extends Component {
 
     this.state = {
       shopId: "",
-
+      loading: false,
+      disabled: false,
       sunChecked: false,
       monChecked: false,
       tueChecked: false,
@@ -95,11 +96,11 @@ class AvailableTime extends Component {
       const thursday = result.find((t) => t.day === "Thursday");
       const friday = result.find((t) => t.day === "Friday");
       const saturday = result.find((t) => t.day === "Saturday");
-      
+
       if (sunday) {
         const sunMinDate = sunday.opening;
         const sunMaxDate = sunday.closing;
-        
+
         this.setState({
           sunId: sunday.id,
           selectedSunMin: sunMinDate,
@@ -277,7 +278,10 @@ class AvailableTime extends Component {
         friId,
         satId,
       } = this.state;
-
+      this.setState({
+        loading: true,
+        disabled: true,
+      });
       const result = await clientService.createOpeningDay({
         shopId,
         sunChecked,
@@ -318,6 +322,11 @@ class AvailableTime extends Component {
       }
     } catch (err) {
       toast.success("No network", toastOptions(true));
+    } finally {
+      this.setState({
+        loading: false,
+        disabled: false,
+      });
     }
   };
   render() {
@@ -329,8 +338,7 @@ class AvailableTime extends Component {
       thurChecked,
       friChecked,
       satChecked,
-    } = this.state;
-    const {
+
       selectedSunMin,
       selectedSunMax,
       selectedMonMin,
@@ -345,6 +353,8 @@ class AvailableTime extends Component {
       selectedFriMax,
       selectedSatMin,
       selectedSatMax,
+      disabled,
+      loading,
     } = this.state;
 
     return (
@@ -706,7 +716,14 @@ class AvailableTime extends Component {
                 </Grid.Row>
               </Grid>
               <hr></hr>
-              <Button padding color="red" onClick={this.onSubmit} type="button">
+              <Button
+                loading={loading}
+                disabled={disabled}
+                padding
+                color="red"
+                onClick={this.onSubmit}
+                type="button"
+              >
                 Save <Icon name="save" />
               </Button>
             </Segment>

@@ -8,7 +8,6 @@ import {
   REGISTER_URL,
   SERVER_ERROR,
   asyncLocalStorage,
-  
 } from "../utility/global";
 import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
@@ -31,6 +30,7 @@ class Login extends Component {
     password: "",
     hasError: false,
     loading: false,
+    disabled: false,
   };
 
   onChange = (e) => {
@@ -39,42 +39,35 @@ class Login extends Component {
     });
   };
 
-  login = (e) => {
-    var dashType;
-    e.preventDefault();
-    this.setState({ loading: true });
+  login = async (e) => {
+    try {
+      var dashType;
+      e.preventDefault();
+      this.setState({ loading: true, disabled: true });
 
-    const data = {
-      email: this.state.email,
-      password: this.state.password,
-    };
+      const dataObj = {
+        email: this.state.email,
+        password: this.state.password,
+      };
+      const loginResponse = await clientService.login(dataObj);
+      this.setState({ loading: false });
+      const { data, token } = loginResponse.data;
+      const setStorage = await asyncLocalStorage.setItem("tk", token);
+      dashType = data.role === "Seller" ? DASHBOARD_URL : DASHBOARD_USER_URL;
 
-    clientService
-      .login(data)
+      let { from } = this.props.location.state || {
+        from: { pathname: dashType },
+      };
 
-      .then(async (response) => {
-        
-        this.setState({ loading: false });
-        const { data, token } = response.data;
-        const setStorage = await asyncLocalStorage.setItem("tk", token);
-        dashType = data.role === "Seller" ? DASHBOARD_URL : DASHBOARD_USER_URL;
-
-        let { from } = this.props.location.state || {
-          from: { pathname: dashType },
-        };
-        //localStorage.setItem("tk", token);
-        
-        //sessionStorage.setItem("tk", token);
-
-        this.props.history.replace(from);
-      })
-      .catch((err) => {
-        this.setState({ loading: false });
-        this.setState({
-          hasError: true,
-          message: SERVER_ERROR,
-        });
+      this.props.history.replace(from);
+    } catch (err) {
+      this.setState({
+        hasError: true,
+        message: SERVER_ERROR,
       });
+    } finally {
+      this.setState({ loading: false, disabled: false });
+    }
   };
 
   responseGoogle = (response) => {};
@@ -113,7 +106,7 @@ class Login extends Component {
     }
   };
   render() {
-    const { loading } = this.state;
+    const { loading, disabled } = this.state;
     const alert = (
       <div className="ui info message">
         <div className="header">Login refusal</div>
@@ -190,6 +183,7 @@ class Login extends Component {
 
                 <Button
                   loading={loading}
+                  disabled={disabled}
                   type="submit"
                   color="red"
                   fluid

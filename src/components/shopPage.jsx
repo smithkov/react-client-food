@@ -160,6 +160,7 @@ class ShopPage extends Component {
         minTime,
         maxTime,
         minOrder,
+        banner,
         percentageDiscount,
         discountAmount,
         City,
@@ -186,10 +187,7 @@ class ShopPage extends Component {
         percentageDiscount,
         discountAmount: discountAmount ? discountAmount : 0,
         logoPreviewUrl: logo ? `${IMAGE_URL}${logo}` : DEFAULT_LOGO,
-        bannerPreviewUrl:
-          shopBanners.length > 0
-            ? `${IMAGE_URL}${shopBanners[0].bannerPath}`
-            : DEFAULT_BANNER,
+        bannerPreviewUrl: banner ? `${IMAGE_URL}${banner}` : DEFAULT_BANNER,
       });
 
       clientService.productsByShopId(id).then((response) => {

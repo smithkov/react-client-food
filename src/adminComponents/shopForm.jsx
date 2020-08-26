@@ -83,6 +83,7 @@ class ShopForm extends Component {
               about,
               City,
               Origin,
+              banner,
               id,
             } = data;
 
@@ -90,10 +91,9 @@ class ShopForm extends Component {
               hasLoaded: true,
               shopName,
               shopId: id,
-              bannerPreviewUrl:
-                shopBanners.length > 0
-                  ? `${IMAGE_URL}${shopBanners[0].bannerPath}`
-                  : DEFAULT_BANNER,
+              bannerPreviewUrl: banner
+                ? `${IMAGE_URL}${banner}`
+                : DEFAULT_BANNER,
               logoPreviewUrl: logo ? `${IMAGE_URL}${logo}` : DEFAULT_LOGO,
               hasShop: data,
               firstAddress,
@@ -220,7 +220,7 @@ class ShopForm extends Component {
     formData.append("banner", selectedBanner);
     formData.append("shopName", shopName);
     formData.append("shopUrl", shopUrl);
-    formData.append("originId",selectedOrigin);
+    formData.append("originId", selectedOrigin);
     formData.append("shopId", shopId);
     formData.append("about", about);
 

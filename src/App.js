@@ -10,7 +10,7 @@ import ShopPage from "./components/ShopPage";
 import ErrorPage from "./components/errorPage";
 import ContactUs from "./components/contactUs";
 import Payment from "./components/payment";
-import FoodListing from "./components/FoodListing";
+import StoreListing from "./components/storeListing";
 import Dashboard from "./adminComponents/dashboard_admin";
 import DashboardUser from "./adminComponents/dashboard_user";
 import ShopForm from "./adminComponents/shopForm";
@@ -97,7 +97,7 @@ class App extends React.Component {
               path={POST_CODES_URL}
               component={ProtectedRoute(PostCode)}
             />
-            <Route exact path={LISTING_URL} component={FoodListing} />
+            <Route exact path={LISTING_URL} component={StoreListing} />
             <Route exact path={LOGIN_URL} component={Login} />
             <Route exact path={REGISTER_URL} component={Register} />
             <Route exact path={SHOP_SIGNUP} component={ShopCreate} />

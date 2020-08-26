@@ -22,9 +22,7 @@ import EmptySearch from "../emptySearch";
 
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import {
-  fetchProducts
-} from "../../actions/productActions";
+import { fetchProducts } from "../../actions/productActions";
 
 import {
   Button,
@@ -39,6 +37,7 @@ import {
   Card,
   Segment,
 } from "semantic-ui-react";
+import clientService from "../../services/clientService";
 
 const options = [
   { key: "all", text: "All", value: "all" },
@@ -54,11 +53,17 @@ class Listing extends Component {
     hasListing: false,
     products: [],
     productsClose: [],
+    stores: [],
     search: "",
   };
-  componentDidMount() {
+  componentDidMount = async () => {
     this.props.fetchProducts("");
-  }
+    const storeResponse = await clientService.storeListing();
+
+    this.setState({
+      stores: storeResponse.data.data,
+    });
+  };
 
   onChange = (e) => {
     this.setState({
@@ -93,7 +98,7 @@ class Listing extends Component {
       objectFit: "cover",
       objectPosition: "center center",
     };
-    const { products, productsClose } = this.state;
+    const { products, productsClose, stores, hasListing } = this.state;
 
     return (
       <Grid style={{ paddingTop: 80 }} stackable>
@@ -115,13 +120,30 @@ class Listing extends Component {
                   Search
                 </Button>
               </Input>
-
-              <h3>
+              <Card>
+                <Card.Content>
+                  <Image
+                    floated="right"
+                    circular
+                    size="mini"
+                    src="https://react.semantic-ui.com/images/avatar/large/steve.jpg"
+                  />
+                  <Card.Header>Steve Sanders</Card.Header>
+                  <Card.Meta>Friends of Elliot</Card.Meta>
+                  <Image src='https://react.semantic-ui.com/images/avatar/large/daniel.jpg' wrapped ui={true} />
+                  <Card.Description>
+                    Steve wants to add you to the group{" "}
+                    <strong>best friends</strong>
+                  </Card.Description>
+                </Card.Content>
+               
+              </Card>
+              {/* <h3>
                 <Icon color="red" name="food" /> Available meals
               </h3>
-              <hr />
+              <hr /> */}
 
-              {this.state.hasListing ? (
+              {/* {hasListing ? (
                 products.length > 0 ? (
                   products.map((seller) => {
                     return (
@@ -240,7 +262,7 @@ class Listing extends Component {
                 )
               ) : (
                 <BigLoader />
-              )}
+              )} */}
               <h3>
                 <Icon color="red" name="food" /> Order for later
               </h3>
@@ -267,15 +289,18 @@ class Listing extends Component {
                       const findIndexOf = shopTimes.indexOf(shopTime);
                       if (findIndexOf != -1) {
                         const nextday = nextOpening(shopTime, shopTimes);
-                        nextOpeningTime = `Today at ${moment(nextday.opening).format("LT")}`;
-                        
+                        nextOpeningTime = `Today at ${moment(
+                          nextday.opening
+                        ).format("LT")}`;
                       } else {
                         const nextday = nextOpening(shopTime, shopTimes);
-                        nextOpeningTime = `Opens ${nextday.day} ${moment(nextday.opening).format("LT")}`;
+                        nextOpeningTime = `Opens ${nextday.day} ${moment(
+                          nextday.opening
+                        ).format("LT")}`;
                         //console.log(moment(nextday.opening).format("LT"))
                       }
                     }
-                    
+
                     return (
                       <React.Fragment>
                         <Grid
@@ -369,10 +394,12 @@ class Listing extends Component {
                                       ""
                                     )}
 
-                                  
                                     {nextOpeningTime ? (
                                       <p>
-                                        <Icon size="large" name="clock outline" />
+                                        <Icon
+                                          size="large"
+                                          name="clock outline"
+                                        />
                                         {nextOpeningTime}
                                       </p>
                                     ) : (
@@ -424,6 +451,4 @@ const mapStateToProps = (state) => ({
   newProduct: state.products.item,
 });
 
-export default connect(mapStateToProps, {  fetchProducts })(
-  Listing
-);
+export default connect(mapStateToProps, { fetchProducts })(Listing);

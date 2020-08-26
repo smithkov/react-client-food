@@ -61,8 +61,7 @@ class SideMenu extends Component {
     const { hasCategory, hasOrigin } = this.state;
     return (
       <Fragment>
-        <Icon name="filter" /> All Cuisines{" "}
-        <a  className="pull-right">Reset</a>
+        
         <Menu fluid vertical>
           {hasOrigin ? (
             this.state.menu.map((menu) => {

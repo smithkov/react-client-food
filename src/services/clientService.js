@@ -49,6 +49,11 @@ class ClientService {
     return http.get(`${SERVER_URL}/product/` + id, header(token));
   };
 
+  storeListing = async () => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/storeListing`, header());
+  };
+
   frontPageMeals() {
     return http.get(`${SERVER_URL}/front-page-meals`);
   }
@@ -167,7 +172,10 @@ class ClientService {
 
   getCartByShopId = async (shopId) => {
     const token = await asyncLocalStorage.getItem(TOKEN);
-    return http.get(`${SERVER_URL}/retriveCartByShopId/${shopId}`, header(token));
+    return http.get(
+      `${SERVER_URL}/retriveCartByShopId/${shopId}`,
+      header(token)
+    );
   };
 
   createProduct = async (data) => {
@@ -182,7 +190,11 @@ class ClientService {
 
   createReviewResponse = async (data) => {
     const token = await asyncLocalStorage.getItem(TOKEN);
-    return http.post(`${SERVER_URL}/productRatingResponse`, data, header(token));
+    return http.post(
+      `${SERVER_URL}/productRatingResponse`,
+      data,
+      header(token)
+    );
   };
 
   createShopReviewResponse = async (data) => {
@@ -243,11 +255,19 @@ class ClientService {
 
   findReviewByProduct = async (data) => {
     const token = await asyncLocalStorage.getItem(TOKEN);
-    return http.post(`${SERVER_URL}/productRating/product`, data, header(token));
+    return http.post(
+      `${SERVER_URL}/productRating/product`,
+      data,
+      header(token)
+    );
   };
   createProductRatingResponse = async (data) => {
     const token = await asyncLocalStorage.getItem(TOKEN);
-    return http.post(`${SERVER_URL}/productRatingResponse`, data, header(token));
+    return http.post(
+      `${SERVER_URL}/productRatingResponse`,
+      data,
+      header(token)
+    );
   };
   findPostCodesByShop = async (data) => {
     const token = await asyncLocalStorage.getItem(TOKEN);
@@ -266,7 +286,11 @@ class ClientService {
 
   resendVerifyEmail = async (data) => {
     const token = await asyncLocalStorage.getItem(TOKEN);
-    return http.post(`${SERVER_URL}/resendEmailVerification`, data, header(token));
+    return http.post(
+      `${SERVER_URL}/resendEmailVerification`,
+      data,
+      header(token)
+    );
   };
 
   findProductReviewByShop = async (data) => {
