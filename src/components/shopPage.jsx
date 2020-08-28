@@ -195,7 +195,7 @@ class ShopPage extends Component {
           products: response.data.data,
         });
       });
-      Geocode.setApiKey("AIzaSyDSYuGeHrv1KmGmB-mU1PdtvBNozgoYctU");
+      Geocode.setApiKey(process.env.REACT_APP_GOOGLE_KEY);
       Geocode.fromAddress(`${firstAddress}, ${City.name}`).then(
         (response) => {
           const { lat, lng } = response.results[0].geometry.location;

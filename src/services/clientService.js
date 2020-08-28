@@ -54,6 +54,11 @@ class ClientService {
     return http.post(`${SERVER_URL}/storeListing`, header());
   };
 
+  listingSearch = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/listingSearch`,data, header());
+  };
+
   frontPageMeals() {
     return http.get(`${SERVER_URL}/front-page-meals`);
   }

@@ -90,11 +90,11 @@ class DesktopContainer extends Component {
                 {/* <Menu.Item as="a">Home</Menu.Item> */}
 
                 <Menu.Item position="right">
-                  <Link to={LOGIN_URL}>
-                    <Button as="a" inverted={!fixed}>
+                  
+                    <Button as="a" href={LOGIN_URL} inverted={!fixed}>
                       Log In
                     </Button>
-                  </Link>
+                  
                   {/* <Button as='a' inverted={!fixed} primary={fixed} style={{ marginLeft: '0.5em' }}>
                     Sign Up
                   </Button> */}
@@ -175,11 +175,11 @@ class MobileContainer extends Component {
                   <Icon name="sidebar" />
                 </Menu.Item>
                 <Menu.Item position="right">
-                <Link to={LOGIN_URL}>
-                  <Button as="a" inverted>
+                
+                  <Button href={LOGIN_URL} as="a" inverted>
                     Log In
                   </Button>
-                  </Link>
+                 
                   {/* <Button as='a' inverted style={{ marginLeft: '0.5em' }}>
                     Sign Up
                   </Button> */}
@@ -232,14 +232,14 @@ class Landing extends Component {
     return (
       <ResponsiveContainer>
         <Segment style={{ paddingTop: "5em" }}>
-          <h1>Food delivery in Edinburgh</h1>
+          <h1>African/Caribbean food delivery in the UK</h1>
           {topMeals.length > 0 ? (
             <Grid padded stackable>
               <Grid.Row style={{ margin: "auto" }} columns={5}>
                 {topMeals.map((meal) => {
-                  const { VirtualShop, price, photo, name } = meal;
+                  const {id, VirtualShop, price, photo, name } = meal;
                   return (
-                    <Grid.Column>
+                    <Grid.Column key={id}>
                       <Link to={`/${VirtualShop.shopUrl}`}>
                         <Card fluid>
                           <Image

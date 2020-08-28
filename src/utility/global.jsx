@@ -17,10 +17,12 @@ export const OPEN = "open";
 export const NOT_OPEN = "not_open";
 
 export const DAYS = daysOfWeek;
-export const SERVER_URL = "http://localhost:8000/api";
-export const IMAGE_URL = "http://localhost:8000/uploads/category/";
-export const DEFAULT_STORE_BANNER = "http://localhost:8000/uploads/default_banner.png";
-export const DEFAULT_STORE_LOGO = "http://localhost:8000/uploads/default_logo.png";
+//export const ENDPOINT = "https://foodengo.herokuapp.com/";
+export const ENDPOINT = "http://localhost:8000/";
+export const SERVER_URL = `${ENDPOINT}api`;
+export const IMAGE_URL = `${ENDPOINT}uploads/category/`;
+export const DEFAULT_STORE_BANNER = `${ENDPOINT}uploads/default_banner.png`;
+export const DEFAULT_STORE_LOGO = `${ENDPOINT}uploads/default_logo.png`;
 // export const SERVER_URL = "https://foodengo.herokuapp.com/api";
 // export const IMAGE_URL = "https://foodengo.herokuapp.com/uploads/category/";
 //export const DEFAULT_BANNER = "https://foodengo.herokuapp.com/uploads/default_banner.png";

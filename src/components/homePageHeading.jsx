@@ -61,7 +61,7 @@ export class HomepageHeading extends Component {
             marginTop: this.props.mobile ? "0.5em" : "1.5em",
           }}
         />
-        <Input fluid type="text" placeholder="Edinburgh" action>
+        <Input fluid type="text" placeholder="Enter your postcode" action>
           <input />
           <Button onClick={this.handleSubmit} color="red" type="button">
             Find Food

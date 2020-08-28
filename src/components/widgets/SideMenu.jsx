@@ -10,6 +10,7 @@ import {
   Label,
   Menu,
   Icon,
+  Flag,
   Segment,
   Dimmer,
   Loader,
@@ -19,7 +20,7 @@ class SideMenu extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      menu: [],
+      origins: [],
       category: [],
     };
   }
@@ -27,29 +28,17 @@ class SideMenu extends Component {
     hasOrigin: false,
     hasCategory: false,
   };
-  componentDidMount() {
-    ClientService.origins()
-      .then((response) => {
-        this.setState({
-          menu: response.data.data,
-          hasOrigin: true,
-        });
-      })
-      .catch((err) => {
-        //console.log(err);
-      });
+  componentDidMount = async () => {
+    const originResponse = await ClientService.origins();
+    const categoryResponse = await ClientService.category();
 
-    ClientService.category()
-      .then((response) => {
-        this.setState({
-          category: response.data.data,
-          hasCategory: true,
-        });
-      })
-      .catch((err) => {
-        //console.log(err);
-      });
-  }
+    this.setState({
+      category: categoryResponse.data.data,
+      hasCategory: true,
+      origins: originResponse.data.data,
+      hasOrigin: true,
+    });
+  };
   onChange = (id) => {
     this.props.updateProduct(id);
   };
@@ -58,20 +47,34 @@ class SideMenu extends Component {
     this.props.updateCategory(id);
   };
   render() {
-    const { hasCategory, hasOrigin } = this.state;
+    const { hasCategory, hasOrigin, origins } = this.state;
     return (
       <Fragment>
-        
+        <Menu fluid vertical>
+          <Menu.Item>
+            <Input placeholder="Search..." />
+          </Menu.Item>
+
+          <Menu.Item
+            name="browse"
+            // active={activeItem === "browse"}
+            // onClick={this.handleItemClick}
+          >
+           <Flag floated="right"  name="ng" />
+            Browse
+            <Label color="green">34</Label>
+          </Menu.Item>
+        </Menu>
         <Menu fluid vertical>
           {hasOrigin ? (
-            this.state.menu.map((menu) => {
+            origins.map((menu) => {
               return (
                 <Menu.Item
                   key={menu.id}
                   name="inbox"
-                  onClick={() => this.onChange(menu.id)}
+                  // onClick={() => this.onChange(menu.id)}
                 >
-                  <Label color="green">{menu.products.length}</Label>
+                  <Label color="green">{menu.shops.length}</Label>
                   {menu.name}
                 </Menu.Item>
               );
@@ -83,20 +86,22 @@ class SideMenu extends Component {
         <Icon name="filter" /> Cuisine Categories{" "}
         <a className="pull-right">Reset</a>
         <Menu fluid vertical>
-          
-
-          {hasCategory? this.state.category.map((category) => {
-            return (
-              <Menu.Item
-                key={category.id}
-                name="inbox"
-                onClick={() => this.onChangeCategory(category.id)}
-              >
-                <Label color="green">{category.products.length}</Label>
-                {category.name}
-              </Menu.Item>
-            );
-          }):<LoaderTemp />}
+          {hasCategory ? (
+            this.state.category.map((category) => {
+              return (
+                <Menu.Item
+                  key={category.id}
+                  name="inbox"
+                  // onClick={() => this.onChangeCategory(category.id)}
+                >
+                  <Label color="green">{category.products.length}</Label>
+                  {category.name}
+                </Menu.Item>
+              );
+            })
+          ) : (
+            <LoaderTemp />
+          )}
         </Menu>
       </Fragment>
     );
