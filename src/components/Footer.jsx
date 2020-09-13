@@ -27,8 +27,16 @@ class Footer extends Component {
   state = {
     category: [],
     origin: [],
+    hasLogin: false,
   };
   componentDidMount = async () => {
+    const loginToken = localStorage.getItem("tk");
+    if (loginToken) {
+      this.setState({
+        hasLogin: true,
+      });
+    }
+   
     const category = await clientService.category();
     const origin = await clientService.origins();
 
@@ -37,8 +45,12 @@ class Footer extends Component {
       origin: origin.data.data,
     });
   };
+  handleOrigin = (id) => {
+    alert(id);
+  };
   render() {
-    const { category, origin } = this.state;
+    const { category, origin, hasLogin } = this.state;
+    const leftAlign = { textAlign: "left" };
     return (
       <Segment
         inverted
@@ -46,38 +58,59 @@ class Footer extends Component {
         style={{ margin: "5em 0em 0em", padding: "5em 0em" }}
       >
         <Container textAlign="center">
-          <Grid divided inverted stackable>
+          <Grid style={leftAlign} divided inverted stackable>
             <Grid.Column width={3}>
               <Header inverted as="h4" content="Customer service" />
               <List link inverted>
                 <List.Item as="a">Contact us</List.Item>
-                <List.Item>
-                  <Link to={LOGIN_URL}>Log in</Link>
-                </List.Item>
-                <List.Item>
-                  <Link to={REGISTER_URL}>Sign up</Link>
-                </List.Item>
-                <List.Item>
-                  <Link to={REGISTER_URL}>My account</Link>
-                </List.Item>
-                <List.Item>
-                  <Link to={SHOP_SIGNUP}>Vendor sign up</Link>
-                </List.Item>
+
+                {hasLogin ? (
+                  ""
+                ) : (
+                  <List.Item>
+                    <Link to={LOGIN_URL}>Log in</Link>
+                  </List.Item>
+                )}
+                {hasLogin ? (
+                  ""
+                ) : (
+                  <List.Item>
+                    <Link to={REGISTER_URL}>Sign up</Link>
+                  </List.Item>
+                )}
+
+                {hasLogin ? (
+                  ""
+                ) : (
+                  <List.Item>
+                    <Link to={SHOP_SIGNUP}>Vendor sign up</Link>
+                  </List.Item>
+                )}
               </List>
             </Grid.Column>
             <Grid.Column width={3}>
               <Header inverted as="h4" content="Origin" />
               <List link inverted>
                 {origin.map((item) => {
-                  return <List.Item>{item.name}</List.Item>;
+                  return (
+                    <List.Item>
+                      <Link>{item.name}</Link>
+                    </List.Item>
+                  );
                 })}
               </List>
             </Grid.Column>
             <Grid.Column width={3}>
-              <Header inverted as="h4" content="Meal Categories" />
+              <Header inverted as="h4" content="Global Head Office" />
               <List link inverted>
                 {category.map((item) => {
-                  return <List.Item>{item.display}</List.Item>;
+                  return (
+                    <List.Item>
+                      <Link onClick={() => this.handleOrigin(item.id)}>
+                        {item.display}
+                      </Link>
+                    </List.Item>
+                  );
                 })}
               </List>
             </Grid.Column>

@@ -17,8 +17,8 @@ export const OPEN = "open";
 export const NOT_OPEN = "not_open";
 
 export const DAYS = daysOfWeek;
-export const ENDPOINT = "https://api.foodengo.co.uk/";
-//export const ENDPOINT = "http://localhost:8000/";
+//export const ENDPOINT = "https://api.foodengo.co.uk/";
+export const ENDPOINT = "http://localhost:8000/";
 export const SERVER_URL = `${ENDPOINT}api`;
 export const IMAGE_URL = ``;
 export const DEFAULT_STORE_BANNER = `${ENDPOINT}uploads/default_banner.png`;

@@ -37,11 +37,11 @@ class Register extends Component {
     loading: false,
   };
   responseGoogle = (response) => {
-    console.log(response);
+    
   };
   responseFacebook = (res) => {
     //const firstName
-    console.log(res);
+    
     if (res) {
       const { email, name, graphDomain, id } = res;
       const nameArray = name.split(" ");
