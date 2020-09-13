@@ -1,0 +1,28 @@
+{
+  "files": {
+    "main.css": "/static/css/main.3213501a.chunk.css",
+    "main.js": "/static/js/main.55581408.chunk.js",
+    "main.js.map": "/static/js/main.55581408.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.9e8d84a2.js",
+    "runtime-main.js.map": "/static/js/runtime-main.9e8d84a2.js.map",
+    "static/css/2.81c2e8c0.chunk.css": "/static/css/2.81c2e8c0.chunk.css",
+    "static/js/2.6837a517.chunk.js": "/static/js/2.6837a517.chunk.js",
+    "static/js/2.6837a517.chunk.js.map": "/static/js/2.6837a517.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.422a4b1a35b313cd473e997bce3bf82b.js": "/precache-manifest.422a4b1a35b313cd473e997bce3bf82b.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/2.81c2e8c0.chunk.css.map": "/static/css/2.81c2e8c0.chunk.css.map",
+    "static/css/main.3213501a.chunk.css.map": "/static/css/main.3213501a.chunk.css.map",
+    "static/media/semantic.min.css": "/static/media/icons.fee66e71.woff",
+    "static/media/index.scss": "/static/media/icons-20.cef8cdbb.woff",
+    "static/media/styles.css": "/static/media/revicons.2feb69cc.eot",
+    "static/media/slick-theme.css": "/static/media/slick.f97e3bbf.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.9e8d84a2.js",
+    "static/css/2.81c2e8c0.chunk.css",
+    "static/js/2.6837a517.chunk.js",
+    "static/css/main.3213501a.chunk.css",
+    "static/js/main.55581408.chunk.js"
+  ]
+}
