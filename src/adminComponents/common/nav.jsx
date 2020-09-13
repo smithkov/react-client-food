@@ -4,7 +4,12 @@ import { Link, withRouter } from "react-router-dom";
 import { addUser } from "../../actions/productActions";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { DASHBOARD_URL, LOGIN_URL, logout } from "../../utility/global";
+import {
+  DASHBOARD_URL,
+  LOGIN_URL,
+  logout,
+  DASHBOARD_USER_URL,
+} from "../../utility/global";
 import clientService from "../../services/clientService";
 import { Icon, Image } from "semantic-ui-react";
 
@@ -12,12 +17,16 @@ class Nav extends Component {
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
   state = {
     activeItem: "",
+    role: "",
   };
   componentDidMount() {
     this.props.addUser();
   }
   componentWillReceiveProps(nextProps) {
     if (nextProps) {
+      this.setState({
+        role: nextProps.user.role,
+      });
       // console.log("Next prop",nextProps)
     }
   }
@@ -29,8 +38,10 @@ class Nav extends Component {
   };
   dashboard = async (e) => {
     e.preventDefault();
-
-    this.props.history.push(DASHBOARD_URL);
+    const role = this.state.role;
+    this.props.history.push(
+      role === "Customer" ? DASHBOARD_USER_URL : DASHBOARD_URL
+    );
   };
   render() {
     return (

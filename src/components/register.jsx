@@ -4,7 +4,13 @@ import ClientService from "../services/clientService";
 import { Redirect, Link } from "react-router-dom";
 import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
-import { CRED, LISTING_URL, LOGIN_URL, SERVER_ERROR } from "../utility/global";
+import {
+  CRED,
+  LISTING_URL,
+  LOGIN_URL,
+  SERVER_ERROR,
+  asyncLocalStorage,
+} from "../utility/global";
 import {
   Button,
   Form,
@@ -66,37 +72,37 @@ class Register extends Component {
   };
 
   addOrder() {}
-  register = (e) => {
+  register = async (e) => {
     e.preventDefault();
-    this.setState({
-      loading: true,
-    });
-    const data = {
-      email: this.state.email,
-      password: this.state.password,
-      lastName: this.state.lastName,
-      firstName: this.state.firstName,
-    };
-
-    ClientService.register(data)
-      .then((response) => {
-        this.setState({
-          loading: false,
-        });
-        const error = response.data.error;
-        if (!error) this.props.history.push(LISTING_URL);
-        else {
-        }
-      })
-      .catch((err) => {
-        this.setState({
-          loading: false,
-        });
-        this.setState({
-          showAlert: true,
-          message: SERVER_ERROR,
-        });
+    try {
+      this.setState({
+        loading: true,
       });
+      const data = {
+        email: this.state.email,
+        password: this.state.password,
+        lastName: this.state.lastName,
+        firstName: this.state.firstName,
+      };
+
+      const response = await ClientService.register(data);
+
+      const error = response.data.error;
+      if (!error) {
+        const { data, token } = response.data;
+        const setStorage = await asyncLocalStorage.setItem("tk", token);
+        this.props.history.push(`/`);
+      }
+    } catch (err) {
+      this.setState({
+        showAlert: true,
+        message: SERVER_ERROR,
+      });
+    } finally {
+      this.setState({
+        loading: false,
+      });
+    }
   };
   render() {
     const alert = this.state.showAlert ? (
@@ -120,13 +126,13 @@ class Register extends Component {
               >
                 <Grid.Column style={{ maxWidth: 450 }}>
                   <Header as="h2" color="black" textAlign="center">
-                    <Image circular size="mini" src="/images/onelogo.png" /> Sign-up to
-                    order
+                    <Image circular size="mini" src="/images/onelogo.png" />{" "}
+                    Sign-up to order
                   </Header>
 
                   <Form size="large">
                     {alert}
-                    <FacebookLogin
+                    {/* <FacebookLogin
                       appId="900223110479631"
                       autoLoad={false}
                       cssClass="facebookBtn"
@@ -134,7 +140,7 @@ class Register extends Component {
                       callback={this.responseFacebook}
                       icon={<Icon name="facebook" />}
                       textButton="&nbsp;&nbsp;Sign In with Facebook"
-                    />
+                    /> */}
                     {/* <GoogleLogin
                       clientId="489905510114-d9395vk5dso3h7bb07rlfv492u444ebs.apps.googleusercontent.com"
                       render={(renderProps) => (
@@ -154,7 +160,7 @@ class Register extends Component {
                       style={{ textAlign: "center" }}
                       buttonText="Sign In with Google"
                     /> */}
-                    <div class="ui horizontal divider">Or</div>
+                    {/* <div class="ui horizontal divider">Or</div> */}
                     <Segment stacked>
                       <Form.Group widths="equal">
                         <Form.Field>
@@ -204,7 +210,13 @@ class Register extends Component {
                         />
                       </Form.Input>
 
-                      <Button loading={this.state.loading} type="submit" color="red" fluid size="large">
+                      <Button
+                        loading={this.state.loading}
+                        type="submit"
+                        color="red"
+                        fluid
+                        size="large"
+                      >
                         Sign up
                       </Button>
                     </Segment>

@@ -3,7 +3,6 @@ import SideMenu from "./SideMenu";
 import moment from "moment";
 import { Container, Row, Col } from "reactstrap";
 import {
-  IMAGE_URL,
   totalRating,
   displayRating,
   formatPrice,
@@ -313,7 +312,7 @@ class Listing extends Component {
                               <Card id={seller.id} fluid color="red" raised>
                                 <Image
                                   style={styles}
-                                  src={`${IMAGE_URL}${seller.photo}`}
+                                  src={`${seller.photo}`}
                                   ui={false}
                                 />
                               </Card>

@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import LoaderTemp from "../loader";
 import { updateProduct, updateCategory } from "../../actions/productActions";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Input,
   Label,
@@ -47,35 +48,28 @@ class SideMenu extends Component {
     this.props.updateCategory(id);
   };
   render() {
-    const { hasCategory, hasOrigin, origins } = this.state;
+    const { hasCategory, category, hasOrigin, origins } = this.state;
     return (
       <Fragment>
         <Menu fluid vertical>
-          <Menu.Item>
-            <Input placeholder="Search..." />
-          </Menu.Item>
-
-          <Menu.Item
-            name="browse"
-            // active={activeItem === "browse"}
-            // onClick={this.handleItemClick}
-          >
-           <Flag floated="right"  name="ng" />
-            Browse
-            <Label color="green">34</Label>
-          </Menu.Item>
-        </Menu>
-        <Menu fluid vertical>
           {hasOrigin ? (
             origins.map((menu) => {
-              return (
+              const { id, code, shops, name } = menu;
+              return shops.length > 0 ? (
                 <Menu.Item
-                  key={menu.id}
-                  name="inbox"
-                  // onClick={() => this.onChange(menu.id)}
+                  name={id}
+                  // active={activeItem === "browse"}
+                  onClick={() => this.props.originEvent(id)}
                 >
-                  <Label color="green">{menu.shops.length}</Label>
-                  {menu.name}
+                  <Flag floated="right" name={code} />
+                  {name}
+                  <Label color="">{shops.length}</Label>
+                </Menu.Item>
+              ) : (
+                <Menu.Item name={id}>
+                  <Flag floated="right" name={code} />
+                  {name}
+                  <Label color="">{shops.length}</Label>
                 </Menu.Item>
               );
             })
@@ -87,16 +81,19 @@ class SideMenu extends Component {
         <a className="pull-right">Reset</a>
         <Menu fluid vertical>
           {hasCategory ? (
-            this.state.category.map((category) => {
-              return (
+            category.map((category) => {
+              const { id, name, products } = category;
+              return products.length > 0 ? (
                 <Menu.Item
-                  key={category.id}
-                  name="inbox"
-                  // onClick={() => this.onChangeCategory(category.id)}
+                  key={id}
+                  name={id}
+                  onClick={() => this.props.categoryEvent(id)}
                 >
-                  <Label color="green">{category.products.length}</Label>
-                  {category.name}
+                  <Label color="">{category.products.length}</Label>
+                  {name}
                 </Menu.Item>
+              ) : (
+                ""
               );
             })
           ) : (

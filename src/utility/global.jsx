@@ -17,10 +17,10 @@ export const OPEN = "open";
 export const NOT_OPEN = "not_open";
 
 export const DAYS = daysOfWeek;
-//export const ENDPOINT = "https://foodengo.herokuapp.com/";
-export const ENDPOINT = "http://localhost:8000/";
+export const ENDPOINT = "https://api.foodengo.co.uk/";
+//export const ENDPOINT = "http://localhost:8000/";
 export const SERVER_URL = `${ENDPOINT}api`;
-export const IMAGE_URL = `${ENDPOINT}uploads/category/`;
+export const IMAGE_URL = ``;
 export const DEFAULT_STORE_BANNER = `${ENDPOINT}uploads/default_banner.png`;
 export const DEFAULT_STORE_LOGO = `${ENDPOINT}uploads/default_logo.png`;
 // export const SERVER_URL = "https://foodengo.herokuapp.com/api";
@@ -40,6 +40,8 @@ export const DASHBOARD_URL = "/dashboard_admin";
 export const DASHBOARD_USER_URL = "/dashboard_user";
 export const TERMS_AND_CONDITION = "/terms_and_conditions";
 export const SHOP_SETTING_URL = "/shop/settings";
+export const CUSTOMER_ORDER = "/my-orders";
+export const CUSTOMER_ACCOUNT = "/my-account";
 export const PRIVACY_URL = "/user-seller/privacy";
 export const DISCLAIMER = "/user/disclaimer";
 export const CONTACT_US = "/contact_us";
@@ -77,6 +79,47 @@ export const formatCurrentDay = (day) => {
   }
 };
 
+export const storeNextOpening = (timeObject) => {
+  //alert(JSON.stringify(timeObject))
+  const days = new Date().getDay();
+  const day = daysOfWeek[days];
+
+  let result;
+  let store;
+  let firstStore;
+  let hasPassed = false;
+
+  let counter = 0;
+  for (var i in timeObject) {
+    if (timeObject[i].checked === true) {
+      //console.log(i)
+      if (counter == 0) {
+        result = firstStore = timeObject[i];
+      }
+      if (timeObject[i].dayNum === days) {
+        result = timeObject[i];
+        hasPassed = true;
+        break;
+      }
+      if (timeObject[i].dayNum > days) {
+        result = timeObject[i];
+        hasPassed = true;
+        break;
+      }
+      store = timeObject[i];
+      counter++;
+    }
+  }
+  if (!hasPassed && store) {
+    if (store.dayNum != firstStore.dayNum) {
+      result = firstStore;
+    } else {
+      result = store;
+    }
+    //console.log(store.day)
+  }
+  return result;
+};
 export const formatClose = (day) => {
   const closed = "Closed";
   const currentDay = daysOfWeek[new Date().getDay()];

@@ -141,7 +141,6 @@ class ProductForm extends React.Component {
 
     const {
       discountPrice,
-      selectedOrigin,
       selectedUnitType,
       selectedCategory,
       selectedPhoto,
@@ -154,7 +153,7 @@ class ProductForm extends React.Component {
     } = this.state;
 
     if (selectedPhoto) {
-      if (selectedCategory ) {
+      if (selectedCategory !== "" ) {
         //Lock submit button and show loading in the button
         this.setState({
           isLockButton: true,

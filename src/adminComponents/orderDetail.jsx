@@ -91,7 +91,7 @@ class OrderDetail extends Component {
               >
                 <Grid>
                   <Grid.Column floated="left" width={5}>
-                    <Image src="/images/logo2.png" />
+                    <Image src="/images/onelogo.png" />
                   </Grid.Column>
                   <Grid.Column floated="right" width={5}>
                     <h1>Receipt</h1>

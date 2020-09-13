@@ -7,7 +7,6 @@ import clientService from "../services/clientService";
 import {
   MISSING_USER_MSG,
   DEFAULT_BANNER,
-  IMAGE_URL,
   DEFAULT_LOGO,
   toastOptions,
   titleCase,

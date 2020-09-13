@@ -18,7 +18,6 @@ import {
   Input,
 } from "semantic-ui-react";
 import {
-  IMAGE_URL,
   totalRating,
   displayRating,
   formatPrice,

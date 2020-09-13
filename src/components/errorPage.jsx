@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import ClientService from "../services/clientService";
+import Footer from "./Footer";
 import NavBar from "./NavBar";
 import {
   Grid,
@@ -8,6 +9,7 @@ import {
   Header,
   Button,
   Form,
+  Segment,
   Message,
 } from "semantic-ui-react";
 import Review from "./widgets/Review";
@@ -16,7 +18,6 @@ import ReviewList from "./widgets/reviewList";
 import {
   DEFAULT_USER,
   DEFAULT_BANNER,
-  IMAGE_URL,
   DEFAULT_LOGO,
   totalRating,
   displayRating,
@@ -45,21 +46,20 @@ export default class ErrorPage extends Component {
       <React.Fragment>
         <NavBar />
         <Grid style={{ margin: 70 }} stackable>
-          <Grid.Column width={4}></Grid.Column>
-          <Grid.Column width={8}>
-            <Header as="h2" icon textAlign="center">
+          <Grid.Column width={2}></Grid.Column>
+          <Grid.Column width={12}>
+            
+            <Segment textAlign="center" placeholder>
+              <Header icon>
+                <Icon color="red" name="meh outline" />
+                That page does not exist, sorry
+              </Header>
               
-            </Header>
-            <Image
-              centered
-              size="large"
-              src="/images/foodengo-error.jpg"
-            />
-            <hr></hr>
-            <Link to={`/listing`}><Button fluid color="red">Go to listing</Button></Link>
+            </Segment>
           </Grid.Column>
-          <Grid.Column width={4}></Grid.Column>
+          <Grid.Column width={2}></Grid.Column>
         </Grid>
+        <Footer />
       </React.Fragment>
     );
   }

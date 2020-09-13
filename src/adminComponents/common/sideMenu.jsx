@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { Menu, Modal, Button, List } from "semantic-ui-react";
+import { Menu, Checkbox } from "semantic-ui-react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { fetchUser } from "../../actions/productActions";
@@ -14,64 +14,83 @@ import {
   SHOP_SOCIAL_URL,
   AVAILABILITY_URL,
   BANK_DETAIL_URL,
+  CUSTOMER_ACCOUNT,
+  CUSTOMER_ORDER
 } from "../../utility/global";
 import Icon from "react-icons-kit";
+import clientService from "../../services/clientService";
 
 class SideMenu extends Component {
   state = {
     activeItem: "",
     role: "",
+    isPreOrder: false,
+    shopId: "",
   };
 
   componentDidMount() {
     this.props.fetchUser();
+
     //console.log("next propdddddd", this.props.role)
   }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps) {
-      const user = nextProps.user;
-      
+  onChange = async (e, data) => {
+    const isPreOrder = data.checked;
+    const updatePreOrder = await clientService.updatePreOrder(
+      this.state.shopId,
+      { isPreOrder }
+    );
+    if (!updatePreOrder.data.error) {
       this.setState({
-        role: user.role,
+        isPreOrder: isPreOrder,
       });
     }
-  }
+  };
+  componentWillReceiveProps = async (nextProps) => {
+    if (nextProps) {
+      const user = nextProps.user;
+      const shopId = user.shopId;
+      this.setState({
+        shopId: shopId,
+        role: user.role,
+      });
+
+      const preOrderResponse = await clientService.fetchShopPreOrder({
+        shopId,
+      });
+      const data = preOrderResponse.data.data;
+      this.setState({
+        isPreOrder: data ? data.isPreOrder : false,
+      });
+    }
+  };
 
   render() {
-    const { role } = this.state;
+    const { role, isPreOrder } = this.state;
+    const preOrder = isPreOrder ? "Pre-order(ON)" : "Pre-order(OFF)";
     if (role == "Customer") {
       return (
         <Menu fluid vertical>
           <Menu.Item>
-            <Menu.Header>Orders</Menu.Header>
-            <Menu.Menu>
-              <Link to={USER_ORDER_URL}>
-                <Menu.Item
-                  name="Your-orders"
-                  active={this.state.activeItem === "Your-orders"}
-                  onClick={this.handleItemClick}
-                />
-              </Link>
-            </Menu.Menu>
+            <Menu.Header><Link to={CUSTOMER_ORDER}>My Orders</Link></Menu.Header>
+            
           </Menu.Item>
           <Menu.Item>
-            <Menu.Header>Settings</Menu.Header>
-            <Menu.Menu>
-              <Link to={MY_ACCOUNT}>
-                <Menu.Item
-                  name="Account-info"
-                  active={this.state.activeItem === "Account-info"}
-                  onClick={this.handleItemClick}
-                />
-              </Link>
-            </Menu.Menu>
+            <Menu.Header><Link to={CUSTOMER_ACCOUNT}>My Account</Link></Menu.Header>
+            
           </Menu.Item>
         </Menu>
       );
     } else {
       return (
         <Menu fluid vertical>
+          <Menu.Item>
+            <Checkbox
+              onChange={this.onChange}
+              checked={isPreOrder}
+              toggle
+              label={preOrder}
+            />
+          </Menu.Item>
           <Menu.Item>
             <Menu.Header>Food</Menu.Header>
 

@@ -22,6 +22,8 @@ import ShopSocial from "./adminComponents/social";
 import Account from "./adminComponents/account";
 import ProductDetail from "./components/productDetail";
 import PaymentSuccess from "./components/paymentSuccess";
+import CustomerOrder from "./components/customerOrder";
+import CustomerAccount from "./components/customerAccount";
 import PaymentError from "./components/paymentError";
 import ApplicationSuccess from "./components/applicationSuccess";
 import DeliveryDetail from "./components/deliveryDetail";
@@ -71,7 +73,9 @@ import {
   PAYMENT_ERROR_URL,
   BANK_DETAIL_URL,
   DASHBOARD_USER_URL,
-  POST_CODES_URL
+  POST_CODES_URL,
+  CUSTOMER_ORDER,
+  CUSTOMER_ACCOUNT
 } from "./utility/global";
 
 class App extends React.Component {
@@ -82,10 +86,21 @@ class App extends React.Component {
           <Switch>
            
             <Route exact path="/" component={Landing} />
+            
             <Route
               exact
               path={PAYMENT_SUCCESS_URL}
               component={ProtectedRoute(PaymentSuccess)}
+            />
+            <Route
+              exact
+              path={CUSTOMER_ORDER}
+              component={ProtectedRoute(CustomerOrder)}
+            />
+            <Route
+              exact
+              path={CUSTOMER_ACCOUNT}
+              component={ProtectedRoute(CustomerAccount)}
             />
             <Route
               exact
@@ -193,6 +208,7 @@ class App extends React.Component {
               path={PAYMENT_URL}
               component={ProtectedRoute(Payment)}
             />
+            <Route  component={ErrorPage} />
           </Switch>
         </Router>
         <ToastContainer />

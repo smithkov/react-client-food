@@ -17,7 +17,6 @@ import Footer from "./Footer";
 import {
   DEFAULT_USER,
   DEFAULT_BANNER,
-  IMAGE_URL,
   DEFAULT_LOGO,
   totalRating,
   displayRating,

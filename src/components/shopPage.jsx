@@ -23,6 +23,9 @@ import {
   Table,
   Header,
   Ref,
+  Dimmer,
+  Container,
+  Segment,
 } from "semantic-ui-react";
 import ItemCard from "./widgets/ItemCard";
 import Order from "./widgets/order";
@@ -31,7 +34,6 @@ import ReviewList from "./widgets/reviewList";
 import {
   DEFAULT_USER,
   DEFAULT_BANNER,
-  IMAGE_URL,
   DEFAULT_LOGO,
   Rating,
   formatPrice,
@@ -142,7 +144,6 @@ class ShopPage extends Component {
   };
   componentDidMount = async () => {
     try {
-      console.log(getTempId());
       const shopUrl = this.props.match.params.shopUrl;
       const getShop = await ClientService.findShopByUrl({ shopUrl });
 
@@ -186,8 +187,8 @@ class ShopPage extends Component {
         firstAddress,
         percentageDiscount,
         discountAmount: discountAmount ? discountAmount : 0,
-        logoPreviewUrl: logo ? `${IMAGE_URL}${logo}` : DEFAULT_LOGO,
-        bannerPreviewUrl: banner ? `${IMAGE_URL}${banner}` : DEFAULT_BANNER,
+        logoPreviewUrl: logo ? `${logo}` : DEFAULT_LOGO,
+        bannerPreviewUrl: banner ? `${banner}` : DEFAULT_BANNER,
       });
 
       clientService.productsByShopId(id).then((response) => {
@@ -206,16 +207,19 @@ class ShopPage extends Component {
         },
         (error) => {}
       );
-      const openingTime = data.openingTimes;
 
-      if (openingTime.length > 0) {
-        const sunday = openingTime.find((t) => t.day === "Sunday");
-        const monday = openingTime.find((t) => t.day === "Monday");
-        const tuesday = openingTime.find((t) => t.day === "Tuesday");
-        const wednesday = openingTime.find((t) => t.day === "Wednesday");
-        const thursday = openingTime.find((t) => t.day === "Thursday");
-        const friday = openingTime.find((t) => t.day === "Friday");
-        const saturday = openingTime.find((t) => t.day === "Saturday");
+      let storeTime = data.storeTime;
+
+      if (storeTime.length > 0) {
+        const openingTime = storeTime[0];
+
+        const sunday = openingTime.Sunday;
+        const monday = openingTime.Monday;
+        const tuesday = openingTime.Tuesday;
+        const wednesday = openingTime.Wednesday;
+        const thursday = openingTime.Thursday;
+        const friday = openingTime.Friday;
+        const saturday = openingTime.Saturday;
 
         if (sunday) {
           this.setState({
@@ -429,7 +433,7 @@ class ShopPage extends Component {
         margin: "auto",
         height: "100%",
       };
-      const { socials } = this.state;
+      const { socials, products } = this.state;
       let socialRender;
       const {
         hasSun,
@@ -496,15 +500,28 @@ class ShopPage extends Component {
             <React.Fragment>
               <Tab.Pane>
                 <Grid stackable columns={3}>
-                  {this.state.products.map((product) => {
-                    return (
-                      <ItemCard
-                        handleAdd={this.handleAddOrder}
-                        key={product.id}
-                        product={product}
-                      />
-                    );
-                  })}
+                  {products.length > 0 ? (
+                    products.map((product) => {
+                      return (
+                        <ItemCard
+                          handleAdd={this.handleAddOrder}
+                          key={product.id}
+                          isForMenu={true}
+                          product={product}
+                        />
+                      );
+                    })
+                  ) : (
+                    <Dimmer.Dimmable
+                      style={{ height: 100, width: "100%" }}
+                      as={Segment}
+                      dimmed={true}
+                    >
+                      <Container textAlign="center">
+                        <h3>Seller has got no menu yet. </h3>
+                      </Container>
+                    </Dimmer.Dimmable>
+                  )}
                 </Grid>
               </Tab.Pane>
             </React.Fragment>
@@ -712,6 +729,8 @@ class ShopPage extends Component {
               <Grid.Row>
                 <Grid.Column width={4}>
                   <Image
+                    style={styles}
+                    circular
                     className="img-resize"
                     src={logoPreviewUrl || DEFAULT_LOGO}
                   />

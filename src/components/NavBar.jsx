@@ -2,13 +2,14 @@ import React, { Component } from "react";
 import {
   DEFAULT_USER,
   DEFAULT_BANNER,
-  IMAGE_URL,
   DEFAULT_LOGO,
   USER_ORDER_URL,
   MY_ACCOUNT,
   LISTING_URL,
   LOGIN_URL,
-  logout
+  logout,
+  CUSTOMER_ACCOUNT,
+  CUSTOMER_ORDER,
 } from "../utility/global";
 
 import { Link, withRouter } from "react-router-dom";
@@ -35,71 +36,48 @@ class NavBar extends Component {
   state = {
     firstName: "",
     avatar: DEFAULT_USER,
-    role:""
+    role: "",
   };
 
   componentDidMount = async () => {
     this.props.addUser();
-   
   };
   componentWillReceiveProps(nextProps) {
     if (nextProps.user) {
-     
-      const {firstName, photo, role} =nextProps.user;
+      const { firstName, photo, role } = nextProps.user;
       this.setState({
         firstName: firstName,
         role: role,
-        avatar: photo ? `${IMAGE_URL}${photo}` : DEFAULT_USER,
+        avatar: photo ? `${photo}` : DEFAULT_USER,
       });
     }
   }
   handlerLogout = async (e) => {
     e.preventDefault();
+
     logout();
     this.props.history.push(LOGIN_URL);
   };
   handlerOrder = async (e) => {
     e.preventDefault();
-    this.props.history.push(USER_ORDER_URL);
+    const role = this.state.role;
+    this.props.history.push(
+      role === "Customer" ? CUSTOMER_ORDER : USER_ORDER_URL
+    );
   };
 
   handlerAccount = async (e) => {
     e.preventDefault();
-    this.props.history.push(MY_ACCOUNT);
+    const role = this.state.role;
+    this.props.history.push(
+      role === "Customer" ? CUSTOMER_ACCOUNT : MY_ACCOUNT
+    );
   };
   render() {
-    const { firstName, avatar } = this.state;
+    const { firstName, avatar, role } = this.state;
 
     const styles = { color: "black" };
-    const options = [
-      {
-        key: "user",
-        text: (
-          <Link style={styles} to={`${MY_ACCOUNT}`}>
-            Your Account
-          </Link>
-        ),
-        icon: "user",
-      },
-      {
-        key: "settings",
-        text: (
-          <Link style={styles} to={`${USER_ORDER_URL}`}>
-            Your orders
-          </Link>
-        ),
-        icon: "clipboard outline",
-      },
-      {
-        key: "sign-out",
-        text: (
-          <a onClick={this.logout} style={styles}>
-            Logout
-          </a>
-        ),
-        icon: "sign out",
-      },
-    ];
+
     const trigger = (
       <span>
         <Image avatar src={avatar} />

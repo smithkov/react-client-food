@@ -5,7 +5,6 @@ import Moment from "react-moment";
 import {
   DEFAULT_USER,
   DEFAULT_BANNER,
-  IMAGE_URL,
   DEFAULT_LOGO,
   LOGIN_URL,
 } from "../../utility/global";
@@ -63,7 +62,7 @@ export default class ReviewList extends Component {
 
           <Comment>
             <Comment.Avatar
-              src={User.photo ? `${IMAGE_URL}${User.photo}` : DEFAULT_USER}
+              src={User.photo ? `${User.photo}` : DEFAULT_USER}
             />
 
             <Comment.Content>
@@ -106,7 +105,7 @@ export default class ReviewList extends Component {
                 return (
                   <Comment>
                     <Comment.Avatar
-                      src={photo ? `${IMAGE_URL}${photo}` : DEFAULT_USER}
+                      src={photo ? `${photo}` : DEFAULT_USER}
                     />
                     <Comment.Content>
                       <Comment.Author as="a">{name}</Comment.Author>

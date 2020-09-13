@@ -22,14 +22,15 @@ import {
   Input,
 } from "semantic-ui-react";
 import {
-  IMAGE_URL,
   totalRating,
   displayRating,
   formatPrice,
   LISTING_URL,
   REGISTER_URL,
   LOGIN_URL,
+  SHOP_SIGNUP,
 } from "../utility/global";
+import StoreCard from "./widgets/storeCard";
 import { Link, withRouter } from "react-router-dom";
 import HomepageHeading from "../components/homePageHeading";
 // Heads up!
@@ -73,7 +74,7 @@ class DesktopContainer extends Component {
             style={{
               backgroundImage: `url("/images/bg.jpg")`,
               minHeight: 700,
-              repeat:"none",
+              repeat: "none",
               padding: "1em 0em",
             }}
             vertical
@@ -87,14 +88,18 @@ class DesktopContainer extends Component {
               size="large"
             >
               <Container>
-                {/* <Menu.Item as="a">Home</Menu.Item> */}
-
                 <Menu.Item position="right">
-                  
-                    <Button as="a" href={LOGIN_URL} inverted={!fixed}>
-                      Log In
-                    </Button>
-                  
+                  {/* <Link to={SHOP_SIGNUP}>Vendor Sign up</Link> */}
+                  {/* <Link
+                    style={{ paddingLeft: 20, paddingRight: 20 }}
+                    to={LISTING_URL}
+                  >
+                    View Listing
+                  </Link> */}
+                  <Button as="a" href={LOGIN_URL} inverted={!fixed}>
+                    Log In
+                  </Button>
+
                   {/* <Button as='a' inverted={!fixed} primary={fixed} style={{ marginLeft: '0.5em' }}>
                     Sign Up
                   </Button> */}
@@ -118,21 +123,13 @@ DesktopContainer.propTypes = {
 class MobileContainer extends Component {
   state = {};
 
-  handleSidebarHide = () => this.setState({ sidebarOpened: false });
-
-  handleToggle = () => this.setState({ sidebarOpened: true });
-
   render() {
     const { children } = this.props;
     const { sidebarOpened } = this.state;
 
     return (
-      <Responsive
-        as={Sidebar.Pushable}
-        getWidth={getWidth}
-        maxWidth={Responsive.onlyMobile.maxWidth}
-      >
-        <Sidebar
+      <Responsive getWidth={getWidth} maxWidth={Responsive.onlyMobile.maxWidth}>
+        {/* <Sidebar
           as={Menu}
           animation="push"
           inverted
@@ -140,23 +137,17 @@ class MobileContainer extends Component {
           vertical
           visible={sidebarOpened}
         >
-          
           <Link to={LISTING_URL}>
             <Menu.Item as="a" active>
-              Find Food
+              View Listing
             </Menu.Item>
           </Link>
           <Link to={LOGIN_URL}>
-            <Menu.Item as="a">
-              Log In
-            </Menu.Item>
+            <Menu.Item as="a">Log In</Menu.Item>
           </Link>
 
-          {/* <Menu.Item as="a">Work</Menu.Item>
-          <Menu.Item as="a">Company</Menu.Item>
-          <Menu.Item as="a">Careers</Menu.Item>
-          <Menu.Item as="a">Log in</Menu.Item> */}
-        </Sidebar>
+         
+        </Sidebar> */}
 
         <Sidebar.Pusher dimmed={sidebarOpened}>
           <Segment
@@ -170,19 +161,13 @@ class MobileContainer extends Component {
             vertical
           >
             <Container>
-              <Menu  color="grey" inverted pointing secondary size="large">
-                <Menu.Item onClick={this.handleToggle}>
-                  <Icon name="sidebar" />
-                </Menu.Item>
-                <Menu.Item position="right">
+              <Menu color="grey" inverted pointing secondary size="large">
                 
+
+                <Menu.Item position="right">
                   <Button href={LOGIN_URL} as="a" inverted>
                     Log In
                   </Button>
-                 
-                  {/* <Button as='a' inverted style={{ marginLeft: '0.5em' }}>
-                    Sign Up
-                  </Button> */}
                 </Menu.Item>
               </Menu>
             </Container>
@@ -213,7 +198,7 @@ ResponsiveContainer.propTypes = {
 
 class Landing extends Component {
   componentDidMount = async () => {
-    const result = await clientService.frontPageMeals();
+    const result = await clientService.storeFrontPage();
     this.setState({
       topMeals: result.data.data,
     });
@@ -229,49 +214,30 @@ class Landing extends Component {
       objectPosition: "center center",
     };
     const { topMeals } = this.state;
+
     return (
       <ResponsiveContainer>
-        <Segment style={{ paddingTop: "5em" }}>
-          <h1>African/Caribbean food delivery in the UK</h1>
-          {topMeals.length > 0 ? (
-            <Grid padded stackable>
-              <Grid.Row style={{ margin: "auto" }} columns={5}>
-                {topMeals.map((meal) => {
-                  const {id, VirtualShop, price, photo, name } = meal;
-                  return (
-                    <Grid.Column key={id}>
-                      <Link to={`/${VirtualShop.shopUrl}`}>
-                        <Card fluid>
-                          <Image
-                            style={styles}
-                            src={`${IMAGE_URL}${photo}`}
-                            ui={false}
-                          />
-                          <Card.Content>
-                            <Header as="h4">{name}</Header>
-                            <Header color="red" as="h4">
-                              {formatPrice(price)}
-                            </Header>
-                            {VirtualShop.deliveryPrice
-                              ? `${formatPrice(
-                                  VirtualShop.deliveryPrice
-                                )} delivery fee`
-                              : "Free delivery"}
-                          </Card.Content>
-                          <Card.Content extra>
-                            <Header as="h4">{VirtualShop.shopName}</Header>
-                          </Card.Content>
-                        </Card>
-                      </Link>
-                    </Grid.Column>
-                  );
-                })}
-              </Grid.Row>
-            </Grid>
-          ) : (
-            <BigLoader />
-          )}
-        </Segment>
+        <Container>
+          <hr></hr>
+          <Segment style={{ paddingTop: "5em" }}>
+            <h1>Top-rated sellers</h1>
+            {topMeals.length > 0 ? (
+              <Grid padded stackable>
+                <Grid.Row style={{ margin: "auto" }} columns={4}>
+                  {topMeals.map((item) => {
+                    const { id, VirtualShop, price, photo, name } = item;
+                    return (
+                      <StoreCard isOpen={true} key={item.id} item={item} />
+                    );
+                  })}
+                </Grid.Row>
+              </Grid>
+            ) : (
+              <BigLoader />
+            )}
+          </Segment>
+        </Container>
+
         <Footer />
       </ResponsiveContainer>
     );

@@ -21,7 +21,6 @@ import {
   MEAL_CREATE,
   MEAL_LIST,
   SAVE_SUCCESS,
-  IMAGE_URL,
   titleCase,
 } from "../utility/global";
 import {
@@ -53,7 +52,6 @@ class ProductForm extends React.Component {
       ingredients: [],
       ingredient: "",
       selectedPhoto: null,
-      selectedOrigin: "",
       discountPrice: "",
       unitType: [],
       unitText: "",
@@ -88,7 +86,6 @@ class ProductForm extends React.Component {
         ingredients,
         Category,
         weight,
-        Origin,
         Unit,
         photo,
         id,
@@ -110,12 +107,11 @@ class ProductForm extends React.Component {
         categoryText: Category ? Category.name : "",
         discountPrice,
         selectedPhoto: photo,
-        selectedOrigin: Origin ? Origin.id : "",
         selectedUnitType: Unit ? Unit.id : "",
         oldPhoto: photo,
         productId: id,
         selectedCategory: Category ? Category.id : "",
-        photoPreviewUrl: photo ? `${IMAGE_URL}${photo}` : "",
+        photoPreviewUrl: photo ? `${photo}` : "",
       });
     }
 
@@ -178,7 +174,6 @@ class ProductForm extends React.Component {
 
     const {
       discountPrice,
-      selectedOrigin,
       selectedUnitType,
       selectedCategory,
       selectedPhoto,
@@ -192,7 +187,7 @@ class ProductForm extends React.Component {
       shopId,
     } = this.state;
     if (selectedPhoto) {
-      if (selectedCategory && selectedOrigin) {
+      if (selectedCategory !== "") {
         //Lock submit button and show loading in the button
         this.setState({
           isLockButton: true,

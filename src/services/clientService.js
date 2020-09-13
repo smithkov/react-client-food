@@ -36,10 +36,15 @@ class ClientService {
     return http.patch(`${SERVER_URL}/product/${id}`, data, header(token));
   };
 
-  productsByOrigin(id) {
-    return http.get(`${SERVER_URL}/product/origin/` + id);
-  }
-
+  shopByOrigin = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/shopByOrigin`, data, header(token));
+  };
+  productByCategory = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/shop/productByCategory`, data, header(token));
+  };
+  
   storeVerification(code) {
     return http.get(`${SERVER_URL}/shop/activateByLink/` + code);
   }
@@ -54,14 +59,19 @@ class ClientService {
     return http.post(`${SERVER_URL}/storeListing`, header());
   };
 
-  listingSearch = async (data) => {
+  storeListingClose = async () => {
     const token = await asyncLocalStorage.getItem(TOKEN);
-    return http.post(`${SERVER_URL}/listingSearch`,data, header());
+    return http.post(`${SERVER_URL}/storeListingClose`, header());
   };
 
-  frontPageMeals() {
-    return http.get(`${SERVER_URL}/front-page-meals`);
-  }
+  storeFrontPage = async () => {
+    return http.post(`${SERVER_URL}/storeFrontPage`, header());
+  };
+
+  listingSearch = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/listingSearch`, data, header());
+  };
 
   productsByShopId = async (id) => {
     const token = await asyncLocalStorage.getItem(TOKEN);
@@ -246,6 +256,15 @@ class ClientService {
   bankDetail = async (id, data) => {
     const token = await asyncLocalStorage.getItem(TOKEN);
     return http.patch(`${SERVER_URL}/bankDetail/${id}`, data, header(token));
+  };
+
+  fetchShopPreOrder = async (data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.post(`${SERVER_URL}/fetchShopPreOrder`, data, header(token));
+  };
+  updatePreOrder = async (id, data) => {
+    const token = await asyncLocalStorage.getItem(TOKEN);
+    return http.patch(`${SERVER_URL}/preOrder/${id}`, data, header(token));
   };
 
   findShopByUser = async (id) => {

@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Card, Icon, Image } from "semantic-ui-react";
 import { Grid, Button, Header, List, Table } from "semantic-ui-react";
 import {
-  IMAGE_URL,
   DEFAULT_LOGO,
   displayRating,
   totalRating,

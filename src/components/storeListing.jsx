@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import Listing from "./widgets/Listing";
 import SideMenu from "./widgets/SideMenu";
+import StoreCard from "./widgets/storeCard";
+import ProductCard from "./widgets/ItemCard";
 import clientService from "../services/clientService";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
@@ -9,13 +11,13 @@ import "react-multi-carousel/lib/styles.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import {
-  IMAGE_URL,
   DEFAULT_STORE_BANNER,
   DEFAULT_STORE_LOGO,
   totalRating,
   displayRating,
   SERVER_URL,
   ENDPOINT,
+  storeNextOpening,
 } from "../utility/global";
 import { Link } from "react-router-dom";
 import {
@@ -36,6 +38,7 @@ import {
   Segment,
   Loader,
   Dimmer,
+  Container,
   Message,
 } from "semantic-ui-react";
 const imageUrl = `${ENDPOINT}uploads`;
@@ -45,12 +48,16 @@ class StoreListing extends Component {
   }
   state = {
     stores: [],
+    closeStores: [],
     categories: [],
     autoCompleteResult: [],
+    meals: [],
     searchVal: "",
     loading: false,
     loadingCategory: true,
     loadingStore: true,
+    title: "",
+    closeTitle: "",
   };
   // componentDidMount() {
   //   ClientService.products()
@@ -72,9 +79,15 @@ class StoreListing extends Component {
 
     this.setState({
       stores: storeResponse.data.data,
+      title: storeResponse.data.desc,
       categories: categoryResponse.data.data,
       loadingCategory: false,
       loadingStore: false,
+    });
+    const storeCloseResponse = await clientService.storeListingClose();
+    this.setState({
+      closeTitle: storeCloseResponse.data.desc,
+      closeStores: storeCloseResponse.data.data,
     });
   };
   searchSelect = async (e, data) => {
@@ -83,7 +96,9 @@ class StoreListing extends Component {
     const searchResponse = await clientService.listingSearch({ search });
 
     this.setState({
-      stores: searchResponse.data.data,
+      closeTitle: searchResponse.data.desc,
+      stores: [],
+      closeStores: searchResponse.data.data,
     });
   };
   handleSearchChange = async (e, data) => {
@@ -98,6 +113,31 @@ class StoreListing extends Component {
       loading: false,
     });
   };
+  originEvent = async (originId) => {
+    const originResponse = await clientService.shopByOrigin({ originId });
+    const response = originResponse.data;
+
+    this.setState({
+      stores: response.data.open,
+      closeStores: response.data.close,
+      title: response.openDesc,
+      closeTitle: response.closeDesc,
+      meals: [],
+    });
+  };
+
+  categoryEvent = async (categoryId) => {
+    const categoryResponse = await clientService.productByCategory({
+      categoryId,
+    });
+    this.setState({
+      meals: categoryResponse.data.data,
+      title: categoryResponse.data.desc,
+      stores: [],
+      closeStores: [],
+    });
+  };
+
   render() {
     const {
       stores,
@@ -105,6 +145,10 @@ class StoreListing extends Component {
       loading,
       loadingCategory,
       loadingStore,
+      closeStores,
+      title,
+      closeTitle,
+      meals,
     } = this.state;
     const styles = {
       height: 150,
@@ -134,14 +178,14 @@ class StoreListing extends Component {
           breakpoint: 960,
           settings: {
             slidesToShow: 3,
-            slidesToScroll: 2,
+            slidesToScroll: 1,
           },
         },
         {
           breakpoint: 480,
           settings: {
             slidesToShow: 1,
-            slidesToScroll: 2,
+            slidesToScroll: 1,
           },
         },
       ],
@@ -149,205 +193,114 @@ class StoreListing extends Component {
 
     return (
       <>
-        <Grid stackable style={{ paddingTop: 100 }}>
+        <Container>
           <NavBar />
-          <Grid.Column style={{ paddingLeft: 30 }} width={4}>
-            <Message floating icon>
-              <Message.Header> </Message.Header>
-            </Message>
-          </Grid.Column>
-          <Grid.Column style={{ paddingRight: 60 }} width={10}>
-            <Search
-              showNoResults
-              placeholder="Search for a dish or food vendor"
-              name="search"
-              input={{ fluid: true }}
-              loading={loading}
-              onResultSelect={this.searchSelect}
-              results={this.state.autoCompleteResult.map((item) => {
-                const { logo, shopName, Origin } = item;
-                return {
-                  title: shopName,
-                  image: logo ? `${IMAGE_URL}/${logo}` : DEFAULT_STORE_LOGO,
-                  description: Origin.name,
-                };
-              })}
-              onSearchChange={this.handleSearchChange}
-            />
-          </Grid.Column>
-        </Grid>
-        <Grid stackable padding style={{ paddingLeft: 40 }}>
-          <Grid.Column width={4}>
-            <SideMenu />
-          </Grid.Column>
-          <Grid.Column width={10}>
-            <Loader active={loadingCategory} inline="centered" />
-            <Slider {...settings}>
-              {categories.map((item) => {
-                const { id, imagePath, display } = item;
-                return (
-                  <div className="out" key={id}>
-                    <Card padding>
-                      <img
-                        src={`${imageUrl}/${imagePath}`}
-                        style={categoryStyles}
-                      />
-
-                      <Card.Content>
-                        <Card.Meta>{display}</Card.Meta>
-                      </Card.Content>
-                    </Card>
-                  </div>
-                );
-              })}
-            </Slider>
-
-            <hr />
-
-            {loadingStore ? (
-              <Segment>
-                <Dimmer active={loadingStore} inverted>
-                  <Loader size="large">Loading</Loader>
-                </Dimmer>
-
-                <Image src="https://react.semantic-ui.com/images/wireframe/paragraph.png" />
-              </Segment>
-            ) : (
-              ""
-            )}
-            <Grid stackable>
-              <Grid.Row style={{ margin: "auto" }} columns={3}>
-                {stores.map((item) => {
-                  const {
-                    logo,
-                    banner,
-                    shopName,
-                    shopUrl,
-                    minTime,
-                    maxTime,
-                    percentageDiscount,
-                    discountAmount,
-                    minOrder,
-                    deliveryPrice,
-                  } = item;
+          <Grid stackable padding style={{ paddingTop: 100 }}>
+            <Grid.Column width={4}>
+              {/* <Message floating icon>
+                <Message.Header> </Message.Header>
+              </Message> */}
+            </Grid.Column>
+            <Grid.Column width={12}>
+              <Search
+                showNoResults
+                placeholder="Search for a dish or food vendor"
+                name="search"
+                input={{ fluid: true }}
+                loading={loading}
+                onResultSelect={this.searchSelect}
+                results={this.state.autoCompleteResult.map((item) => {
+                  const { logo, shopName, Origin } = item;
+                  return {
+                    title: shopName,
+                    image: logo ? `${logo}` : DEFAULT_STORE_LOGO,
+                    description: Origin.name,
+                  };
+                })}
+                onSearchChange={this.handleSearchChange}
+              />
+            </Grid.Column>
+          </Grid>
+          <Grid stackable>
+            <Grid.Column width={4}>
+              <SideMenu
+                categoryEvent={this.categoryEvent}
+                originEvent={this.originEvent}
+              />
+            </Grid.Column>
+            <Grid.Column width={12}>
+              <Loader active={loadingCategory} inline="centered" />
+              <Slider {...settings}>
+                {categories.map((item) => {
+                  const { id, imagePath, display } = item;
                   return (
-                    <Grid.Column style={{ paddingBottom: 15 }}>
-                      <Link to={`/${shopUrl}`}>
-                        <Card raised color="orange" fluid>
-                          <Card.Content>
-                            <Image
-                              floated="left"
-                              circular
-                              fluid
-                              size="mini"
-                              style={logoStyles}
-                              src={
-                                logo
-                                  ? `${IMAGE_URL}/${logo}`
-                                  : DEFAULT_STORE_LOGO
-                              }
-                            />
+                    <div className="out" key={id}>
+                      <Card onClick={()=>this.categoryEvent(id)}>
+                        <img
+                          src={`${imageUrl}/${imagePath}`}
+                          style={categoryStyles}
+                        />
 
-                            <Card.Header>{shopName}</Card.Header>
-                            <Card.Meta>{item.Origin.name}</Card.Meta>
-                            <img
-                              style={styles}
-                              src={
-                                banner
-                                  ? `${IMAGE_URL}/${banner}`
-                                  : DEFAULT_STORE_BANNER
-                              }
-                            />
-
-                            <Card.Content extra>
-                              <Table
-                                very
-                                basic
-                                unstackable
-                                size="small"
-                                singleLine
-                                compact
-                              >
-                                <Table.Row>
-                                  {minTime ? (
-                                    <Table.Cell textAlign="left">
-                                      <Card.Meta>
-                                        <Icon
-                                          color="red"
-                                          size="large"
-                                          name="time"
-                                        />
-                                        {`${minTime} - ${maxTime} mins`}
-                                      </Card.Meta>
-                                    </Table.Cell>
-                                  ) : (
-                                    <Table.Cell textAlign="left">
-                                      <Card.Meta>
-                                        <Icon
-                                          color="red"
-                                          size="large"
-                                          name="time"
-                                        />
-                                        {`0 mins`}
-                                      </Card.Meta>
-                                    </Table.Cell>
-                                  )}{" "}
-                                  {percentageDiscount ? (
-                                    <Table.Cell textAlign="right">
-                                      <Card.Meta>
-                                        <Icon
-                                          color="red"
-                                          size="large"
-                                          name="fire"
-                                        />
-                                        {`${percentageDiscount}% discount`}
-                                      </Card.Meta>
-                                    </Table.Cell>
-                                  ) : (
-                                    <Table.Cell textAlign="right"></Table.Cell>
-                                  )}
-                                </Table.Row>
-                              </Table>
-                            </Card.Content>
-                            <Card.Content extra>
-                              <Card.Meta>
-                                <Icon
-                                  size="large"
-                                  color="green"
-                                  name="money bill alternate"
-                                />
-                                {` Minimun spend £${minOrder ? minOrder : "0"}`}
-                              </Card.Meta>
-                            </Card.Content>
-                            <Card.Content>
-                              <Card.Meta>
-                                <Icon size="large" name="truck" />
-                                {` Delivery £${
-                                  deliveryPrice ? deliveryPrice : "0"
-                                }`}
-                              </Card.Meta>
-                            </Card.Content>
-                            <Card.Description>
-                              <Rating
-                                padding
-                                maxRating={5}
-                                rating={displayRating(item.ratings)}
-                                disabled
-                                icon="star"
-                                size="small"
-                              />
-                            </Card.Description>
-                          </Card.Content>
-                        </Card>
-                      </Link>
-                    </Grid.Column>
+                        <Card.Content>
+                          <Card.Meta>{display}</Card.Meta>
+                        </Card.Content>
+                      </Card>
+                    </div>
                   );
                 })}
-              </Grid.Row>
-            </Grid>
-          </Grid.Column>
-          <Grid.Column width={1}></Grid.Column>
-        </Grid>
+              </Slider>
+
+              <hr />
+
+              {loadingStore ? (
+                <Segment>
+                  <Dimmer active={loadingStore} inverted>
+                    <Loader size="large">Loading</Loader>
+                  </Dimmer>
+
+                  <Image src="https://react.semantic-ui.com/images/wireframe/paragraph.png" />
+                </Segment>
+              ) : (
+                ""
+              )}
+              {stores.length > 0 ? <Message floating>{title}</Message> : ""}
+
+              <Grid stackable>
+                <Grid.Row style={{ margin: "auto" }} columns={3}>
+                  {stores.map((item) => {
+                    return (
+                      <StoreCard isOpen={true} key={item.id} item={item} />
+                    );
+                  })}
+                </Grid.Row>
+              </Grid>
+              {closeStores.length > 0 ? (
+                <Message floating>{closeTitle}</Message>
+              ) : (
+                ""
+              )}
+
+              <Grid stackable>
+                <Grid.Row style={{ margin: "auto" }} columns={3}>
+                  {closeStores.map((item) => {
+                    return (
+                      <StoreCard isOpen={false} key={item.id} item={item} />
+                    );
+                  })}
+                </Grid.Row>
+              </Grid>
+              {meals.length > 0 ? <Message floating>{title}</Message> : ""}
+              <Grid stackable>
+                <Grid.Row style={{ margin: "auto" }} columns={3}>
+                  {meals.map((item) => {
+                    return <ProductCard isForMenu={false} key={item.id} product={item} />;
+                  })}
+                </Grid.Row>
+              </Grid>
+            </Grid.Column>
+            <Grid.Column width={1}></Grid.Column>
+          </Grid>
+        </Container>
         <Footer />
       </>
     );

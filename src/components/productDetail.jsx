@@ -12,7 +12,6 @@ import { connect } from "react-redux";
 import {
   DEFAULT_USER,
   DEFAULT_BANNER,
-  IMAGE_URL,
   DEFAULT_LOGO,
   totalRating,
   displayRating,
@@ -130,7 +129,7 @@ class ProductDetail extends Component {
                   objectPosition: "center center",
                   width: "100%",
                 }}
-                src={`${IMAGE_URL}${photo}`}
+                src={`${photo}`}
                 size="medium"
                 rounded
               />

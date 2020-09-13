@@ -7,7 +7,6 @@ import clientService from "../services/clientService";
 import {
   MISSING_USER_MSG,
   DEFAULT_BANNER,
-  IMAGE_URL,
   DEFAULT_LOGO,
   toastOptions,
 } from "../utility/global";
@@ -92,13 +91,14 @@ class ShopForm extends Component {
               shopName,
               shopId: id,
               bannerPreviewUrl: banner
-                ? `${IMAGE_URL}${banner}`
+                ? `${banner}`
                 : DEFAULT_BANNER,
-              logoPreviewUrl: logo ? `${IMAGE_URL}${logo}` : DEFAULT_LOGO,
+              logoPreviewUrl: logo ? `${logo}` : DEFAULT_LOGO,
               hasShop: data,
               firstAddress,
               shopUrl,
               about,
+              selectedOrigin: Origin ? Origin.id : "",
               initialShopName: shopName,
               initialShopUrl: shopUrl,
               secondAddress: secondAddress == null ? "" : secondAddress,
@@ -331,7 +331,7 @@ class ShopForm extends Component {
     return (
       <Container fluid={true}>
         <Nav />
-        <AfterNav form={hasShop ? "Update Shop" : "Create Shop"} />
+        <AfterNav form={hasShop ? "Update Store" : "Create Store"} />
         <hr></hr>
         <Row style={{ paddingTop: "10px" }}>
           <Col lg="2">
@@ -339,7 +339,7 @@ class ShopForm extends Component {
           </Col>
           <Col lg="1"></Col>
           <Col className="dashboard-panel" lg="6">
-            <Message attached header="My Store" />
+            <Message attached header="My store" />
             <Form
               loading={!hasLoaded}
               className="attached fluid segment"

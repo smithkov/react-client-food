@@ -13,7 +13,6 @@ import clientService from "../services/clientService";
 import {
   MISSING_USER_MSG,
   DEFAULT_BANNER,
-  IMAGE_URL,
   DEFAULT_USER,
 } from "../utility/global";
 import {
@@ -74,7 +73,7 @@ class Account extends Component {
               photo,
             } = data;
            
-            const myPhoto = photo ? `${IMAGE_URL}${photo}` : "";
+            const myPhoto = photo ? `${photo}` : "";
             this.setState({
               photoPreviewUrl: myPhoto,
               firstName,

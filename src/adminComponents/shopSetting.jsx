@@ -8,7 +8,6 @@ import { toast } from "react-toastify";
 import {
   MISSING_USER_MSG,
   DEFAULT_BANNER,
-  IMAGE_URL,
   DEFAULT_LOGO,
   toastOptions,
 } from "../utility/global";

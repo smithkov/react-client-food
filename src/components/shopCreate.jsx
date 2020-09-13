@@ -8,7 +8,6 @@ import { toast } from "react-toastify";
 import {
   MISSING_USER_MSG,
   DEFAULT_BANNER,
-  IMAGE_URL,
   toastOptions,
   DEFAULT_LOGO,
   scrollToTop,
@@ -276,7 +275,7 @@ export default class ShopCreate extends Component {
                 <List.Item icon="check" content="Verify your email address." />
                 <List.Item
                   icon="check"
-                  content="List your food menu and sample photos of foods on your menu."
+                  content="List food photos."
                 />
               </List>
             </Container>
@@ -477,7 +476,7 @@ export default class ShopCreate extends Component {
               </Header>
               <p>
                 When you register with Foodengo, our photography team will take
-                high resolution photos of what you sell for good presentation.
+                high resolution photos for your menu.
               </p>
               <Header color="red" as="h4">
                 <Image circular src="/images/foodengo_approve.png" />

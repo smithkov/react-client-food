@@ -79,6 +79,7 @@ class AvailableTime extends Component {
   componentWillReceiveProps = async (nextProps) => {
     if (nextProps) {
       const shopId = nextProps.user.shopId;
+
       this.setState({
         shopId,
       });
@@ -88,14 +89,23 @@ class AvailableTime extends Component {
       });
 
       const result = getShopOpeningDays.data.data;
-
-      const sunday = result.find((t) => t.day === "Sunday");
-      const monday = result.find((t) => t.day === "Monday");
-      const tuesday = result.find((t) => t.day === "Tuesday");
-      const wednesday = result.find((t) => t.day === "Wednesday");
-      const thursday = result.find((t) => t.day === "Thursday");
-      const friday = result.find((t) => t.day === "Friday");
-      const saturday = result.find((t) => t.day === "Saturday");
+      let sunday;
+      let monday;
+      let tuesday;
+      let wednesday;
+      let thursday;
+      let friday;
+      let saturday;
+      if (result.length > 0) {
+        const arr = result[0];
+        sunday = arr.Sunday;
+        monday = arr.Monday;
+        tuesday = arr.Tuesday;
+        wednesday = arr.Wednesday;
+        thursday = arr.Thursday;
+        friday = arr.Friday;
+        saturday = arr.Saturday;
+      }
 
       if (sunday) {
         const sunMinDate = sunday.opening;
@@ -278,10 +288,12 @@ class AvailableTime extends Component {
         friId,
         satId,
       } = this.state;
+      
       this.setState({
         loading: true,
         disabled: true,
       });
+  
       const result = await clientService.createOpeningDay({
         shopId,
         sunChecked,
@@ -360,7 +372,7 @@ class AvailableTime extends Component {
     return (
       <Container fluid={true}>
         <Nav />
-        <AfterNav form={"Hours"} />
+        <AfterNav form={"Opening time"} />
         <hr></hr>
         <Row className="dash-layout">
           <Col lg="2">
@@ -370,7 +382,7 @@ class AvailableTime extends Component {
           <Col lg="1"></Col>
 
           <Col className="dashboard-panel" lg="6">
-            <Message attached header="Hours" />
+            <Message attached header="Opening time" />
             <Segment raised>
               <Grid padded columns="equal">
                 <Grid.Row>

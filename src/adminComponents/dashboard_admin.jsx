@@ -67,7 +67,7 @@ class Dashboard extends Component {
       });
     }
   };
-
+  
   render() {
     const { isSeller, showTemp, hasEmailVerified } = this.state;
     let mailTempt;
@@ -94,6 +94,7 @@ class Dashboard extends Component {
               ) : (
                 <Grid.Row>
                   <Grid.Column width={16}>
+                    
                     <Message warning icon>
                       <Icon name="warning circle" />
                       <Message.Content>

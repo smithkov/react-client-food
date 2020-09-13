@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import clientService from "../services/clientService";
+import { Col, Container, Row } from "reactstrap";
 import { setToken } from "../http-common";
 import {
   setUserProfile,
@@ -53,7 +54,7 @@ class Login extends Component {
       this.setState({ loading: false });
       const { data, token } = loginResponse.data;
       const setStorage = await asyncLocalStorage.setItem("tk", token);
-      dashType = data.role === "Seller" ? DASHBOARD_URL : DASHBOARD_USER_URL;
+      dashType = data.role === "Seller" ? DASHBOARD_URL : `/`;
 
       let { from } = this.props.location.state || {
         from: { pathname: dashType },
@@ -118,87 +119,96 @@ class Login extends Component {
     );
 
     return (
-      <form onSubmit={this.login}>
-        <Grid
-          textAlign="center"
-          style={{ height: "100vh" }}
-          verticalAlign="middle"
-        >
-          <Grid.Column style={{ maxWidth: 450 }}>
-            <Header as="h2" color="black" textAlign="center">
-              <Image circular size="mini" src="/images/onelogo.png" /> Log-in to
-              your account
-            </Header>
+      <Container fluid={true}>
+        <Row style={{ paddingTop: "40px", position: "relative" }}>
+          <Col lg="4"></Col>
+          <Col lg="4">
+            {" "}
+            <form onSubmit={this.login}>
+              <Grid
+                textAlign="center"
+                style={{ height: "100vh" }}
+                verticalAlign="middle"
+              >
+                <Grid.Column>
+                  <Header as="h2" color="black" textAlign="center">
+                    <Image circular size="mini" src="/images/onelogo.png" />{" "}
+                    Log-in to your account
+                  </Header>
 
-            <Form size="large">
-              {this.state.hasError ? alert : ""}
-              <FacebookLogin
-                appId="900223110479631"
-                autoLoad={false}
-                cssClass="facebookBtn"
-                fields="name,email,picture"
-                callback={this.responseFacebook}
-                icon={<Icon name="facebook" />}
-                textButton="&nbsp;&nbsp;Sign In with Facebook"
-              />
-              {/* <GoogleLogin
-                clientId="489905510114-d9395vk5dso3h7bb07rlfv492u444ebs.apps.googleusercontent.com"
-                render={(renderProps) => (
-                  <button
-                    onClick={renderProps.onClick}
-                    type="button"
-                    className="google"
-                  >
-                    &nbsp;&nbsp;
-                    <Icon name="google" />
-                    Sign In with Google
-                  </button>
-                )}
-                onSuccess={this.responseGoogle}
-                onFailure={this.responseGoogle}
-                className="google"
-                style={{ textAlign: "center" }}
-                buttonText="Sign In with Google"
-              /> */}
-              <div class="ui horizontal divider">Or</div>
-              <Segment stacked>
-                <Form.Input
-                  fluid
-                  type="email"
-                  icon="user"
-                  onChange={this.onChange}
-                  name="email"
-                  iconPosition="left"
-                  placeholder="E-mail address"
-                />
-                <Form.Input
-                  fluid
-                  icon="lock"
-                  onChange={this.onChange}
-                  name="password"
-                  iconPosition="left"
-                  placeholder="Password"
-                  type="password"
-                />
-
-                <Button
-                  loading={loading}
-                  disabled={disabled}
-                  type="submit"
-                  color="red"
-                  fluid
-                  size="large"
+                  <Form size="large">
+                    {this.state.hasError ? alert : ""}
+                    {/* <FacebookLogin
+              appId="900223110479631"
+              autoLoad={false}
+              cssClass="facebookBtn"
+              fields="name,email,picture"
+              callback={this.responseFacebook}
+              icon={<Icon name="facebook" />}
+              textButton="&nbsp;&nbsp;Sign In with Facebook"
+            /> */}
+                    {/* <GoogleLogin
+              clientId="489905510114-d9395vk5dso3h7bb07rlfv492u444ebs.apps.googleusercontent.com"
+              render={(renderProps) => (
+                <button
+                  onClick={renderProps.onClick}
+                  type="button"
+                  className="google"
                 >
-                  Login
-                </Button>
-              </Segment>
-            </Form>
-            <Message>
-              New to us? <Link to={REGISTER_URL}>Sign Up</Link>
-            </Message>
-          </Grid.Column>
-        </Grid>
-      </form>
+                  &nbsp;&nbsp;
+                  <Icon name="google" />
+                  Sign In with Google
+                </button>
+              )}
+              onSuccess={this.responseGoogle}
+              onFailure={this.responseGoogle}
+              className="google"
+              style={{ textAlign: "center" }}
+              buttonText="Sign In with Google"
+            /> */}
+                    {/* <div class="ui horizontal divider">Or</div> */}
+                    <Segment stacked>
+                      <Form.Input
+                        fluid
+                        type="email"
+                        icon="user"
+                        onChange={this.onChange}
+                        name="email"
+                        iconPosition="left"
+                        placeholder="E-mail address"
+                      />
+                      <Form.Input
+                        fluid
+                        icon="lock"
+                        onChange={this.onChange}
+                        name="password"
+                        iconPosition="left"
+                        placeholder="Password"
+                        type="password"
+                      />
+
+                      <Button
+                        loading={loading}
+                        disabled={disabled}
+                        type="submit"
+                        color="red"
+                        fluid
+                        size="large"
+                      >
+                        Login
+                      </Button>
+                    </Segment>
+                  </Form>
+                  <Message>
+                    New to us? <Link to={REGISTER_URL}>Sign up</Link>
+                  </Message>
+                </Grid.Column>
+              </Grid>
+            </form>
+          </Col>
+          <Col lg="4"></Col>
+        </Row>
+      </Container>
     );
   }
 }
