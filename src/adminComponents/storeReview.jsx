@@ -11,6 +11,7 @@ import ReviewList from "../components/widgets/reviewList";
 import { fetchUser } from "../actions/productActions";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import Wrapper from "./wrapper";
 
 class StoreReview extends Component {
   constructor(props) {
@@ -18,8 +19,8 @@ class StoreReview extends Component {
 
     this.state = {
       reviewList: [],
-      shopName:"",
-      replyResult:""
+      shopName: "",
+      replyResult: "",
     };
   }
 
@@ -27,50 +28,49 @@ class StoreReview extends Component {
   componentWillReceiveProps = async (nextProps) => {
     if (nextProps) {
       const shopId = nextProps.user.shopId;
-      
+
       const result = await clientService.findProductReviewByShop({ shopId });
       const shopResult = await clientService.findShopById(shopId);
       const shop = shopResult.data.data;
 
       this.setState({
         reviewList: result.data.data,
-        shopName: shop.shopName
+        shopName: shop.shopName,
       });
     }
   };
   onSubmit = (e) => {
     e.preventDefault();
   };
-  handleReply=async(data)=>{
-   
-    const {content, shopId,ratingId} = data;
-    const result = await clientService.createProductRatingResponse({content, shopId,ratingId});
-    this.setState({replyResult:result.data.data})
-    
-  }
+  handleReply = async (data) => {
+    const { content, shopId, ratingId } = data;
+    const result = await clientService.createProductRatingResponse({
+      content,
+      shopId,
+      ratingId,
+    });
+    this.setState({ replyResult: result.data.data });
+  };
   render() {
-    const {replyResult, shopName} = this.state;
+    const { replyResult, shopName } = this.state;
     return (
       <Container fluid={true}>
-        <Nav />
-        <AfterNav form={"Food List"} />
-        <hr></hr>
-        <Row className="dash-layout">
-          <Col lg="2">
-            <SideMenu />
-          </Col>
-
-          <Col lg="1"></Col>
-
-          <Col className="dashboard-panel" lg="6">
-            <Segment padded>
-              {this.state.reviewList.map((review) => {
-                return <ReviewList replyResult={replyResult} poster={shopName} handleReply={this.handleReply} data={review} />;
-              })}
-            </Segment>
-            <br/><br/>
-          </Col>
-        </Row>
+        <Wrapper>
+          <Segment padded>
+            {this.state.reviewList.map((review) => {
+              return (
+                <ReviewList
+                  replyResult={replyResult}
+                  poster={shopName}
+                  handleReply={this.handleReply}
+                  data={review}
+                />
+              );
+            })}
+          </Segment>
+          <br />
+          <br />
+        </Wrapper>
       </Container>
     );
   }

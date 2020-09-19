@@ -36,19 +36,8 @@ export class HomepageHeading extends Component {
   };
   render() {
     return (
-      <Container style={{ backgroundColor: "white", paddingBottom: 30 }} text>
-        <Header
-          as="h1"
-          content="Foodengo"
-          inverted
-          style={{
-            fontSize: this.props.mobile ? "2em" : "4em",
-            fontWeight: "normal",
-            marginBottom: 0,
-            color: "#660000",
-            marginTop: this.props.mobile ? "1.5em" : "3em",
-          }}
-        />
+      <Container style={{marginTop:120, backgroundColor: "white", paddingBottom: 30 }} text>
+        <Image centered  src="/images/logo.png" size="medium" />
         <Header
           as="h2"
           content="Get your African/Caribbean food delivered to your doorstep"

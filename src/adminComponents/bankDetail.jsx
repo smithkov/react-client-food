@@ -4,15 +4,14 @@ import SideMenu from "./common/sideMenu";
 import ClientService from "../services/clientService";
 import { Col, Container, Row } from "reactstrap";
 import clientService from "../services/clientService";
-import {
-  toastOptions,
-} from "../utility/global";
+import { toastOptions } from "../utility/global";
 import { Button, Form, Message, Icon } from "semantic-ui-react";
 import AfterNav from "./common/afterNav";
 import { toast } from "react-toastify";
 import { fetchUser } from "../actions/productActions";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import Wrapper from "./wrapper";
 
 class BankDetail extends Component {
   constructor(props) {
@@ -33,12 +32,12 @@ class BankDetail extends Component {
         ClientService.findShopByUser(user.id)
           .then((response) => {
             const data = response.data.data;
-            
+
             this.setState({
-              shopId: data.id
-            })
-            const { id,bankDetail } = data;
-          
+              shopId: data.id,
+            });
+            const { id, bankDetail } = data;
+
             this.setState({
               shopId: id,
               sortCode: bankDetail.sortCode,
@@ -78,9 +77,9 @@ class BankDetail extends Component {
       accountName,
       accountNumber,
     };
-    console.log(shopId)
+    console.log(shopId);
     clientService
-      .bankDetail(shopId, {bankDetail})
+      .bankDetail(shopId, { bankDetail })
       .then((response) => {
         toast.success(response.data.message, toastOptions(false));
       })
@@ -94,84 +93,75 @@ class BankDetail extends Component {
 
     return (
       <Container fluid={true}>
-        <Nav />
-        <AfterNav form={"Bank Details"} />
-        <hr></hr>
-        <Row style={{ paddingTop: "10px" }}>
-          <Col lg="2">
-            <SideMenu />
-          </Col>
-          <Col lg="1"></Col>
-          <Col className="dashboard-panel" lg="6">
-            <Message attached header="Bank Details" />
-            <Form
-              className="attached fluid segment"
-              style={{
-                width: "100%",
-                margin: "auto",
-                height: "auto",
-                padding: 13,
-              }}
-              onSubmit={this.onSubmit}
-            >
-              <Form.Field required>
-                <label>Account name</label>
+        <Wrapper>
+          <Message attached header="Bank Details" />
+          <Form
+            className="attached fluid segment"
+            style={{
+              width: "100%",
+              margin: "auto",
+              height: "auto",
+              padding: 13,
+            }}
+            onSubmit={this.onSubmit}
+          >
+            <Form.Field required>
+              <label>Account name</label>
 
-                <Form.Input
-                  type="text"
-                  required
-                  value={accountName}
-                  name="accountName"
-                  onChange={this.onChange}
-                  placeholder="Account name"
-                  width={10}
-                />
-              </Form.Field>
-              <Form.Field required>
-                <label>Sort code</label>
-                <Form.Input
-                  type="text"
-                  required
-                  value={sortCode}
-                  name="sortCode"
-                  maxLength="8"
-                  onChange={this.onChange}
-                  placeholder="00-00-00"
-                  width={6}
-                />
-              </Form.Field>
-              <Form.Field required>
-                <label>Account number</label>
-                <Form.Input
-                  type="text"
-                  value={accountNumber}
-                  name="accountNumber"
-                  onChange={this.onChange}
-                  placeholder="Account number"
-                  width={10}
-                />
-              </Form.Field>
-              <Form.Field required>
-                <label>Bank name</label>
-                <Form.Input
-                  type="text"
-                  required
-                  value={bankName}
-                  name="bankName"
-                  onChange={this.onChange}
-                  placeholder="Bank name"
-                  width={10}
-                />
-              </Form.Field>
+              <Form.Input
+                type="text"
+                required
+                value={accountName}
+                name="accountName"
+                onChange={this.onChange}
+                placeholder="Account name"
+                width={10}
+              />
+            </Form.Field>
+            <Form.Field required>
+              <label>Sort code</label>
+              <Form.Input
+                type="text"
+                required
+                value={sortCode}
+                name="sortCode"
+                maxLength="8"
+                onChange={this.onChange}
+                placeholder="00-00-00"
+                width={6}
+              />
+            </Form.Field>
+            <Form.Field required>
+              <label>Account number</label>
+              <Form.Input
+                type="text"
+                value={accountNumber}
+                name="accountNumber"
+                onChange={this.onChange}
+                placeholder="Account number"
+                width={10}
+              />
+            </Form.Field>
+            <Form.Field required>
+              <label>Bank name</label>
+              <Form.Input
+                type="text"
+                required
+                value={bankName}
+                name="bankName"
+                onChange={this.onChange}
+                placeholder="Bank name"
+                width={10}
+              />
+            </Form.Field>
 
-              <Button color="red" type="submit">
-                Save <Icon name="save" />
-              </Button>
-            </Form>
-            <br />
-            <br />
-          </Col>
-        </Row>
+            <Button color="red" type="submit">
+              Save <Icon name="save" />
+            </Button>
+          </Form>
+          <br />
+          <br />
+        </Wrapper>
       </Container>
     );
   }

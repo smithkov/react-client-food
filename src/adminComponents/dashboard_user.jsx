@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Nav from "./common/nav";
 import SideMenu from "./common/sideMenu";
+import Wrapper from "./wrapper";
 import {
   Card,
   Button,
@@ -38,59 +39,47 @@ class DashboardUser extends Component {
   componentDidMount = async () => {
     this.props.fetchUser();
   };
-  componentWillReceiveProps = async (nextProps) => {
-    
-  };
+  componentWillReceiveProps = async (nextProps) => {};
 
   render() {
-   
     return (
       <Container fluid={true}>
-        <Nav />
-        <AfterNav form={"Dashboard"} />
-        <hr></hr>
-
-        <Row style={{ paddingTop: "10px", height: 600 }}>
-          <Col lg="2" sm="12" xs="12">
-            <SideMenu />
-          </Col>
-          <Col lg="10">
-            <Grid padded stackable>
-              <Grid.Row columns={2}>
-                <Grid.Column>
-                  <Link to={USER_ORDER_URL}>
-                    <Card color="blue" fluid>
-                      <Card.Content>
-                        <Image
-                          floated="right"
-                          size="tiny"
-                          src="/images/order.png"
-                        />
-                        <Card.Header>Orders</Card.Header>
-                        <Card.Meta>Manage and print orders</Card.Meta>
-                      </Card.Content>
-                    </Card>
-                  </Link>
-                </Grid.Column>
-                <Grid.Column>
-                  <Link to={MY_ACCOUNT}>
-                    <Card color="green" fluid>
-                      <Card.Content>
-                        <Image
-                          floated="right"
-                          size="tiny"
-                          src="/images/user_info.png"
-                        />
-                        <Card.Header>Account Info</Card.Header>
-                        <Card.Meta>Manage your personal account</Card.Meta>
-                      </Card.Content>
-                    </Card>
-                  </Link>
-                </Grid.Column>
-              </Grid.Row>
-            </Grid>
-          </Col>
-        </Row>
+        <Wrapper>
+          <Grid padded stackable>
+            <Grid.Row columns={2}>
+              <Grid.Column>
+                <Link to={USER_ORDER_URL}>
+                  <Card color="blue" fluid>
+                    <Card.Content>
+                      <Image
+                        floated="right"
+                        size="tiny"
+                        src="/images/order.png"
+                      />
+                      <Card.Header>Orders</Card.Header>
+                      <Card.Meta>Manage and print orders</Card.Meta>
+                    </Card.Content>
+                  </Card>
+                </Link>
+              </Grid.Column>
+              <Grid.Column>
+                <Link to={MY_ACCOUNT}>
+                  <Card color="green" fluid>
+                    <Card.Content>
+                      <Image
+                        floated="right"
+                        size="tiny"
+                        src="/images/user_info.png"
+                      />
+                      <Card.Header>Account Info</Card.Header>
+                      <Card.Meta>Manage your personal account</Card.Meta>
+                    </Card.Content>
+                  </Card>
+                </Link>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
+        </Wrapper>
       </Container>
     );
   }

@@ -4,6 +4,7 @@ import SideMenu from "./common/sideMenu";
 import ClientService from "../services/clientService";
 import { Col, Container, Row } from "reactstrap";
 import clientService from "../services/clientService";
+import Wrapper from "./wrapper";
 import {
   MISSING_USER_MSG,
   DEFAULT_BANNER,
@@ -118,62 +119,53 @@ export default class Social extends Component {
 
     return (
       <Container fluid={true}>
-        <Nav />
-        <AfterNav form={"Social Setup"} />
-        <hr></hr>
-        <Row style={{ paddingTop: "10px" }}>
-          <Col lg="2">
-            <SideMenu />
-          </Col>
-          <Col lg="1"></Col>
-          <Col className="dashboard-panel" lg="6">
-            <Message attached header="Social Setup" />
-            <Form
-              className="attached fluid segment"
-              onSubmit={this.onSubmit}
-              size="tiny"
-            >
-              {alert}
-              <Form.Field width={16}>
-                <label>Facebook</label>
-                <Input
-                  value={facebook}
-                  labelPosition="left"
-                  onChange={this.onChange}
-                  name="facebook"
-                  type="text"
-                  placeholder="Facebook Url"
-                ></Input>
-              </Form.Field>
-              <Form.Field width={16}>
-                <label>Twitter</label>
-                <Input
-                  value={twitter}
-                  labelPosition="left"
-                  onChange={this.onChange}
-                  name="twitter"
-                  type="text"
-                  placeholder="Twitter Url"
-                ></Input>
-              </Form.Field>
-              <Form.Field width={16}>
-                <label>Instagram</label>
-                <Input
-                  value={instagram}
-                  labelPosition="left"
-                  onChange={this.onChange}
-                  name="instagram"
-                  type="text"
-                  placeholder="Instagram Url"
-                ></Input>
-              </Form.Field>
-              <br />
-              <Button color="red" size="mini" type="submit">
-                Save  <Icon name="save" />
-              </Button>
-            </Form>
-          </Col>
-        </Row>
+        <Wrapper>
+          <Message attached header="Social Setup" />
+          <Form
+            className="attached fluid segment"
+            onSubmit={this.onSubmit}
+            size="tiny"
+          >
+            {alert}
+            <Form.Field width={16}>
+              <label>Facebook</label>
+              <Input
+                value={facebook}
+                labelPosition="left"
+                onChange={this.onChange}
+                name="facebook"
+                type="text"
+                placeholder="Facebook Url"
+              ></Input>
+            </Form.Field>
+            <Form.Field width={16}>
+              <label>Twitter</label>
+              <Input
+                value={twitter}
+                labelPosition="left"
+                onChange={this.onChange}
+                name="twitter"
+                type="text"
+                placeholder="Twitter Url"
+              ></Input>
+            </Form.Field>
+            <Form.Field width={16}>
+              <label>Instagram</label>
+              <Input
+                value={instagram}
+                labelPosition="left"
+                onChange={this.onChange}
+                name="instagram"
+                type="text"
+                placeholder="Instagram Url"
+              ></Input>
+            </Form.Field>
+            <br />
+            <Button color="red" size="mini" type="submit">
+              Save <Icon name="save" />
+            </Button>
+          </Form>
+        </Wrapper>
       </Container>
     );
   }

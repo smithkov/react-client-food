@@ -4,6 +4,7 @@ import SideMenu from "./common/sideMenu";
 import ClientService from "../services/clientService";
 import { Col, Container, Row } from "reactstrap";
 import clientService from "../services/clientService";
+import Wrapper from "./wrapper";
 import {
   MISSING_USER_MSG,
   DEFAULT_BANNER,
@@ -90,9 +91,7 @@ class ShopForm extends Component {
               hasLoaded: true,
               shopName,
               shopId: id,
-              bannerPreviewUrl: banner
-                ? `${banner}`
-                : DEFAULT_BANNER,
+              bannerPreviewUrl: banner ? `${banner}` : DEFAULT_BANNER,
               logoPreviewUrl: logo ? `${logo}` : DEFAULT_LOGO,
               hasShop: data,
               firstAddress,
@@ -330,173 +329,164 @@ class ShopForm extends Component {
 
     return (
       <Container fluid={true}>
-        <Nav />
-        <AfterNav form={hasShop ? "Update Store" : "Create Store"} />
-        <hr></hr>
-        <Row style={{ paddingTop: "10px" }}>
-          <Col lg="2">
-            <SideMenu />
-          </Col>
-          <Col lg="1"></Col>
-          <Col className="dashboard-panel" lg="6">
-            <Message attached header="My store" />
-            <Form
-              loading={!hasLoaded}
-              className="attached fluid segment"
-              style={{
-                width: "100%",
-                margin: "auto",
-                height: "auto",
-                padding: 13,
-              }}
-              onSubmit={this.onSubmit}
+        <Wrapper>
+          <Message attached header="My store" />
+          <Form
+            loading={!hasLoaded}
+            className="attached fluid segment"
+            style={{
+              width: "100%",
+              margin: "auto",
+              height: "auto",
+              padding: 13,
+            }}
+            onSubmit={this.onSubmit}
+          >
+            <p class="h4 mb-4">Store Details</p>
+
+            {nameAlert}
+            <Form.Field required>
+              <label>Store name</label>
+              <input
+                type="text"
+                required
+                value={shopName}
+                onBlur={this.onBlur}
+                name="shopName"
+                onChange={this.onChange}
+                placeholder="Store name"
+              />
+            </Form.Field>
+            {urlAlert}
+            <Form.Field>
+              <Input
+                name="shopUrl"
+                value={shopUrl}
+                onBlur={this.onBlur}
+                onChange={this.onChange}
+                label="https://foodengo.co.uk/"
+                placeholder="your-store-url"
+              />
+            </Form.Field>
+            <Form.Group widths="equal">
+              <Form.Field>
+                <label>Logo</label>
+                <input type="file" onChange={this.fileChangedHandler} />
+              </Form.Field>
+
+              <Image
+                style={{ paddingTop: 5 }}
+                src={logoPreviewUrl || DEFAULT_LOGO}
+                size="small"
+              />
+            </Form.Group>
+            <Form.Field>
+              <label>Banner (728×90)</label>
+              <input type="file" onChange={this.fileChangedHandler2} />
+            </Form.Field>
+            <br />
+            <Image src={bannerPreviewUrl || DEFAULT_BANNER} />
+            <br />
+            <hr></hr>
+            <Message floating content="Business Address" />
+            <Form.Field required>
+              <label>Address 1</label>
+              <input
+                type="text"
+                required
+                value={firstAddress}
+                name="firstAddress"
+                onChange={this.onChange}
+                placeholder="Address 1"
+              />
+            </Form.Field>
+            <Form.Field>
+              <label>Address 2</label>
+              <input
+                type="text"
+                value={secondAddress}
+                name="secondAddress"
+                onChange={this.onChange}
+                placeholder="Address 2"
+              />
+            </Form.Field>
+            <Form.Group widths="equal">
+              <Form.Field required>
+                <label>Post code</label>
+                <input
+                  type="text"
+                  required
+                  value={postCode}
+                  name="postCode"
+                  onChange={this.onChange}
+                  placeholder="Post code"
+                />
+              </Form.Field>
+              <Form.Field required>
+                <label>City</label>
+                <Dropdown
+                  required
+                  fluid
+                  selection
+                  search
+                  defaultValue={selectedCity}
+                  name="selectedCity"
+                  label="City"
+                  placeholder={cityText}
+                  options={city}
+                  onChange={this.onChangeDropdown}
+                  loading={loadingCity}
+                />
+              </Form.Field>
+            </Form.Group>
+            <Message floating content="Food Origin" />
+            <Form.Group widths="equal">
+              <Form.Field required>
+                <label>Food Origin</label>
+                <Dropdown
+                  required
+                  fluid
+                  selection
+                  search
+                  defaultValue={selectedOrigin}
+                  name="selectedOrigin"
+                  label="Food Origin"
+                  placeholder={originText}
+                  options={origin}
+                  onChange={this.onChangeDropdown}
+                  loading={loadingOrigin}
+                />
+              </Form.Field>
+            </Form.Group>
+            <Form.Field>
+              <Popup
+                trigger={<label>About your store (recommended)</label>}
+                content="Enter your cooking qualifications, years of cooking experience, etc."
+                position="top left"
+              />
+
+              <Form.TextArea
+                required
+                name="about"
+                value={about}
+                maxlength="1000"
+                onChange={this.onChange}
+                placeholder="About your store"
+              />
+            </Form.Field>
+
+            <Button
+              color="red"
+              loading={loading}
+              disabled={disabled}
+              type="submit"
             >
-              <p class="h4 mb-4">Store Details</p>
-
-              {nameAlert}
-              <Form.Field required>
-                <label>Store name</label>
-                <input
-                  type="text"
-                  required
-                  value={shopName}
-                  onBlur={this.onBlur}
-                  name="shopName"
-                  onChange={this.onChange}
-                  placeholder="Store name"
-                />
-              </Form.Field>
-              {urlAlert}
-              <Form.Field>
-                <Input
-                  name="shopUrl"
-                  value={shopUrl}
-                  onBlur={this.onBlur}
-                  onChange={this.onChange}
-                  label="https://foodengo.co.uk/"
-                  placeholder="your-store-url"
-                />
-              </Form.Field>
-              <Form.Group widths="equal">
-                <Form.Field>
-                  <label>Logo</label>
-                  <input type="file" onChange={this.fileChangedHandler} />
-                </Form.Field>
-
-                <Image
-                  style={{ paddingTop: 5 }}
-                  src={logoPreviewUrl || DEFAULT_LOGO}
-                  size="small"
-                />
-              </Form.Group>
-              <Form.Field>
-                <label>Banner (728×90)</label>
-                <input type="file" onChange={this.fileChangedHandler2} />
-              </Form.Field>
-              <br />
-              <Image src={bannerPreviewUrl || DEFAULT_BANNER} />
-              <br />
-              <hr></hr>
-              <Message floating content="Business Address" />
-              <Form.Field required>
-                <label>Address 1</label>
-                <input
-                  type="text"
-                  required
-                  value={firstAddress}
-                  name="firstAddress"
-                  onChange={this.onChange}
-                  placeholder="Address 1"
-                />
-              </Form.Field>
-              <Form.Field>
-                <label>Address 2</label>
-                <input
-                  type="text"
-                  value={secondAddress}
-                  name="secondAddress"
-                  onChange={this.onChange}
-                  placeholder="Address 2"
-                />
-              </Form.Field>
-              <Form.Group widths="equal">
-                <Form.Field required>
-                  <label>Post code</label>
-                  <input
-                    type="text"
-                    required
-                    value={postCode}
-                    name="postCode"
-                    onChange={this.onChange}
-                    placeholder="Post code"
-                  />
-                </Form.Field>
-                <Form.Field required>
-                  <label>City</label>
-                  <Dropdown
-                    required
-                    fluid
-                    selection
-                    search
-                    defaultValue={selectedCity}
-                    name="selectedCity"
-                    label="City"
-                    placeholder={cityText}
-                    options={city}
-                    onChange={this.onChangeDropdown}
-                    loading={loadingCity}
-                  />
-                </Form.Field>
-              </Form.Group>
-              <Message floating content="Food Origin" />
-              <Form.Group widths="equal">
-                <Form.Field required>
-                  <label>Food Origin</label>
-                  <Dropdown
-                    required
-                    fluid
-                    selection
-                    search
-                    defaultValue={selectedOrigin}
-                    name="selectedOrigin"
-                    label="Food Origin"
-                    placeholder={originText}
-                    options={origin}
-                    onChange={this.onChangeDropdown}
-                    loading={loadingOrigin}
-                  />
-                </Form.Field>
-              </Form.Group>
-              <Form.Field>
-                <Popup
-                  trigger={<label>About your store (recommended)</label>}
-                  content="Enter your cooking qualifications, years of cooking experience, etc."
-                  position="top left"
-                />
-
-                <Form.TextArea
-                  required
-                  name="about"
-                  value={about}
-                  maxlength="1000"
-                  onChange={this.onChange}
-                  placeholder="About your store"
-                />
-              </Form.Field>
-
-              <Button
-                color="red"
-                loading={loading}
-                disabled={disabled}
-                type="submit"
-              >
-                Save store <Icon name="save" />
-              </Button>
-            </Form>
-            <br />
-            <br />
-          </Col>
-        </Row>
+              Save store <Icon name="save" />
+            </Button>
+          </Form>
+          <br />
+          <br />
+        </Wrapper>
       </Container>
     );
   }

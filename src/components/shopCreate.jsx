@@ -4,6 +4,7 @@ import SideMenu from "../adminComponents/common/sideMenu";
 import ClientService from "../services/clientService";
 import { Col, Row } from "reactstrap";
 import clientService from "../services/clientService";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   MISSING_USER_MSG,
@@ -11,6 +12,7 @@ import {
   toastOptions,
   DEFAULT_LOGO,
   scrollToTop,
+  LOGIN_URL
 } from "../utility/global";
 import {
   Button,
@@ -65,8 +67,8 @@ export default class ShopCreate extends Component {
   componentDidMount = async () => {
     const originResponse = await ClientService.origins();
     this.setState({
-      loadingOrigin:false
-    })
+      loadingOrigin: false,
+    });
     let origins = originResponse.data.data.map((origin) => {
       return {
         key: origin.id,
@@ -79,8 +81,8 @@ export default class ShopCreate extends Component {
     });
     const cityResponse = await ClientService.cities();
     this.setState({
-      loadingCity:false
-    })
+      loadingCity: false,
+    });
     let cities = cityResponse.data.data.map((city) => {
       return {
         key: city.id,
@@ -236,7 +238,7 @@ export default class ShopCreate extends Component {
       isValidationError,
       validationMsg,
       loadingCity,
-      loadingOrigin
+      loadingOrigin,
     } = this.state;
     const nameAlert = isDuplicateName ? (
       <Message color="yellow">
@@ -273,10 +275,7 @@ export default class ShopCreate extends Component {
               <List>
                 <List.Item icon="check" content="Fill out the form." />
                 <List.Item icon="check" content="Verify your email address." />
-                <List.Item
-                  icon="check"
-                  content="List food photos."
-                />
+                <List.Item icon="check" content="List food photos." />
               </List>
             </Container>
           </Col>
@@ -454,8 +453,11 @@ export default class ShopCreate extends Component {
                 Submit
               </Button>
             </Form>
-            <br />
-            <br />
+           
+            <Message style={{textAlign:"center"}}>
+              Already have an account? <Link to={LOGIN_URL}>Log In</Link>
+            </Message>
+            <br/>
           </Col>
           <Col className="padding" lg="3">
             <Container fluid>

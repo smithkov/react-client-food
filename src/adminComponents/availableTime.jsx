@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import SideMenu from "./common/sideMenu";
 import { Col, Container, Row } from "reactstrap";
 import Nav from "./common/nav";
+import Wrapper from "./wrapper";
 import {
   Grid,
   Segment,
@@ -288,12 +289,12 @@ class AvailableTime extends Component {
         friId,
         satId,
       } = this.state;
-      
+
       this.setState({
         loading: true,
         disabled: true,
       });
-  
+
       const result = await clientService.createOpeningDay({
         shopId,
         sunChecked,
@@ -371,378 +372,367 @@ class AvailableTime extends Component {
 
     return (
       <Container fluid={true}>
-        <Nav />
-        <AfterNav form={"Opening time"} />
-        <hr></hr>
-        <Row className="dash-layout">
-          <Col lg="2">
-            <SideMenu />
-          </Col>
-
-          <Col lg="1"></Col>
-
-          <Col className="dashboard-panel" lg="6">
-            <Message attached header="Opening time" />
-            <Segment raised>
-              <Grid padded columns="equal">
-                <Grid.Row>
-                  <Grid.Column>
-                    <h4>Sunday</h4>
-                  </Grid.Column>
-                  <Grid.Column>
-                    <Checkbox
-                      onChange={this.onChangeCheck}
-                      checked={sunChecked}
-                      name="sunChecked"
-                      toggle
-                    />
-                  </Grid.Column>
-                  <Grid.Column>
-                    {sunChecked ? (
-                      <MuiPickersUtilsProvider utils={MomentUtils}>
-                        <KeyboardTimePicker
-                          id="time-picker"
-                          name="sunMin"
-                          value={selectedSunMin}
-                          onChange={this.handleSunMin}
-                          KeyboardButtonProps={{
-                            "aria-label": "change time",
-                          }}
-                        />
-                      </MuiPickersUtilsProvider>
-                    ) : (
-                      ""
-                    )}
-                  </Grid.Column>
-                  <Grid.Column>
-                    {sunChecked ? (
-                      <MuiPickersUtilsProvider utils={MomentUtils}>
-                        <KeyboardTimePicker
-                          id="time-picker"
-                          name="sunMax"
-                          value={selectedSunMax}
-                          onChange={this.handleSunMax}
-                          KeyboardButtonProps={{
-                            "aria-label": "change time",
-                          }}
-                        />
-                      </MuiPickersUtilsProvider>
-                    ) : (
-                      ""
-                    )}
-                  </Grid.Column>
-                </Grid.Row>
-              </Grid>
-              <Grid padded columns="equal">
-                <Grid.Row>
-                  <Grid.Column>
-                    <h4>Monday</h4>
-                  </Grid.Column>
-                  <Grid.Column>
-                    <Checkbox
-                      onChange={this.onChangeCheck}
-                      checked={monChecked}
-                      name="monChecked"
-                      toggle
-                    />
-                  </Grid.Column>
-                  <Grid.Column>
-                    {monChecked ? (
-                      <MuiPickersUtilsProvider utils={MomentUtils}>
-                        <KeyboardTimePicker
-                          id="time-picker"
-                          name="monMin"
-                          value={selectedMonMin}
-                          onChange={this.handleMonMin}
-                          KeyboardButtonProps={{
-                            "aria-label": "change time",
-                          }}
-                        />
-                      </MuiPickersUtilsProvider>
-                    ) : (
-                      ""
-                    )}
-                  </Grid.Column>
-                  <Grid.Column>
-                    {monChecked ? (
-                      <MuiPickersUtilsProvider utils={MomentUtils}>
-                        <KeyboardTimePicker
-                          id="time-picker"
-                          name="monMax"
-                          value={selectedMonMax}
-                          onChange={this.handleMonMax}
-                          KeyboardButtonProps={{
-                            "aria-label": "change time",
-                          }}
-                        />
-                      </MuiPickersUtilsProvider>
-                    ) : (
-                      ""
-                    )}
-                  </Grid.Column>
-                </Grid.Row>
-              </Grid>
-              <Grid padded columns="equal">
-                <Grid.Row>
-                  <Grid.Column>
-                    <h4>Tuesday</h4>
-                  </Grid.Column>
-                  <Grid.Column>
-                    <Checkbox
-                      onChange={this.onChangeCheck}
-                      checked={tueChecked}
-                      name="tueChecked"
-                      toggle
-                    />
-                  </Grid.Column>
-                  <Grid.Column>
-                    {tueChecked ? (
-                      <MuiPickersUtilsProvider utils={MomentUtils}>
-                        <KeyboardTimePicker
-                          id="time-picker"
-                          name="tueMin"
-                          value={selectedTueMin}
-                          onChange={this.handleTueMin}
-                          KeyboardButtonProps={{
-                            "aria-label": "change time",
-                          }}
-                        />
-                      </MuiPickersUtilsProvider>
-                    ) : (
-                      ""
-                    )}
-                  </Grid.Column>
-                  <Grid.Column>
-                    {tueChecked ? (
-                      <MuiPickersUtilsProvider utils={MomentUtils}>
-                        <KeyboardTimePicker
-                          id="time-picker"
-                          name="tueMax"
-                          value={selectedTueMax}
-                          onChange={this.handleTueMax}
-                          KeyboardButtonProps={{
-                            "aria-label": "change time",
-                          }}
-                        />
-                      </MuiPickersUtilsProvider>
-                    ) : (
-                      ""
-                    )}
-                  </Grid.Column>
-                </Grid.Row>
-              </Grid>
-              <Grid padded columns="equal">
-                <Grid.Row>
-                  <Grid.Column>
-                    <h4>Wednesday</h4>
-                  </Grid.Column>
-                  <Grid.Column>
-                    <Checkbox
-                      onChange={this.onChangeCheck}
-                      checked={wedChecked}
-                      name="wedChecked"
-                      toggle
-                    />
-                  </Grid.Column>
-                  <Grid.Column>
-                    {wedChecked ? (
-                      <MuiPickersUtilsProvider utils={MomentUtils}>
-                        <KeyboardTimePicker
-                          id="time-picker"
-                          name="wedMin"
-                          value={selectedWedMin}
-                          onChange={this.handleWedMin}
-                          KeyboardButtonProps={{
-                            "aria-label": "change time",
-                          }}
-                        />
-                      </MuiPickersUtilsProvider>
-                    ) : (
-                      ""
-                    )}
-                  </Grid.Column>
-                  <Grid.Column>
-                    {wedChecked ? (
-                      <MuiPickersUtilsProvider utils={MomentUtils}>
-                        <KeyboardTimePicker
-                          id="time-picker"
-                          name="wedMax"
-                          value={selectedWedMax}
-                          onChange={this.handleWedMax}
-                          KeyboardButtonProps={{
-                            "aria-label": "change time",
-                          }}
-                        />
-                      </MuiPickersUtilsProvider>
-                    ) : (
-                      ""
-                    )}
-                  </Grid.Column>
-                </Grid.Row>
-              </Grid>
-              <Grid padded columns="equal">
-                <Grid.Row>
-                  <Grid.Column>
-                    <h4>Thursday</h4>
-                  </Grid.Column>
-                  <Grid.Column>
-                    <Checkbox
-                      onChange={this.onChangeCheck}
-                      checked={thurChecked}
-                      name="thurChecked"
-                      toggle
-                    />
-                  </Grid.Column>
-                  <Grid.Column>
-                    {thurChecked ? (
-                      <MuiPickersUtilsProvider utils={MomentUtils}>
-                        <KeyboardTimePicker
-                          id="time-picker"
-                          name="thurMin"
-                          value={selectedThurMin}
-                          onChange={this.handleThurMin}
-                          KeyboardButtonProps={{
-                            "aria-label": "change time",
-                          }}
-                        />
-                      </MuiPickersUtilsProvider>
-                    ) : (
-                      ""
-                    )}
-                  </Grid.Column>
-                  <Grid.Column>
-                    {thurChecked ? (
-                      <MuiPickersUtilsProvider utils={MomentUtils}>
-                        <KeyboardTimePicker
-                          id="time-picker"
-                          name="thurMax"
-                          value={selectedThurMax}
-                          onChange={this.handleThurMax}
-                          KeyboardButtonProps={{
-                            "aria-label": "change time",
-                          }}
-                        />
-                      </MuiPickersUtilsProvider>
-                    ) : (
-                      ""
-                    )}
-                  </Grid.Column>
-                </Grid.Row>
-              </Grid>
-              <Grid padded columns="equal">
-                <Grid.Row>
-                  <Grid.Column>
-                    <h4>Friday</h4>
-                  </Grid.Column>
-                  <Grid.Column>
-                    <Checkbox
-                      onChange={this.onChangeCheck}
-                      checked={friChecked}
-                      name="friChecked"
-                      toggle
-                    />
-                  </Grid.Column>
-                  <Grid.Column>
-                    {friChecked ? (
-                      <MuiPickersUtilsProvider utils={MomentUtils}>
-                        <KeyboardTimePicker
-                          id="time-picker"
-                          name="friMin"
-                          value={selectedFriMin}
-                          onChange={this.handleFriMin}
-                          KeyboardButtonProps={{
-                            "aria-label": "change time",
-                          }}
-                        />
-                      </MuiPickersUtilsProvider>
-                    ) : (
-                      ""
-                    )}
-                  </Grid.Column>
-                  <Grid.Column>
-                    {friChecked ? (
-                      <MuiPickersUtilsProvider utils={MomentUtils}>
-                        <KeyboardTimePicker
-                          id="time-picker"
-                          name="friMax"
-                          value={selectedFriMax}
-                          onChange={this.handleFriMax}
-                          KeyboardButtonProps={{
-                            "aria-label": "change time",
-                          }}
-                        />
-                      </MuiPickersUtilsProvider>
-                    ) : (
-                      ""
-                    )}
-                  </Grid.Column>
-                </Grid.Row>
-              </Grid>
-              <Grid padded columns="equal">
-                <Grid.Row>
-                  <Grid.Column>
-                    <h4>Saturday</h4>
-                  </Grid.Column>
-                  <Grid.Column>
-                    <Checkbox
-                      onChange={this.onChangeCheck}
-                      checked={satChecked}
-                      name="satChecked"
-                      toggle
-                    />
-                  </Grid.Column>
-                  <Grid.Column>
-                    {satChecked ? (
-                      <MuiPickersUtilsProvider utils={MomentUtils}>
-                        <KeyboardTimePicker
-                          id="time-picker"
-                          name="satMin"
-                          value={selectedSatMin}
-                          onChange={this.handleSatMin}
-                          KeyboardButtonProps={{
-                            "aria-label": "change time",
-                          }}
-                        />
-                      </MuiPickersUtilsProvider>
-                    ) : (
-                      ""
-                    )}
-                  </Grid.Column>
-                  <Grid.Column>
-                    {satChecked ? (
-                      <MuiPickersUtilsProvider utils={MomentUtils}>
-                        <KeyboardTimePicker
-                          id="time-picker"
-                          name="satMax"
-                          value={selectedSatMax}
-                          onChange={this.handleSatMax}
-                          KeyboardButtonProps={{
-                            "aria-label": "change time",
-                          }}
-                        />
-                      </MuiPickersUtilsProvider>
-                    ) : (
-                      ""
-                    )}
-                  </Grid.Column>
-                </Grid.Row>
-              </Grid>
-              <hr></hr>
-              <Button
-                loading={loading}
-                disabled={disabled}
-                padding
-                color="red"
-                onClick={this.onSubmit}
-                type="button"
-              >
-                Save <Icon name="save" />
-              </Button>
-            </Segment>
-            <br />
-            <br />
-          </Col>
-        </Row>
+        <Wrapper>
+          <Message attached header="Opening time" />
+          <Segment raised>
+            <Grid padded columns="equal">
+              <Grid.Row>
+                <Grid.Column>
+                  <h4>Sunday</h4>
+                </Grid.Column>
+                <Grid.Column>
+                  <Checkbox
+                    onChange={this.onChangeCheck}
+                    checked={sunChecked}
+                    name="sunChecked"
+                    toggle
+                  />
+                </Grid.Column>
+                <Grid.Column>
+                  {sunChecked ? (
+                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                      <KeyboardTimePicker
+                        id="time-picker"
+                        name="sunMin"
+                        value={selectedSunMin}
+                        onChange={this.handleSunMin}
+                        KeyboardButtonProps={{
+                          "aria-label": "change time",
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
+                  ) : (
+                    ""
+                  )}
+                </Grid.Column>
+                <Grid.Column>
+                  {sunChecked ? (
+                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                      <KeyboardTimePicker
+                        id="time-picker"
+                        name="sunMax"
+                        value={selectedSunMax}
+                        onChange={this.handleSunMax}
+                        KeyboardButtonProps={{
+                          "aria-label": "change time",
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
+                  ) : (
+                    ""
+                  )}
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
+            <Grid padded columns="equal">
+              <Grid.Row>
+                <Grid.Column>
+                  <h4>Monday</h4>
+                </Grid.Column>
+                <Grid.Column>
+                  <Checkbox
+                    onChange={this.onChangeCheck}
+                    checked={monChecked}
+                    name="monChecked"
+                    toggle
+                  />
+                </Grid.Column>
+                <Grid.Column>
+                  {monChecked ? (
+                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                      <KeyboardTimePicker
+                        id="time-picker"
+                        name="monMin"
+                        value={selectedMonMin}
+                        onChange={this.handleMonMin}
+                        KeyboardButtonProps={{
+                          "aria-label": "change time",
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
+                  ) : (
+                    ""
+                  )}
+                </Grid.Column>
+                <Grid.Column>
+                  {monChecked ? (
+                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                      <KeyboardTimePicker
+                        id="time-picker"
+                        name="monMax"
+                        value={selectedMonMax}
+                        onChange={this.handleMonMax}
+                        KeyboardButtonProps={{
+                          "aria-label": "change time",
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
+                  ) : (
+                    ""
+                  )}
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
+            <Grid padded columns="equal">
+              <Grid.Row>
+                <Grid.Column>
+                  <h4>Tuesday</h4>
+                </Grid.Column>
+                <Grid.Column>
+                  <Checkbox
+                    onChange={this.onChangeCheck}
+                    checked={tueChecked}
+                    name="tueChecked"
+                    toggle
+                  />
+                </Grid.Column>
+                <Grid.Column>
+                  {tueChecked ? (
+                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                      <KeyboardTimePicker
+                        id="time-picker"
+                        name="tueMin"
+                        value={selectedTueMin}
+                        onChange={this.handleTueMin}
+                        KeyboardButtonProps={{
+                          "aria-label": "change time",
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
+                  ) : (
+                    ""
+                  )}
+                </Grid.Column>
+                <Grid.Column>
+                  {tueChecked ? (
+                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                      <KeyboardTimePicker
+                        id="time-picker"
+                        name="tueMax"
+                        value={selectedTueMax}
+                        onChange={this.handleTueMax}
+                        KeyboardButtonProps={{
+                          "aria-label": "change time",
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
+                  ) : (
+                    ""
+                  )}
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
+            <Grid padded columns="equal">
+              <Grid.Row>
+                <Grid.Column>
+                  <h4>Wednesday</h4>
+                </Grid.Column>
+                <Grid.Column>
+                  <Checkbox
+                    onChange={this.onChangeCheck}
+                    checked={wedChecked}
+                    name="wedChecked"
+                    toggle
+                  />
+                </Grid.Column>
+                <Grid.Column>
+                  {wedChecked ? (
+                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                      <KeyboardTimePicker
+                        id="time-picker"
+                        name="wedMin"
+                        value={selectedWedMin}
+                        onChange={this.handleWedMin}
+                        KeyboardButtonProps={{
+                          "aria-label": "change time",
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
+                  ) : (
+                    ""
+                  )}
+                </Grid.Column>
+                <Grid.Column>
+                  {wedChecked ? (
+                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                      <KeyboardTimePicker
+                        id="time-picker"
+                        name="wedMax"
+                        value={selectedWedMax}
+                        onChange={this.handleWedMax}
+                        KeyboardButtonProps={{
+                          "aria-label": "change time",
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
+                  ) : (
+                    ""
+                  )}
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
+            <Grid padded columns="equal">
+              <Grid.Row>
+                <Grid.Column>
+                  <h4>Thursday</h4>
+                </Grid.Column>
+                <Grid.Column>
+                  <Checkbox
+                    onChange={this.onChangeCheck}
+                    checked={thurChecked}
+                    name="thurChecked"
+                    toggle
+                  />
+                </Grid.Column>
+                <Grid.Column>
+                  {thurChecked ? (
+                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                      <KeyboardTimePicker
+                        id="time-picker"
+                        name="thurMin"
+                        value={selectedThurMin}
+                        onChange={this.handleThurMin}
+                        KeyboardButtonProps={{
+                          "aria-label": "change time",
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
+                  ) : (
+                    ""
+                  )}
+                </Grid.Column>
+                <Grid.Column>
+                  {thurChecked ? (
+                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                      <KeyboardTimePicker
+                        id="time-picker"
+                        name="thurMax"
+                        value={selectedThurMax}
+                        onChange={this.handleThurMax}
+                        KeyboardButtonProps={{
+                          "aria-label": "change time",
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
+                  ) : (
+                    ""
+                  )}
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
+            <Grid padded columns="equal">
+              <Grid.Row>
+                <Grid.Column>
+                  <h4>Friday</h4>
+                </Grid.Column>
+                <Grid.Column>
+                  <Checkbox
+                    onChange={this.onChangeCheck}
+                    checked={friChecked}
+                    name="friChecked"
+                    toggle
+                  />
+                </Grid.Column>
+                <Grid.Column>
+                  {friChecked ? (
+                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                      <KeyboardTimePicker
+                        id="time-picker"
+                        name="friMin"
+                        value={selectedFriMin}
+                        onChange={this.handleFriMin}
+                        KeyboardButtonProps={{
+                          "aria-label": "change time",
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
+                  ) : (
+                    ""
+                  )}
+                </Grid.Column>
+                <Grid.Column>
+                  {friChecked ? (
+                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                      <KeyboardTimePicker
+                        id="time-picker"
+                        name="friMax"
+                        value={selectedFriMax}
+                        onChange={this.handleFriMax}
+                        KeyboardButtonProps={{
+                          "aria-label": "change time",
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
+                  ) : (
+                    ""
+                  )}
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
+            <Grid padded columns="equal">
+              <Grid.Row>
+                <Grid.Column>
+                  <h4>Saturday</h4>
+                </Grid.Column>
+                <Grid.Column>
+                  <Checkbox
+                    onChange={this.onChangeCheck}
+                    checked={satChecked}
+                    name="satChecked"
+                    toggle
+                  />
+                </Grid.Column>
+                <Grid.Column>
+                  {satChecked ? (
+                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                      <KeyboardTimePicker
+                        id="time-picker"
+                        name="satMin"
+                        value={selectedSatMin}
+                        onChange={this.handleSatMin}
+                        KeyboardButtonProps={{
+                          "aria-label": "change time",
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
+                  ) : (
+                    ""
+                  )}
+                </Grid.Column>
+                <Grid.Column>
+                  {satChecked ? (
+                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                      <KeyboardTimePicker
+                        id="time-picker"
+                        name="satMax"
+                        value={selectedSatMax}
+                        onChange={this.handleSatMax}
+                        KeyboardButtonProps={{
+                          "aria-label": "change time",
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
+                  ) : (
+                    ""
+                  )}
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
+            <hr></hr>
+            <Button
+              loading={loading}
+              disabled={disabled}
+              padding
+              color="red"
+              onClick={this.onSubmit}
+              type="button"
+            >
+              Save <Icon name="save" />
+            </Button>
+          </Segment>
+          <br />
+          <br />
+        </Wrapper>
       </Container>
     );
   }

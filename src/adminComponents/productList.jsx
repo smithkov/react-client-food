@@ -11,6 +11,7 @@ import { fetchUser } from "../actions/productActions";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { toast } from "react-toastify";
+import Wrapper from "./wrapper";
 
 class ShopForm extends Component {
   constructor(props) {
@@ -50,82 +51,72 @@ class ShopForm extends Component {
   render() {
     return (
       <Container fluid={true}>
-        <Nav />
-        <AfterNav form={"Food List"} />
-        <hr></hr>
-        <Row className="dash-layout">
-          <Col lg="2">
-            <SideMenu />
-          </Col>
+        <Wrapper>
+          {" "}
+          {this.state.hasData ? (
+            <Table celled compact>
+              <Table.Header fullWidth>
+                <Table.Row>
+                  <Table.HeaderCell>Title</Table.HeaderCell>
+                  <Table.HeaderCell>Category</Table.HeaderCell>
+                  <Table.HeaderCell>Price</Table.HeaderCell>
+                  <Table.HeaderCell>Discount Price</Table.HeaderCell>
+                  <Table.HeaderCell></Table.HeaderCell>
+                </Table.Row>
+              </Table.Header>
 
-          <Col lg="1"></Col>
+              <Table.Body>
+                {this.state.products.map((product) => {
+                  // const rating = { id: 2, value: seller.rating}
+                  return (
+                    <Table.Row key={product.id}>
+                      <Table.Cell>{product.name}</Table.Cell>
+                      <Table.Cell>
+                        {product.Category ? product.Category.name : ""}
+                      </Table.Cell>
+                      <Table.Cell>
+                        £{parseInt(product.price).toFixed(2)}
+                      </Table.Cell>
+                      <Table.Cell>
+                        £{parseInt(product.discountPrice).toFixed(2)}
+                      </Table.Cell>
+                      <Table.Cell title="Click to edit meal">
+                        <Link to={`/meal/update/${product.id}`}>
+                          <Icon color="blue" name="edit" /> Edit
+                        </Link>
+                      </Table.Cell>
+                    </Table.Row>
+                  );
+                })}
+              </Table.Body>
 
-          <Col className="dashboard-panel" lg="6">
-            {this.state.hasData ? (
-              <Table celled compact>
-                <Table.Header fullWidth>
-                  <Table.Row>
-                    <Table.HeaderCell>Title</Table.HeaderCell>
-                    <Table.HeaderCell>Category</Table.HeaderCell>
-                    <Table.HeaderCell>Price</Table.HeaderCell>
-                    <Table.HeaderCell>Discount Price</Table.HeaderCell>
-                    <Table.HeaderCell></Table.HeaderCell>
-                  </Table.Row>
-                </Table.Header>
-
-                <Table.Body>
-                  {this.state.products.map((product) => {
-                    // const rating = { id: 2, value: seller.rating}
-                    return (
-                      <Table.Row key={product.id}>
-                        <Table.Cell>{product.name}</Table.Cell>
-                        <Table.Cell>
-                          {product.Category ? product.Category.name : ""}
-                        </Table.Cell>
-                        <Table.Cell>
-                          £{parseInt(product.price).toFixed(2)}
-                        </Table.Cell>
-                        <Table.Cell>
-                          £{parseInt(product.discountPrice).toFixed(2)}
-                        </Table.Cell>
-                        <Table.Cell title="Click to edit meal">
-                          <Link to={`/meal/update/${product.id}`}>
-                            <Icon color="blue" name="edit" /> Edit
-                          </Link>
-                        </Table.Cell>
-                      </Table.Row>
-                    );
-                  })}
-                </Table.Body>
-
-                <Table.Footer fullWidth>
-                  <Table.Row>
-                    <Table.HeaderCell />
-                    <Table.HeaderCell colSpan="4">
-                      <Link to={MEAL_CREATE}>
-                        <Button
-                          floated="right"
-                          icon
-                          labelPosition="left"
-                          color="red"
-                          size="small"
-                        >
-                          <Icon name="add circle" /> Add food
-                        </Button>
-                      </Link>
-                    </Table.HeaderCell>
-                  </Table.Row>
-                </Table.Footer>
-              </Table>
-            ) : (
-              <Link to={MEAL_CREATE}>
-                <Button type="submit" color="red" fluid size="large">
-                  Create food <Icon name="save" />
-                </Button>
-              </Link>
-            )}
-          </Col>
-        </Row>
+              <Table.Footer fullWidth>
+                <Table.Row>
+                  <Table.HeaderCell />
+                  <Table.HeaderCell colSpan="4">
+                    <Link to={MEAL_CREATE}>
+                      <Button
+                        floated="right"
+                        icon
+                        labelPosition="left"
+                        color="red"
+                        size="small"
+                      >
+                        <Icon name="add circle" /> Add food
+                      </Button>
+                    </Link>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Footer>
+            </Table>
+          ) : (
+            <Link to={MEAL_CREATE}>
+              <Button type="submit" color="red" fluid size="large">
+                Create food <Icon name="save" />
+              </Button>
+            </Link>
+          )}
+        </Wrapper>
       </Container>
     );
   }

@@ -47,7 +47,9 @@ class Nav extends Component {
     return (
       <Menu fixed>
         <Menu.Item>
+        <Link to={'/'}>
           <Image size="mini" circular src="/images/onelogo.png" />
+          </Link>
         </Menu.Item>
 
         <Menu.Item

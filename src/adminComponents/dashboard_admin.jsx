@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Nav from "./common/nav";
 import SideMenu from "./common/sideMenu";
+import Wrapper from "./wrapper";
 import {
   Card,
   Button,
@@ -9,6 +10,7 @@ import {
   Grid,
   Message,
   Loader,
+  Responsive,
 } from "semantic-ui-react";
 import { Col, Container, Row } from "reactstrap";
 import AfterNav from "./common/afterNav";
@@ -29,7 +31,11 @@ import { fetchUser } from "../actions/productActions";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { toast } from "react-toastify";
+const getWidth = () => {
+  const isSSR = typeof window === "undefined";
 
+  return isSSR ? Responsive.onlyTablet.minWidth : window.innerWidth;
+};
 class Dashboard extends Component {
   constructor(props) {
     super(props);
@@ -67,47 +73,44 @@ class Dashboard extends Component {
       });
     }
   };
-  
+
   render() {
     const { isSeller, showTemp, hasEmailVerified } = this.state;
     let mailTempt;
-    setTimeout(()=> {
+    setTimeout(() => {
       this.setState({
-        showTemp:true
-      })
+        showTemp: true,
+      });
     }, 5000);
 
     return (
-      <Container fluid={true}>
-        <Nav />
-        <AfterNav form={"Dashboard"} />
-        <hr></hr>
-
-        <Row style={{ paddingTop: "10px", height: 600 }}>
-          <Col lg="2" sm="12" xs="12">
-            <SideMenu />
-          </Col>
-          <Col lg="10">
+      
+        <Container fluid={true}>
+         
+          <Wrapper>
             <Grid padded stackable>
-              {showTemp? hasEmailVerified ? (
-                ""
+              {showTemp ? (
+                hasEmailVerified ? (
+                  ""
+                ) : (
+                  <Grid.Row>
+                    <Grid.Column width={16}>
+                      <Message warning icon>
+                        <Icon name="warning circle" />
+                        <Message.Content>
+                          <Message.Header>
+                            Verify Your Email Address
+                          </Message.Header>
+                          Before proceeding, please check your email address for
+                          a verification link. If you did not receive the email.
+                        </Message.Content>
+                      </Message>
+                    </Grid.Column>
+                  </Grid.Row>
+                )
               ) : (
-                <Grid.Row>
-                  <Grid.Column width={16}>
-                    
-                    <Message warning icon>
-                      <Icon name="warning circle" />
-                      <Message.Content>
-                        <Message.Header>
-                          Verify Your Email Address
-                        </Message.Header>
-                        Before proceeding, please check your email address for a
-                        verification link. If you did not receive the email.
-                      </Message.Content>
-                    </Message>
-                  </Grid.Column>
-                </Grid.Row>
-              ):""}
+                ""
+              )}
 
               <Grid.Row columns={4}>
                 <Grid.Column>
@@ -237,9 +240,9 @@ class Dashboard extends Component {
                 </Grid.Column>
               </Grid.Row>
             </Grid>
-          </Col>
-        </Row>
-      </Container>
+          </Wrapper>
+        </Container>
+      
     );
   }
 }

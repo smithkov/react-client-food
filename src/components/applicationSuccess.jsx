@@ -75,16 +75,10 @@ class ApplicationSuccess extends Component {
               <Grid.Column></Grid.Column>
               <Grid.Column width={12}>
                 <Message info style={{ textAlign: "center" }}>
-                  <Message.Header>Successful Submission.</Message.Header>
+                  <Message.Header>Account Activation.</Message.Header>
                   <Message.Content>
-                    Your application was submitted successfully, we have
-                    forwarded acknowledgement and verification emails to the
-                    email entered.{" "}
-                    <strong>
-                      Alternatively, to activate your account, enter a
-                      verification code sent to your email in the input box
-                      below.{" "}
-                    </strong>
+                    Verify your account using a 6-digit activation code that was sent
+                    to your phone number.
                   </Message.Content>
                 </Message>
               </Grid.Column>
@@ -114,9 +108,7 @@ class ApplicationSuccess extends Component {
                   </Button>
                   <hr></hr>
                   <a href="/login">
-                    <Button fluid>
-                      Activate Later
-                    </Button>
+                    <Button fluid>Activate Later</Button>
                   </a>
                 </Grid.Column>
                 <Grid.Column></Grid.Column>

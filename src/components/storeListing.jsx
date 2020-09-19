@@ -40,7 +40,13 @@ import {
   Dimmer,
   Container,
   Message,
+  Responsive,
 } from "semantic-ui-react";
+const getWidth = () => {
+  const isSSR = typeof window === "undefined";
+
+  return isSSR ? Responsive.onlyTablet.minWidth : window.innerWidth;
+};
 const imageUrl = `${ENDPOINT}uploads`;
 class StoreListing extends Component {
   constructor(props) {
@@ -223,32 +229,43 @@ class StoreListing extends Component {
           </Grid>
           <Grid stackable>
             <Grid.Column width={4}>
-              <SideMenu
-                categoryEvent={this.categoryEvent}
-                originEvent={this.originEvent}
-              />
+              <Responsive
+                getWidth={getWidth}
+                minWidth={Responsive.onlyMobile.maxWidth}
+              >
+                <SideMenu
+                  categoryEvent={this.categoryEvent}
+                  originEvent={this.originEvent}
+                />
+              </Responsive>
             </Grid.Column>
+
             <Grid.Column width={12}>
               <Loader active={loadingCategory} inline="centered" />
-              <Slider {...settings}>
-                {categories.map((item) => {
-                  const { id, imagePath, display } = item;
-                  return (
-                    <div className="out" key={id}>
-                      <Card onClick={()=>this.categoryEvent(id)}>
-                        <img
-                          src={`${imageUrl}/${imagePath}`}
-                          style={categoryStyles}
-                        />
+              <Responsive
+                getWidth={getWidth}
+                minWidth={Responsive.onlyMobile.maxWidth}
+              >
+                <Slider {...settings}>
+                  {categories.map((item) => {
+                    const { id, imagePath, display } = item;
+                    return (
+                      <div className="out" key={id}>
+                        <Card onClick={() => this.categoryEvent(id)}>
+                          <img
+                            src={`${imageUrl}/${imagePath}`}
+                            style={categoryStyles}
+                          />
 
-                        <Card.Content>
-                          <Card.Meta>{display}</Card.Meta>
-                        </Card.Content>
-                      </Card>
-                    </div>
-                  );
-                })}
-              </Slider>
+                          <Card.Content>
+                            <Card.Meta>{display}</Card.Meta>
+                          </Card.Content>
+                        </Card>
+                      </div>
+                    );
+                  })}
+                </Slider>
+              </Responsive>
 
               <hr />
 
@@ -293,7 +310,13 @@ class StoreListing extends Component {
               <Grid stackable>
                 <Grid.Row style={{ margin: "auto" }} columns={3}>
                   {meals.map((item) => {
-                    return <ProductCard isForMenu={false} key={item.id} product={item} />;
+                    return (
+                      <ProductCard
+                        isForMenu={false}
+                        key={item.id}
+                        product={item}
+                      />
+                    );
                   })}
                 </Grid.Row>
               </Grid>

@@ -11,6 +11,7 @@ import {
   toastOptions,
   titleCase,
 } from "../utility/global";
+import Wrapper from "./wrapper";
 import {
   Button,
   Dropdown,
@@ -117,102 +118,93 @@ class PostCode extends Component {
 
     return (
       <Container fluid={true}>
-        <Nav />
-        <AfterNav form={"Post Codes"} />
-        <hr></hr>
-        <Row style={{ paddingTop: "10px" }}>
-          <Col lg="2">
-            <SideMenu />
-          </Col>
-          <Col lg="1"></Col>
-          <Col className="dashboard-panel" lg="6">
-            <Message attached header="Post Codes" />
-            <Form
-              className="attached fluid segment"
-              style={{
-                width: "100%",
-                margin: "auto",
-                height: "auto",
-                padding: 13,
-              }}
-              onSubmit={this.onSubmit}
-            >
-              <p class="h4 mb-4">Post Codes</p>
-              <Grid fluid stackable columns={2} padded>
-                <Grid.Row>
-                  <Grid.Column>
-                    <Input
-                      fluid
-                      type="text"
-                      name="postCode"
-                      value={postCode}
-                      onChange={this.onChange}
-                      placeholder="Enter post codes"
-                      action
+        <Wrapper>
+          <Message attached header="Post Codes" />
+          <Form
+            className="attached fluid segment"
+            style={{
+              width: "100%",
+              margin: "auto",
+              height: "auto",
+              padding: 13,
+            }}
+            onSubmit={this.onSubmit}
+          >
+            <p class="h4 mb-4">Post Codes</p>
+            <Grid fluid stackable columns={2} padded>
+              <Grid.Row>
+                <Grid.Column>
+                  <Input
+                    fluid
+                    type="text"
+                    name="postCode"
+                    value={postCode}
+                    onChange={this.onChange}
+                    placeholder="Enter post codes"
+                    action
+                  >
+                    <input />
+                    <Button
+                      onClick={this.addPostCode}
+                      color="green"
+                      disabled={!postCode}
+                      type="button"
                     >
-                      <input />
-                      <Button
-                        onClick={this.addPostCode}
-                        color="green"
-                        disabled={!postCode}
-                        type="button"
-                      >
-                        Add
-                      </Button>
-                    </Input>
-                  </Grid.Column>
-                  <Grid.Column></Grid.Column>
-                </Grid.Row>
+                      Add
+                    </Button>
+                  </Input>
+                </Grid.Column>
+                <Grid.Column></Grid.Column>
+              </Grid.Row>
 
-                <Grid.Row>
-                  <Grid.Column>
-                    {postCodes.length > 0 ? (
-                      <Table fluid color="green">
-                        <Table.Header>
-                          <Table.Row>
-                            <Table.HeaderCell>Post Code</Table.HeaderCell>
-                            <Table.HeaderCell></Table.HeaderCell>
-                          </Table.Row>
-                        </Table.Header>
+              <Grid.Row>
+                <Grid.Column>
+                  {postCodes.length > 0 ? (
+                    <Table fluid color="green">
+                      <Table.Header>
+                        <Table.Row>
+                          <Table.HeaderCell>Post Code</Table.HeaderCell>
+                          <Table.HeaderCell></Table.HeaderCell>
+                        </Table.Row>
+                      </Table.Header>
 
-                        <Table.Body>
-                          {postCodes.map((item) => {
-                            return (
-                              <Table.Row key={item.id}>
-                                <Table.Cell>
-                                  {" "}
-                                  <h4>{item.code}</h4>
-                                </Table.Cell>
-                                <Table.Cell textAlign="right">
-                                  <Link
-                                    title={`Remove ${item.code}`}
-                                    onClick={() => this.removePostCode(item.id)}
-                                  >
-                                    <Icon
-                                      color="red"
-                                      size="large"
-                                      name="minus circle"
-                                    />
-                                  </Link>{" "}
-                                </Table.Cell>
-                              </Table.Row>
-                            );
-                          })}
-                        </Table.Body>
-                      </Table>
-                    ) : (
-                      ""
-                    )}
-                  </Grid.Column>
+                      <Table.Body>
+                        {postCodes.map((item) => {
+                          return (
+                            <Table.Row key={item.id}>
+                              <Table.Cell>
+                                {" "}
+                                <h4>{item.code}</h4>
+                              </Table.Cell>
+                              <Table.Cell textAlign="right">
+                                <Link
+                                  title={`Remove ${item.code}`}
+                                  onClick={() => this.removePostCode(item.id)}
+                                >
+                                  <Icon
+                                    color="red"
+                                    size="large"
+                                    name="minus circle"
+                                  />
+                                </Link>{" "}
+                              </Table.Cell>
+                            </Table.Row>
+                          );
+                        })}
+                      </Table.Body>
+                    </Table>
+                  ) : (
+                    ""
+                  )}
+                </Grid.Column>
 
-                  <Grid.Column></Grid.Column>
-                </Grid.Row>
-              </Grid>
-            </Form>
-            <br />
-            <br />
-          </Col>
-        </Row>
+                <Grid.Column></Grid.Column>
+              </Grid.Row>
+            </Grid>
+          </Form>
+          <br />
+          <br />
+        </Wrapper>
       </Container>
     );
   }

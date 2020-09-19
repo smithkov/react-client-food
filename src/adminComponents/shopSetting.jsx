@@ -4,6 +4,7 @@ import SideMenu from "./common/sideMenu";
 import ClientService from "../services/clientService";
 import { Col, Container, Row } from "reactstrap";
 import clientService from "../services/clientService";
+import Wrapper from "./wrapper";
 import { toast } from "react-toastify";
 import {
   MISSING_USER_MSG,
@@ -25,7 +26,7 @@ import {
   Icon,
 } from "semantic-ui-react";
 import AfterNav from "./common/afterNav";
-const hour = [0,1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+const hour = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 const min = [];
 //import "date-fns";
 //import MomentUtils from "@date-io/moment";
@@ -95,7 +96,7 @@ export default class ShopSetting extends Component {
             minTime,
             prepareTime,
           } = data;
-         
+
           this.setState({
             cboMins: [{ value: "", text: "--Select mins--" }].concat(
               min.map((min) => {
@@ -112,8 +113,8 @@ export default class ShopSetting extends Component {
             shopId: id,
             maxTime,
             notice,
-            minText:prepareTime?prepareTime.min: "Min(s)",
-            hourText:prepareTime?prepareTime.hour:"Hour(s)",
+            minText: prepareTime ? prepareTime.min : "Min(s)",
+            hourText: prepareTime ? prepareTime.hour : "Hour(s)",
             percentageDiscount,
             discountAmount,
           });
@@ -193,227 +194,218 @@ export default class ShopSetting extends Component {
       minText,
       hourText,
     } = this.state;
-    console.log(`${selectedHour} ${selectedMin}`);
+
     return (
       <Container fluid={true}>
-        <Nav />
-        <AfterNav form={"Store Settings"} />
-        <hr></hr>
-        <Row style={{ paddingTop: "10px" }}>
-          <Col lg="2">
-            <SideMenu />
-          </Col>
-          <Col lg="1"></Col>
-          <Col className="dashboard-panel" lg="6">
-            <Message attached header="Store settings" />
+        <Wrapper>
+          <Message attached header="Store settings" />
 
-            <Segment>
-              <Header as="h3">
-                Delivery Time <Icon name="time" />
-              </Header>
-              <Form
-                className="attached fluid segment"
-                onSubmit={this.onSubmit}
-                size="tiny"
-              >
-                <Form.Group>
-                  <Form.Field width={5}>
-                    <label>Min. delivery time</label>
-                    <Input
-                      value={minOrder}
-                      labelPosition="right"
-                      min="0"
-                      max="120"
-                      onChange={this.onChange}
-                      name="minTime"
-                      type="number"
-                      placeholder="Min. delivery time"
-                    >
-                      <input />
-                      <Label>mins</Label>
-                    </Input>
-                  </Form.Field>
-                  <Form.Field width={5}>
-                    <label>Max. delivery time (120 mins)</label>
-                    <Input
-                      labelPosition="right"
-                      min="0"
-                      max="120"
-                      value={maxTime}
-                      onChange={this.onChange}
-                      name="maxTime"
-                      type="number"
-                      placeholder="Max. delivery time"
-                    >
-                      <input />
-                      <Label>mins</Label>
-                    </Input>
-                  </Form.Field>
-                </Form.Group>
-                <br />
-                <Button color="red" size="mini" type="submit">
-                  Save <Icon name="save" />
-                </Button>
-              </Form>
-              <Divider hidden />
-              <Divider section />
-              <Header as="h3">
-                Preparation Time <Icon name="hourglass one" />
-              </Header>
-              <Form onSubmit={this.onSubmit} size="tiny">
-                <Form.Group>
-                  <Form.Field width={5}>
-                    <label>Hour(s)</label>
-                    <Form.Select
-                      required
-                      fluid
-                      onChange={this.onChangeDropdown}
-                      name="selectedHour"
-                      options={cboHours}
-                      placeholder={hourText}
-                    />
-                  </Form.Field>
-                  <Form.Field width={5}>
-                    <label>Min(s)</label>
-                    <Form.Select
-                      required
-                      fluid
-                      onChange={this.onChangeDropdown}
-                      name="selectedMin"
-                      options={cboMins}
-                      placeholder={minText}
-                    />
-                  </Form.Field>
-                </Form.Group>
-                <Button color="red" size="mini" type="submit">
-                  Save <Icon name="save" />
-                </Button>
-              </Form>
-              <Divider section />
-              <Header as="h3">
-                Delivery Price <Icon name="money" />
-              </Header>
-              <Form onSubmit={this.onSubmit} size="tiny">
+          <Segment>
+            <Header as="h3">
+              Delivery Time <Icon name="time" />
+            </Header>
+            <Form
+              className="attached fluid segment"
+              onSubmit={this.onSubmit}
+              size="tiny"
+            >
+              <Form.Group>
                 <Form.Field width={5}>
-                  <label>Delivery price</label>
+                  <label>Min. delivery time</label>
                   <Input
-                    labelPosition="right"
-                    min="0"
-                    step="0.01"
-                    value={deliveryPrice}
-                    type="number"
-                    onChange={this.onChange}
-                    name="deliveryPrice"
-                    placeholder="Delivery price"
-                  >
-                    <Label basic>£</Label>
-                    <input />
-                    <Label>.00</Label>
-                  </Input>
-                </Form.Field>
-
-                <Button color="red" size="mini" type="submit">
-                  Save <Icon name="save" />
-                </Button>
-              </Form>
-              <Divider section />
-              <Header as="h3">
-                Minimum Order <Icon name="minus" />
-              </Header>
-              <Form onSubmit={this.onSubmit} size="tiny">
-                <Form.Field width={5}>
-                  <label>Minimum order </label>
-                  <Input
-                    labelPosition="right"
-                    min="0"
                     value={minOrder}
-                    name="minOrder"
-                    step="0.01"
+                    labelPosition="right"
+                    min="0"
+                    max="120"
                     onChange={this.onChange}
+                    name="minTime"
                     type="number"
-                    placeholder="Minimum order"
+                    placeholder="Min. delivery time"
+                  >
+                    <input />
+                    <Label>mins</Label>
+                  </Input>
+                </Form.Field>
+                <Form.Field width={5}>
+                  <label>Max. delivery time (120 mins)</label>
+                  <Input
+                    labelPosition="right"
+                    min="0"
+                    max="120"
+                    value={maxTime}
+                    onChange={this.onChange}
+                    name="maxTime"
+                    type="number"
+                    placeholder="Max. delivery time"
+                  >
+                    <input />
+                    <Label>mins</Label>
+                  </Input>
+                </Form.Field>
+              </Form.Group>
+              <br />
+              <Button color="red" size="mini" type="submit">
+                Save <Icon name="save" />
+              </Button>
+            </Form>
+            <Divider hidden />
+            <Divider section />
+            <Header as="h3">
+              Preparation Time <Icon name="hourglass one" />
+            </Header>
+            <Form onSubmit={this.onSubmit} size="tiny">
+              <Form.Group>
+                <Form.Field width={5}>
+                  <label>Hour(s)</label>
+                  <Form.Select
+                    required
+                    fluid
+                    onChange={this.onChangeDropdown}
+                    name="selectedHour"
+                    options={cboHours}
+                    placeholder={hourText}
+                  />
+                </Form.Field>
+                <Form.Field width={5}>
+                  <label>Min(s)</label>
+                  <Form.Select
+                    required
+                    fluid
+                    onChange={this.onChangeDropdown}
+                    name="selectedMin"
+                    options={cboMins}
+                    placeholder={minText}
+                  />
+                </Form.Field>
+              </Form.Group>
+              <Button color="red" size="mini" type="submit">
+                Save <Icon name="save" />
+              </Button>
+            </Form>
+            <Divider section />
+            <Header as="h3">
+              Delivery Price <Icon name="money" />
+            </Header>
+            <Form onSubmit={this.onSubmit} size="tiny">
+              <Form.Field width={5}>
+                <label>Delivery price</label>
+                <Input
+                  labelPosition="right"
+                  min="0"
+                  step="0.01"
+                  value={deliveryPrice}
+                  type="number"
+                  onChange={this.onChange}
+                  name="deliveryPrice"
+                  placeholder="Delivery price"
+                >
+                  <Label basic>£</Label>
+                  <input />
+                  <Label>.00</Label>
+                </Input>
+              </Form.Field>
+
+              <Button color="red" size="mini" type="submit">
+                Save <Icon name="save" />
+              </Button>
+            </Form>
+            <Divider section />
+            <Header as="h3">
+              Minimum Order <Icon name="minus" />
+            </Header>
+            <Form onSubmit={this.onSubmit} size="tiny">
+              <Form.Field width={5}>
+                <label>Minimum order </label>
+                <Input
+                  labelPosition="right"
+                  min="0"
+                  value={minOrder}
+                  name="minOrder"
+                  step="0.01"
+                  onChange={this.onChange}
+                  type="number"
+                  placeholder="Minimum order"
+                >
+                  <Label basic>£</Label>
+                  <input />
+                  <Label>.00</Label>
+                </Input>
+              </Form.Field>
+
+              <Button color="red" size="mini" type="submit">
+                Save <Icon name="save" />
+              </Button>
+            </Form>
+            <Divider section />
+            <Header as="h3">
+              Discount <Icon name="tag" />
+            </Header>
+            <Form onSubmit={this.onSubmit} size="tiny">
+              <Form.Group>
+                <Form.Field width={5}>
+                  <label>Percentage discount</label>
+                  <Input
+                    labelPosition="right"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    value={percentageDiscount}
+                    onChange={this.onChange}
+                    name="percentageDiscount"
+                    type="number"
+                    placeholder="Discount"
+                  >
+                    <input />
+                    <Label>%</Label>
+                  </Input>
+                </Form.Field>
+
+                <Form.Field width={5}>
+                  <label>When you spend</label>
+                  <Input
+                    labelPosition="right"
+                    min="0"
+                    step="0.01"
+                    value={discountAmount}
+                    onChange={this.onChange}
+                    name="discountAmount"
+                    type="number"
+                    placeholder="Spend"
                   >
                     <Label basic>£</Label>
                     <input />
                     <Label>.00</Label>
                   </Input>
                 </Form.Field>
+              </Form.Group>
 
-                <Button color="red" size="mini" type="submit">
-                  Save <Icon name="save" />
-                </Button>
-              </Form>
-              <Divider section />
-              <Header as="h3">
-                Discount <Icon name="tag" />
-              </Header>
-              <Form onSubmit={this.onSubmit} size="tiny">
-                <Form.Group>
-                  <Form.Field width={5}>
-                    <label>Percentage discount</label>
-                    <Input
-                      labelPosition="right"
-                      min="0"
-                      max="100"
-                      step="0.01"
-                      value={percentageDiscount}
-                      onChange={this.onChange}
-                      name="percentageDiscount"
-                      type="number"
-                      placeholder="Discount"
-                    >
-                      <input />
-                      <Label>%</Label>
-                    </Input>
-                  </Form.Field>
-
-                  <Form.Field width={5}>
-                    <label>When you spend</label>
-                    <Input
-                      labelPosition="right"
-                      min="0"
-                      step="0.01"
-                      value={discountAmount}
-                      onChange={this.onChange}
-                      name="discountAmount"
-                      type="number"
-                      placeholder="Spend"
-                    >
-                      <Label basic>£</Label>
-                      <input />
-                      <Label>.00</Label>
-                    </Input>
-                  </Form.Field>
-                </Form.Group>
-
-                <br />
-                <Button color="red" size="mini" type="submit">
-                  Save <Icon name="save" />
-                </Button>
-              </Form>
-              <Divider section />
-              <Header as="h3">
-                Public Notice <Icon name="announcement" />
-              </Header>
-              <Form onSubmit={this.onSubmit} size="tiny">
-                <Form.TextArea
-                  maxlength="200"
-                  name="notice"
-                  onChange={this.onChange}
-                  value={notice}
-                  placeholder="Write a short welcome message for customers..."
-                />
-                <Button color="red" size="mini" type="submit">
-                  Save <Icon name="save" />
-                </Button>
-                <br />
-                <br />
-              </Form>
-            </Segment>
-            <br />
-            <br />
-          </Col>
-        </Row>
+              <br />
+              <Button color="red" size="mini" type="submit">
+                Save <Icon name="save" />
+              </Button>
+            </Form>
+            <Divider section />
+            <Header as="h3">
+              Public Notice <Icon name="announcement" />
+            </Header>
+            <Form onSubmit={this.onSubmit} size="tiny">
+              <Form.TextArea
+                maxlength="200"
+                name="notice"
+                onChange={this.onChange}
+                value={notice}
+                placeholder="Write a short welcome message for customers..."
+              />
+              <Button color="red" size="mini" type="submit">
+                Save <Icon name="save" />
+              </Button>
+              <br />
+              <br />
+            </Form>
+          </Segment>
+          <br />
+          <br />
+        </Wrapper>
       </Container>
     );
   }

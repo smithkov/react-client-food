@@ -10,6 +10,7 @@ import SideMenu from "./common/sideMenu";
 import ClientService from "../services/clientService";
 import { Col, Container, Row } from "reactstrap";
 import clientService from "../services/clientService";
+import Wrapper from "./wrapper";
 import {
   MISSING_USER_MSG,
   DEFAULT_BANNER,
@@ -72,7 +73,7 @@ class Account extends Component {
               City,
               photo,
             } = data;
-           
+
             const myPhoto = photo ? `${photo}` : "";
             this.setState({
               photoPreviewUrl: myPhoto,
@@ -155,10 +156,9 @@ class Account extends Component {
       postCode,
       selectedCity,
       selectedPhoto,
-      userId
+      userId,
     } = this.state;
-    
-    
+
     const formData = new FormData();
     formData.append("firstName", firstName);
     formData.append("lastName", lastName);
@@ -225,140 +225,131 @@ class Account extends Component {
 
     return (
       <Container fluid={true}>
-        <Nav />
-        <AfterNav form={"My Account"} />
-        <hr></hr>
-        <Row style={{ paddingTop: "10px" }}>
-          <Col lg="2">
-            <SideMenu />
-          </Col>
-          <Col lg="1"></Col>
-          <Col className="dashboard-panel" lg="6">
-            <Message attached header="Personal details" />
-            <Form
-              className="attached fluid segment"
-              style={{
-                width: "auto",
-                margin: "auto",
-                height: "auto",
-                padding: 13,
-              }}
-              onSubmit={this.onSubmit}
-            >
-              {userAlert}
-              <Form.Group widths="equal">
-                <Form.Field>
-                  <label>Photo</label>
-                  <input type="file" onChange={this.fileChangedHandler} />
-                </Form.Field>
-
-                <Form.Field>
-                  <img
-                    style={{
-                      objectFit: "cover",
-                      objectPosition: "center center",
-                      height: 100,
-                      width: "100",
-                    }}
-                    src={photoPreviewUrl ? photoPreviewUrl : DEFAULT_USER}
-                  />
-                </Form.Field>
-              </Form.Group>
-              <Form.Group widths="equal">
-                <Form.Field>
-                  <label>First name</label>
-                  <input
-                    type="text"
-                    required
-                    value={firstName}
-                    name="firstName"
-                    onChange={this.onChange}
-                    placeholder="First name"
-                  />
-                </Form.Field>
-
-                <Form.Field>
-                  <label>Last name</label>
-                  <input
-                    type="text"
-                    required
-                    value={lastName}
-                    name="lastName"
-                    onChange={this.onChange}
-                    placeholder="Last name"
-                  />
-                </Form.Field>
-              </Form.Group>
+        <Wrapper>
+          <Message attached header="Personal details" />
+          <Form
+            className="attached fluid segment"
+            style={{
+              width: "auto",
+              margin: "auto",
+              height: "auto",
+              padding: 13,
+            }}
+            onSubmit={this.onSubmit}
+          >
+            {userAlert}
+            <Form.Group widths="equal">
               <Form.Field>
-                <label>Email</label>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  name="email"
-                  onChange={this.onChange}
-                  placeholder="Email"
-                />
+                <label>Photo</label>
+                <input type="file" onChange={this.fileChangedHandler} />
               </Form.Field>
 
-              <hr />
-
-              <Message floating content="Home Address" />
               <Form.Field>
-                <label>Address 1</label>
+                <img
+                  style={{
+                    objectFit: "cover",
+                    objectPosition: "center center",
+                    height: 100,
+                    width: "100",
+                  }}
+                  src={photoPreviewUrl ? photoPreviewUrl : DEFAULT_USER}
+                />
+              </Form.Field>
+            </Form.Group>
+            <Form.Group widths="equal">
+              <Form.Field>
+                <label>First name</label>
                 <input
                   type="text"
                   required
-                  value={firstAddress}
-                  name="firstAddress"
+                  value={firstName}
+                  name="firstName"
                   onChange={this.onChange}
-                  placeholder="Address 1"
+                  placeholder="First name"
                 />
               </Form.Field>
+
               <Form.Field>
-                <label>Address 2</label>
+                <label>Last name</label>
                 <input
                   type="text"
-                  value={secondAddress}
-                  name="secondAddress"
+                  required
+                  value={lastName}
+                  name="lastName"
                   onChange={this.onChange}
-                  placeholder="Address 2"
+                  placeholder="Last name"
                 />
               </Form.Field>
-              <Form.Group widths="equal">
-                <Form.Field>
-                  <input
-                    type="text"
-                    required
-                    value={postCode}
-                    name="postCode"
-                    onChange={this.onChange}
-                    placeholder="Post code"
-                  />
-                </Form.Field>
+            </Form.Group>
+            <Form.Field>
+              <label>Email</label>
+              <input
+                type="email"
+                required
+                value={email}
+                name="email"
+                onChange={this.onChange}
+                placeholder="Email"
+              />
+            </Form.Field>
 
-                <Dropdown
+            <hr />
+
+            <Message floating content="Home Address" />
+            <Form.Field>
+              <label>Address 1</label>
+              <input
+                type="text"
+                required
+                value={firstAddress}
+                name="firstAddress"
+                onChange={this.onChange}
+                placeholder="Address 1"
+              />
+            </Form.Field>
+            <Form.Field>
+              <label>Address 2</label>
+              <input
+                type="text"
+                value={secondAddress}
+                name="secondAddress"
+                onChange={this.onChange}
+                placeholder="Address 2"
+              />
+            </Form.Field>
+            <Form.Group widths="equal">
+              <Form.Field>
+                <input
+                  type="text"
                   required
-                  fluid
-                  selection
-                  search
-                  defaultValue={selectedCity}
-                  name="selectedCity"
-                  label="City"
-                  placeholder={cityText}
-                  options={city}
-                  onChange={this.onChangeDropdown}
+                  value={postCode}
+                  name="postCode"
+                  onChange={this.onChange}
+                  placeholder="Post code"
                 />
-              </Form.Group>
+              </Form.Field>
 
-              <Button color="red" type="submit">
-                Save <Icon name="save" />
-              </Button>
-            </Form>
-            <br />
-            <br />
-          </Col>
-        </Row>
+              <Dropdown
+                required
+                fluid
+                selection
+                search
+                defaultValue={selectedCity}
+                name="selectedCity"
+                label="City"
+                placeholder={cityText}
+                options={city}
+                onChange={this.onChangeDropdown}
+              />
+            </Form.Group>
+
+            <Button color="red" type="submit">
+              Save <Icon name="save" />
+            </Button>
+          </Form>
+          <br />
+          <br />
+        </Wrapper>
       </Container>
     );
   }

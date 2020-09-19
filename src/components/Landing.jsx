@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import React, { Component, useState, useEffect } from "react";
 import clientService from "../services/clientService";
 import Footer from "./Footer";
+import Nav from "./NavBar";
 import BigLoader from "./bigLoader";
 import {
   Button,
@@ -18,6 +19,7 @@ import {
   Segment,
   Sidebar,
   Visibility,
+  Dropdown,
   Card,
   Input,
 } from "semantic-ui-react";
@@ -52,11 +54,11 @@ const getWidth = () => {
  * It can be more complicated, but you can create really flexible markup.
  */
 class DesktopContainer extends Component {
-  state = {};
+  state = { hasLogin: false };
 
   hideFixedMenu = () => this.setState({ fixed: false });
   showFixedMenu = () => this.setState({ fixed: true });
-
+  componentDidMount = async () => {};
   render() {
     const { children } = this.props;
     const { fixed } = this.state;
@@ -79,33 +81,7 @@ class DesktopContainer extends Component {
             }}
             vertical
           >
-            <Menu
-              color="grey"
-              fixed={fixed ? "top" : null}
-              inverted={!fixed}
-              pointing={!fixed}
-              secondary={!fixed}
-              size="large"
-            >
-              <Container>
-                <Menu.Item position="right">
-                  {/* <Link to={SHOP_SIGNUP}>Vendor Sign up</Link> */}
-                  {/* <Link
-                    style={{ paddingLeft: 20, paddingRight: 20 }}
-                    to={LISTING_URL}
-                  >
-                    View Listing
-                  </Link> */}
-                  <Button as="a" href={LOGIN_URL} inverted={!fixed}>
-                    Log In
-                  </Button>
-
-                  {/* <Button as='a' inverted={!fixed} primary={fixed} style={{ marginLeft: '0.5em' }}>
-                    Sign Up
-                  </Button> */}
-                </Menu.Item>
-              </Container>
-            </Menu>
+            <Nav />
             <HomepageHeading />
           </Segment>
         </Visibility>
@@ -121,34 +97,16 @@ DesktopContainer.propTypes = {
 };
 
 class MobileContainer extends Component {
-  state = {};
-
+  state = {
+    hasLogin: false,
+  };
+  componentDidMount = () => {};
   render() {
     const { children } = this.props;
     const { sidebarOpened } = this.state;
 
     return (
       <Responsive getWidth={getWidth} maxWidth={Responsive.onlyMobile.maxWidth}>
-        {/* <Sidebar
-          as={Menu}
-          animation="push"
-          inverted
-          onHide={this.handleSidebarHide}
-          vertical
-          visible={sidebarOpened}
-        >
-          <Link to={LISTING_URL}>
-            <Menu.Item as="a" active>
-              View Listing
-            </Menu.Item>
-          </Link>
-          <Link to={LOGIN_URL}>
-            <Menu.Item as="a">Log In</Menu.Item>
-          </Link>
-
-         
-        </Sidebar> */}
-
         <Sidebar.Pusher dimmed={sidebarOpened}>
           <Segment
             inverted
@@ -161,15 +119,7 @@ class MobileContainer extends Component {
             vertical
           >
             <Container>
-              <Menu color="grey" inverted pointing secondary size="large">
-                
-
-                <Menu.Item position="right">
-                  <Button href={LOGIN_URL} as="a" inverted>
-                    Log In
-                  </Button>
-                </Menu.Item>
-              </Menu>
+              <Nav />
             </Container>
             <HomepageHeading mobile={true} />
           </Segment>

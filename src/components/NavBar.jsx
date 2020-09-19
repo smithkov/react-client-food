@@ -89,6 +89,7 @@ class NavBar extends Component {
         {" "}
         <Menu color="red" fixed="top" inverted>
           <Menu.Item>
+            <Link to={'/'}>
             <img
               style={{
                 marginRight: "1.5em",
@@ -96,7 +97,8 @@ class NavBar extends Component {
                 width: "100px",
               }}
               src="/images/foodengo_logo.png"
-            />
+            /></Link>
+           
           </Menu.Item>
           {/* <Menu.Item>
             <Link to={LISTING_URL}>Home</Link>
